@@ -1740,16 +1740,78 @@ function renderModeles(month) {
     achCanvas.classList.remove('is-hidden');
     if (achEmpty) achEmpty.hidden = true;
     const ctx3 = achCanvas.getContext('2d');
+    const gAch = ctx3.createLinearGradient(0, 320, 0, 0);
+    gAch.addColorStop(0, alpha(css('--accent'), 0.98));
+    gAch.addColorStop(1, alpha(css('--accent-2'), 0.88));
     charts.achievement = new Chart(ctx3, {
       type: 'bar',
       data: {
         labels: topA.map(e=>e[0]),
         datasets: [
-          { label: 'Cumul produit', data: topA.map(e=>e[1].cumul), backgroundColor: alpha(css('--accent'),0.85), borderRadius: 5 },
-          { label: 'Qté prévu', data: topA.map(e=>e[1].qte_prevu - e[1].cumul < 0 ? 0 : e[1].qte_prevu - e[1].cumul), backgroundColor: alpha(css('--text-faint'),0.25), borderRadius: 5 }
+          {
+            label: 'Cumul produit',
+            data: topA.map(e=>e[1].cumul),
+            backgroundColor: gAch,
+            borderColor: alpha('#ffffff', 0.35),
+            borderWidth: 1.5,
+            borderRadius: 6,
+            borderSkipped: false
+          },
+          {
+            label: 'Reste vs prévu',
+            data: topA.map(e=>e[1].qte_prevu - e[1].cumul < 0 ? 0 : e[1].qte_prevu - e[1].cumul),
+            backgroundColor: alpha(css('--green'), 0.72),
+            borderColor: alpha('#ffffff', 0.28),
+            borderWidth: 1.5,
+            borderRadius: 6,
+            borderSkipped: false
+          }
         ]
       },
-      options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 10, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => { const m = topA[c.dataIndex][1]; const pct = (m.cumul/m.qte_prevu)*100; return c.dataset.label==='Cumul produit' ? `Cumul: ${fmtInt(m.cumul)} / ${fmtInt(m.qte_prevu)} (${pct.toFixed(1)}%)` : `Reste: ${fmtInt(Math.max(0,m.qte_prevu-m.cumul))}`; } } } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { color: css('--text-dim'), font: { size: 9 }, maxRotation: 60, minRotation: 30 } }, y: { stacked: true, grid: { color: css('--grid') }, ticks: { color: css('--text-dim'), callback: v=>fmtInt(v) } } } }
+      options: {
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 14,
+              font: { size: 12, weight: '600' },
+              color: css('--text')
+            }
+          },
+          tooltip: {
+            backgroundColor: alpha(css('--surface-3'), 0.96),
+            titleColor: css('--text'),
+            bodyColor: css('--text'),
+            borderColor: css('--border-2'),
+            borderWidth: 1,
+            padding: 12,
+            callbacks: {
+              label: (c) => {
+                const m = topA[c.dataIndex][1];
+                const pct = (m.cumul / m.qte_prevu) * 100;
+                return c.dataset.label === 'Cumul produit'
+                  ? `Cumul: ${fmtInt(m.cumul)} / ${fmtInt(m.qte_prevu)} (${pct.toFixed(1)}%)`
+                  : `Reste: ${fmtInt(Math.max(0, m.qte_prevu - m.cumul))}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            stacked: true,
+            grid: { display: false },
+            ticks: { color: css('--text'), font: { size: 10, weight: '600' }, maxRotation: 55, minRotation: 25 }
+          },
+          y: {
+            stacked: true,
+            grid: { color: alpha(css('--accent'), 0.12), lineWidth: 1 },
+            ticks: { color: css('--text-dim'), font: { size: 11, weight: '600' }, callback: v => fmtInt(v) }
+          }
+        }
+      }
     });
   }
 }
