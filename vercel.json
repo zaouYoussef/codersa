@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/Tableau_de_bord_Production.html" }
+  ]
+}
