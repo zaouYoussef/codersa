@@ -882,119 +882,11 @@ footer {
   .pin-modal { width: 88vw; }
 }
 
-/* === Simplified saisie row layout (v2) === */
-.saisie-grid.v2 { min-width: 1280px; }
-.saisie-grid.v2 thead th { padding: 9px 8px; }
-.saisie-grid.v2 tr.chain-band td {
-  background: linear-gradient(90deg, var(--surface-2), transparent 70%);
-  padding: 9px 10px; border-top: 2px solid var(--border-2);
-  font-weight: 800;
-}
-.saisie-grid.v2 tr.chain-band .chain-tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--grad-a); color: #fff;
-  padding: 3px 9px; border-radius: 6px;
-  font-size: 11.5px; font-weight: 800;
-  font-family: 'JetBrains Mono', monospace;
-}
-.saisie-grid.v2 tr.chain-band .add-btn {
-  appearance: none; border: 1px dashed var(--accent);
-  background: transparent; color: var(--accent);
-  padding: 4px 10px; border-radius: 7px;
-  font-size: 11px; font-weight: 700; cursor: pointer;
-  font-family: inherit; margin-left: 12px;
-}
-.saisie-grid.v2 tr.chain-band .add-btn:hover { background: rgba(56,189,248,0.08); }
-.saisie-grid.v2 tr.chain-band .add-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.saisie-grid.v2 td.cell-edit { padding: 4px 6px; }
-.saisie-grid.v2 input.cell-input,
-.saisie-grid.v2 select.cell-input {
-  width: 100%; min-width: 60px;
-  border: 1px solid transparent; background: transparent;
-  color: var(--text); font-family: 'JetBrains Mono', monospace;
-  font-weight: 600; font-size: 11.5px; text-align: center;
-  padding: 6px 6px; border-radius: 6px;
-  font-family: inherit;
-}
-.saisie-grid.v2 input.cell-input[type="number"] { font-family: 'JetBrains Mono', monospace; }
-.saisie-grid.v2 input.cell-input:hover,
-.saisie-grid.v2 select.cell-input:hover { background: var(--surface-2); }
-.saisie-grid.v2 input.cell-input:focus,
-.saisie-grid.v2 select.cell-input:focus {
-  outline: none; border-color: var(--accent);
-  background: var(--surface); box-shadow: 0 0 0 2px rgba(56,189,248,0.18);
-}
-.saisie-grid.v2 input.cell-input:disabled,
-.saisie-grid.v2 select.cell-input:disabled {
-  color: var(--text-faint); cursor: not-allowed; opacity: 0.7;
-}
-.saisie-grid.v2 input.cell-input.dirty,
-.saisie-grid.v2 select.cell-input.dirty {
-  background: rgba(250,204,21,0.12); border-color: rgba(250,204,21,0.45);
-}
-.saisie-grid.v2 td.cell-text input { text-align: left; }
-.saisie-grid.v2 td.read { font-family: 'JetBrains Mono', monospace; font-weight: 700; text-align: right; padding: 8px 10px; }
-.saisie-grid.v2 td.read.rend { font-weight: 800; }
-.saisie-grid.v2 td.actions { padding: 6px 8px; white-space: nowrap; text-align: center; }
-.saisie-grid.v2 .icon-btn {
-  appearance: none; border: 1px solid var(--border);
-  background: var(--surface-2); color: var(--text-dim);
-  width: 26px; height: 26px; border-radius: 7px;
-  display: inline-grid; place-items: center;
-  cursor: pointer; transition: all 0.15s ease;
-  margin: 0 2px;
-}
-.saisie-grid.v2 .icon-btn:hover { color: var(--accent); border-color: var(--accent); }
-.saisie-grid.v2 .icon-btn.danger:hover { color: var(--red); border-color: var(--red); }
-.saisie-grid.v2 .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.saisie-grid.v2 .icon-btn svg { width: 13px; height: 13px; }
-
-/* Hour-detail panel (expandable below a row) */
-.saisie-grid.v2 tr.hour-detail-row > td {
-  padding: 0; background: var(--surface-3);
-  border-bottom: 1px solid var(--border-2);
-}
-.saisie-grid.v2 tr.hour-detail-row.hidden { display: none; }
-.hour-detail-panel {
-  padding: 12px 16px;
-}
-.hour-detail-panel .hd-title {
-  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
-  color: var(--text-dim); margin-bottom: 8px;
-}
-.hour-grid {
-  display: grid;
-  grid-template-columns: 130px repeat(11, minmax(50px, 1fr));
-  gap: 4px;
-  font-size: 11px;
-}
-.hour-grid .hg-head { color: var(--text-dim); font-weight: 800; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.4px; padding: 6px 4px; text-align: center; }
-.hour-grid .hg-row-lab { color: var(--text); font-weight: 800; font-size: 10.5px; padding: 6px 8px; display: flex; align-items: center; }
-.hour-grid .hg-row-lab.entre { color: var(--accent); }
-.hour-grid .hg-row-lab.sortie { color: var(--green); }
-.hour-grid .hg-row-lab.eff { color: var(--orange); }
-.hour-grid .hg-row-lab.stag { color: var(--accent-3); }
-.hour-grid input.h-cell {
-  width: 100%; padding: 6px 4px; text-align: center;
-  border: 1px solid var(--border); background: var(--surface);
-  color: var(--text); font-family: 'JetBrains Mono', monospace;
-  font-weight: 600; font-size: 11px; border-radius: 6px;
-}
-.hour-grid input.h-cell:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(56,189,248,0.18); }
-.hour-grid input.h-cell:disabled { color: var(--text-faint); opacity: 0.7; }
-.hour-grid input.h-cell.dirty { background: rgba(250,204,21,0.10); border-color: rgba(250,204,21,0.4); }
-.hour-detail-panel .hd-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; font-size: 11px; color: var(--text-dim); font-weight: 600; }
-.hour-detail-panel .hd-actions .syncbtn { appearance: none; border: 1px solid var(--accent); background: transparent; color: var(--accent); padding: 5px 10px; border-radius: 7px; font-weight: 700; cursor: pointer; font-family: inherit; }
-.hour-detail-panel .hd-actions .syncbtn:hover { background: rgba(56,189,248,0.08); }
-.hour-detail-panel .hd-actions .syncbtn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-@media (max-width: 920px) {
-  .hour-grid { grid-template-columns: 110px repeat(11, minmax(40px, 1fr)); font-size: 10px; }
-}
 </style>
 </head>
 <body>
 <div class="ambient"></div>
+
 
 <header class="topbar">
   <div class="topbar-row1">
@@ -1139,6 +1031,7 @@ footer {
 
   <!-- PAGE: OVERVIEW -->
   <section class="page active" id="page-overview">
+
     <div class="page-head">
       <div class="left">
         <h2><span id="ov-month">JANVIER</span> · <span class="accent">Vue d'ensemble</span></h2>
@@ -1241,7 +1134,8 @@ footer {
         <div class="h-240"><canvas id="chart-client-mix"></canvas></div>
       </div>
     </div>
-  </section>
+
+    </section>
 
   <!-- PAGE: RENDEMENT -->
   <section class="page" id="page-rendement">
@@ -2733,321 +2627,171 @@ function _rowKey(c) {
 function buildSaisieHeader() {
   const tr = document.getElementById('saisie-grid-head');
   tr.innerHTML = '';
-  const grid = document.getElementById('saisie-grid');
-  grid.classList.add('v2');
-  const cols = ['Ch','Import','Client','Modèle','Désig','Chef','P/H','QTE prév.','Effectifs','Stagiaires','Entrée tot.','Sortie tot.','Cumul','Encours','Rend.','Actions'];
-  for (const c of cols) {
+  const baseCols = ['Ch','Client','Import','Modèle','Désig','Chef','P/H'];
+  for (const c of baseCols) {
+    const th = document.createElement('th');
+    th.textContent = c;
+    if (c === 'Ch' || c === 'Client') th.classList.add('sticky-l');
+    tr.appendChild(th);
+  }
+  const sep = document.createElement('th');
+  sep.textContent = 'Heure / Valeur';
+  sep.classList.add('hour-h');
+  tr.appendChild(sep);
+  for (const h of HOUR_LABELS) {
+    const th = document.createElement('th');
+    th.classList.add('hour-h');
+    th.textContent = h;
+    tr.appendChild(th);
+  }
+  for (const c of ['Total','Cumul','Encours','Rend.']) {
     const th = document.createElement('th');
     th.textContent = c;
     tr.appendChild(th);
   }
 }
 
+function _num(v) { return (typeof v === 'number' && !isNaN(v)) ? v : null; }
+function _sum(arr) { return (arr || []).reduce((s,v)=>s+(typeof v === 'number' && !isNaN(v) ? v : 0), 0); }
+function _max(arr) { let m = 0; for (const v of (arr || [])) if (typeof v === 'number' && !isNaN(v) && v > m) m = v; return m; }
+
 function buildSaisieBody() {
   const tbody = document.getElementById('saisie-grid-body');
   tbody.innerHTML = '';
   const editable = isEditable();
-  const todayActionable = isToday(saisieDate);
   const chains = PRODUCTION[saisieMonth].daily[saisieDate] || [];
+  // Skip rows with no chain
+  const visible = chains.filter(c => c.chain != null && !isNaN(c.chain) && (c.client || (c.modele && c.modele !== 0)));
 
-  // Group by chain number — ignore rows without a chain number
-  const byChain = new Map();
-  for (const c of chains) {
-    if (c.chain == null || isNaN(c.chain)) continue;
-    if (!byChain.has(c.chain)) byChain.set(c.chain, []);
-    byChain.get(c.chain).push(c);
-  }
-  const sortedChains = Array.from(byChain.keys()).sort((a,b)=>a-b);
+  for (const c of visible) {
+    // Header band per chain
+    const head = document.createElement('tr');
+    head.className = 'chain-head';
+    const colspan = 7 + 1 + HOUR_LABELS.length + 4;
+    head.innerHTML = '<td colspan="' + colspan + '">'
+      + '<span class="chain-tag">Ch' + String(c.chain).padStart(2,'0') + '</span>'
+      + '<span style="margin-left:10px;font-weight:700">' + (c.client || '—') + '</span>'
+      + '<span style="margin-left:8px;color:var(--text-dim);font-weight:600;font-size:11px">'
+      + (c.import || '') + ' · ' + (c.modele || '') + ' · ' + (c.desig || '') + '</span>'
+      + '<span style="margin-left:8px;color:var(--text-faint);font-size:11px">chef ' + (c.chef || '—') + '</span>'
+      + '</td>';
+    tbody.appendChild(head);
 
-  for (const chainNo of sortedChains) {
-    const lines = byChain.get(chainNo);
-    // Show only lines that have a client or were added by user (skip empty placeholders)
-    const visible = lines.filter(l => l.client || l._added);
+    const rowDefs = [
+      { key: 'hours_entry',     label: 'Entrée chaîne', cls: 'row-entre'  },
+      { key: 'hours_exit',      label: 'Sortie chaîne', cls: 'row-sortie' },
+      { key: 'effectifs_hours', label: 'Effectifs',     cls: 'row-eff'    },
+      { key: 'stagiaire_hours', label: 'Stagiaire',     cls: 'row-stag'   },
+    ];
 
-    // Chain band header with "+ Modèle" button (today only)
-    const band = document.createElement('tr');
-    band.className = 'chain-band';
-    band.innerHTML = `<td colspan="16">
-      <span class="chain-tag">Ch${String(chainNo).padStart(2,'0')}</span>
-      <span style="margin-left:10px;color:var(--text-dim);font-weight:600;font-size:11px">${visible.length} modèle${visible.length>1?'s':''}</span>
-      <button class="add-btn" data-chain="${chainNo}" ${editable ? '' : 'disabled'}>＋ Ajouter un modèle</button>
-    </td>`;
-    tbody.appendChild(band);
-    band.querySelector('.add-btn').addEventListener('click', () => addModelLine(chainNo));
-
-    if (visible.length === 0) {
-      const empty = document.createElement('tr');
-      empty.innerHTML = `<td colspan="16" style="padding:10px 14px;color:var(--text-faint);font-size:11.5px;font-style:italic">Aucun modèle saisi sur cette chaîne pour le ${saisieDate}.</td>`;
-      tbody.appendChild(empty);
-      continue;
-    }
-
-    for (const line of visible) {
-      const key = _rowKey(line);
+    for (const def of rowDefs) {
       const tr = document.createElement('tr');
-      tr.dataset.row = key;
-      tr.dataset.chain = chainNo;
-
-      // Compute display values from the row
-      const sumEntry = _hasHours(line.hours_entry) ? _sum(line.hours_entry) : (line.entre_total || 0);
-      const sumExit  = _hasHours(line.hours_exit)  ? _sum(line.hours_exit)  : (line.sortie_total || 0);
-      const effDisp  = line.effectifs != null ? line.effectifs : (_max(line.effectifs_hours) || '');
-      const stagDisp = _hasHours(line.stagiaire_hours) ? _max(line.stagiaire_hours) : (line.stagiaire || '');
-
-      tr.innerHTML = `
-        <td class="cell-edit" style="width:60px;text-align:center"><b style="font-family:'JetBrains Mono',monospace">Ch${String(chainNo).padStart(2,'0')}</b></td>
-        <td class="cell-edit cell-text"><input class="cell-input dirty-trk" data-f="import"   value="${line.import || ''}" placeholder="—"></td>
-        <td class="cell-edit cell-text"><input class="cell-input dirty-trk" data-f="client"   value="${line.client || ''}" placeholder="—"></td>
-        <td class="cell-edit cell-text"><input class="cell-input dirty-trk" data-f="modele"   value="${line.modele || ''}" placeholder="—"></td>
-        <td class="cell-edit cell-text"><input class="cell-input dirty-trk" data-f="desig"    value="${line.desig  || ''}" placeholder="—"></td>
-        <td class="cell-edit cell-text"><input class="cell-input dirty-trk" data-f="chef"     value="${line.chef   || ''}" placeholder="—"></td>
-        <td class="cell-edit"><input class="cell-input dirty-trk" type="number" min="0" step="0.01" data-f="ph"        value="${line.ph != null ? line.ph : ''}" placeholder="—"></td>
-        <td class="cell-edit"><input class="cell-input dirty-trk" type="number" min="0" step="1"    data-f="qte_prevu" value="${line.qte_prevu != null ? line.qte_prevu : ''}" placeholder="—"></td>
-        <td class="cell-edit"><input class="cell-input dirty-trk" type="number" min="0" step="1"    data-f="effectifs" value="${effDisp !== '' && effDisp != null ? effDisp : ''}" placeholder="—"></td>
-        <td class="cell-edit"><input class="cell-input dirty-trk" type="number" min="0" step="1"    data-f="stagiaire" value="${stagDisp !== '' && stagDisp != null ? stagDisp : ''}" placeholder="—"></td>
-        <td class="cell-edit"><input class="cell-input dirty-trk" type="number" min="0" step="1"    data-f="entre_total"  value="${sumEntry || ''}" placeholder="—"></td>
-        <td class="cell-edit"><input class="cell-input dirty-trk" type="number" min="0" step="1"    data-f="sortie_total" value="${sumExit  || ''}" placeholder="—"></td>
-        <td class="read" data-r="cumul">${fmtInt(line.cumul)}</td>
-        <td class="read" data-r="encours">${fmtInt(line.encours)}</td>
-        <td class="read rend" data-r="rend">${fmtPct(line.rendement)}</td>
-        <td class="actions">
-          <button class="icon-btn" data-act="expand" title="Détailler par heure">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </button>
-          <button class="icon-btn danger" data-act="remove" title="Supprimer cette ligne" ${editable && line._added ? '' : 'disabled'}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-          </button>
-        </td>`;
-
-      // Apply disabled / colored state
-      tr.querySelectorAll('.cell-input').forEach(inp => {
+      tr.className = def.cls;
+      tr.dataset.chain = c.chain;
+      tr.dataset.key = def.key;
+      tr.innerHTML =
+        '<td class="label-cell sticky-l" style="position:sticky;left:0;background:var(--surface)"><b>Ch' + String(c.chain).padStart(2,'0') + '</b></td>'
+        + '<td class="chip-cell">' + (c.client || '—') + '</td>'
+        + '<td class="chip-cell">' + (c.import || '—') + '</td>'
+        + '<td class="chip-cell">' + (c.modele || '—') + '</td>'
+        + '<td class="chip-cell">' + (c.desig || '—') + '</td>'
+        + '<td class="chip-cell">' + (c.chef || '—') + '</td>'
+        + '<td class="chip-cell" style="font-family:JetBrains Mono,monospace">' + fmtFloat(c.ph, 0) + '</td>'
+        + '<td class="row-lab">' + def.label + '</td>';
+      const arr = c[def.key] || new Array(HOUR_LABELS.length).fill(null);
+      for (let i = 0; i < HOUR_LABELS.length; i++) {
+        const td = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.className = 'h-input';
+        inp.min = '0';
+        inp.step = '1';
+        inp.dataset.chain = c.chain;
+        inp.dataset.key   = def.key;
+        inp.dataset.idx   = i;
+        if (arr[i] != null && !isNaN(arr[i])) inp.value = arr[i];
         if (!editable) inp.disabled = true;
-        inp.addEventListener('input', (e) => onSaisieFieldInput(e, line));
-      });
-      const rEl = tr.querySelector('[data-r="rend"]');
-      rEl.style.color = rendColor(line.rendement) || 'var(--text)';
-
-      // Action handlers
-      tr.querySelector('[data-act="expand"]').addEventListener('click', () => toggleHourDetail(line));
-      tr.querySelector('[data-act="remove"]').addEventListener('click', () => removeModelLine(line));
-
+        inp.addEventListener('input', onSaisieInput);
+        td.appendChild(inp);
+        tr.appendChild(td);
+      }
+      const totTd = document.createElement('td'); totTd.className = 'total-cell'; totTd.dataset.tot = 'row'; totTd.textContent = '—'; tr.appendChild(totTd);
+      const cumTd = document.createElement('td'); cumTd.className = 'total-cell'; cumTd.dataset.tot = 'cumul'; cumTd.textContent = '—'; tr.appendChild(cumTd);
+      const encTd = document.createElement('td'); encTd.className = 'total-cell'; encTd.dataset.tot = 'encours'; encTd.textContent = '—'; tr.appendChild(encTd);
+      const renTd = document.createElement('td'); renTd.className = 'rend-cell';  renTd.dataset.tot = 'rend';   renTd.textContent = '—'; tr.appendChild(renTd);
       tbody.appendChild(tr);
-
-      // Hidden hour-detail row (created lazily on first expand)
     }
+    recomputeChainRow(c.chain);
   }
 }
 
-function onSaisieFieldInput(e, line) {
+function onSaisieInput(e) {
   const inp = e.target;
   inp.classList.add('dirty');
-  const f = inp.dataset.f;
-  const isText = ['import','client','modele','desig','chef'].includes(f);
-  let v;
-  if (isText) v = inp.value;
-  else { v = inp.value === '' ? null : Number(inp.value); if (v != null && isNaN(v)) v = null; }
-  // Effectifs / stagiaire also mirror to hour arrays (max value) so other pages reflect it
-  if (f === 'effectifs') {
-    line.effectifs = v;
-    // also keep effectifs_hours consistent
-    if (v != null && (!Array.isArray(line.effectifs_hours) || !_hasHours(line.effectifs_hours))) {
-      line.effectifs_hours = new Array(HOUR_LABELS.length).fill(v);
-    }
-  } else if (f === 'stagiaire') {
-    line.stagiaire = v;
-    if (v != null && (!Array.isArray(line.stagiaire_hours) || !_hasHours(line.stagiaire_hours))) {
-      line.stagiaire_hours = new Array(HOUR_LABELS.length).fill(v);
-    }
-  } else if (f === 'entre_total') {
-    line.entre_total = v || 0;
-    // if hour breakdown empty, leave it empty; otherwise sync proportionally? simpler: clear if user overrides
-    if (!_hasHours(line.hours_entry)) line.hours_entry = new Array(HOUR_LABELS.length).fill(null);
-  } else if (f === 'sortie_total') {
-    line.sortie_total = v || 0;
-    if (!_hasHours(line.hours_exit)) line.hours_exit = new Array(HOUR_LABELS.length).fill(null);
-  } else if (f === 'qte_prevu') {
-    line.qte_prevu = v;
-  } else if (f === 'ph') {
-    line.ph = v;
-  } else if (isText) {
-    line[f] = v;
-    if (f === 'client') line.client_norm = (v || '').toUpperCase();
-    if (f === 'chef')   line.chef_norm   = (v || '').toUpperCase();
-  }
-
-  // Recompute aggregates
-  if (line.effectifs && line.ph && line.ph > 0) {
-    line.rendement = (line.sortie_total || 0) / (line.effectifs * line.ph);
-  }
-  // Update read-only cells
-  const tr = inp.closest('tr');
-  tr.querySelector('[data-r="rend"]').textContent = fmtPct(line.rendement);
-  tr.querySelector('[data-r="rend"]').style.color = rendColor(line.rendement) || 'var(--text)';
-  // Encours updates if qte_prevu was changed (we wait for save to recompute cumul properly)
-  if (line.qte_prevu != null) {
-    line.encours = Math.max(0, line.qte_prevu - (line.cumul || 0));
-    tr.querySelector('[data-r="encours"]').textContent = fmtInt(line.encours);
-  }
+  const chain = +inp.dataset.chain;
+  const key   = inp.dataset.key;
+  const idx   = +inp.dataset.idx;
+  const v     = inp.value === '' ? null : Number(inp.value);
+  const row = PRODUCTION[saisieMonth].daily[saisieDate].find(r => r.chain === chain);
+  if (!row) return;
+  if (!Array.isArray(row[key])) row[key] = new Array(HOUR_LABELS.length).fill(null);
+  while (row[key].length < HOUR_LABELS.length) row[key].push(null);
+  row[key][idx] = (v === null || isNaN(v)) ? null : v;
+  row.entre_total  = _sum(row.hours_entry);
+  row.sortie_total = _sum(row.hours_exit);
+  const effMax = _max(row.effectifs_hours);
+  if (effMax > 0) row.effectifs = effMax;
+  if (row.effectifs && row.ph && row.ph > 0) row.rendement = row.sortie_total / (row.effectifs * row.ph);
+  recomputeChainRow(chain);
   refreshSummaryStrip();
 }
 
-// Hour detail panel — toggles a row below the line, showing 4 × 11 hour inputs
-function toggleHourDetail(line) {
-  const key = _rowKey(line);
-  const mainTr = document.querySelector(`#saisie-grid-body tr[data-row="${key}"]`);
-  if (!mainTr) return;
-  let panelTr = mainTr.nextElementSibling;
-  if (!panelTr || !panelTr.classList.contains('hour-detail-row')) {
-    panelTr = createHourDetailRow(line);
-    mainTr.parentNode.insertBefore(panelTr, mainTr.nextSibling);
-  } else {
-    panelTr.classList.toggle('hidden');
-  }
-}
-
-function createHourDetailRow(line) {
-  const editable = isEditable();
-  const tr = document.createElement('tr');
-  tr.className = 'hour-detail-row';
-  const wrap = document.createElement('td');
-  wrap.colSpan = 16;
-  const panel = document.createElement('div');
-  panel.className = 'hour-detail-panel';
-  panel.innerHTML = `<div class="hd-title">Détail horaire — Ch${String(line.chain).padStart(2,'0')} · ${line.modele || '—'}</div>`;
-
-  const grid = document.createElement('div'); grid.className = 'hour-grid';
-  // Header row
-  const headLab = document.createElement('div'); headLab.className = 'hg-head'; headLab.textContent = '';
-  grid.appendChild(headLab);
-  for (const h of HOUR_LABELS) { const hd = document.createElement('div'); hd.className = 'hg-head'; hd.textContent = h; grid.appendChild(hd); }
-
-  const defs = [
-    { key: 'hours_entry',     label: 'Entrée chaîne', cls: 'entre' },
-    { key: 'hours_exit',      label: 'Sortie chaîne', cls: 'sortie' },
-    { key: 'effectifs_hours', label: 'Effectifs',     cls: 'eff' },
-    { key: 'stagiaire_hours', label: 'Stagiaire',     cls: 'stag' },
-  ];
-  for (const def of defs) {
-    const lab = document.createElement('div');
-    lab.className = 'hg-row-lab ' + def.cls; lab.textContent = def.label;
-    grid.appendChild(lab);
-    if (!Array.isArray(line[def.key])) line[def.key] = new Array(HOUR_LABELS.length).fill(null);
-    while (line[def.key].length < HOUR_LABELS.length) line[def.key].push(null);
-    for (let i = 0; i < HOUR_LABELS.length; i++) {
-      const inp = document.createElement('input');
-      inp.type = 'number'; inp.min = '0'; inp.step = '1';
-      inp.className = 'h-cell';
-      if (line[def.key][i] != null && !isNaN(line[def.key][i])) inp.value = line[def.key][i];
-      if (!editable) inp.disabled = true;
-      inp.addEventListener('input', () => {
-        inp.classList.add('dirty');
-        const v = inp.value === '' ? null : Number(inp.value);
-        line[def.key][i] = (v == null || isNaN(v)) ? null : v;
-        if (def.key === 'hours_entry') line.entre_total  = _sum(line.hours_entry);
-        if (def.key === 'hours_exit')  line.sortie_total = _sum(line.hours_exit);
-        if (def.key === 'effectifs_hours') { const m = _max(line.effectifs_hours); if (m > 0) line.effectifs = m; }
-        if (line.effectifs && line.ph && line.ph > 0) line.rendement = (line.sortie_total || 0) / (line.effectifs * line.ph);
-        // Sync the main row totals
-        const mainTr = document.querySelector(`#saisie-grid-body tr[data-row="${line._rowKey}"]`);
-        if (mainTr) {
-          const en = mainTr.querySelector('[data-f="entre_total"]');
-          const ex = mainTr.querySelector('[data-f="sortie_total"]');
-          const ef = mainTr.querySelector('[data-f="effectifs"]');
-          if (en && def.key === 'hours_entry') { en.value = line.entre_total; en.classList.add('dirty'); }
-          if (ex && def.key === 'hours_exit')  { ex.value = line.sortie_total; ex.classList.add('dirty'); }
-          if (ef && def.key === 'effectifs_hours' && _max(line.effectifs_hours) > 0) { ef.value = line.effectifs; ef.classList.add('dirty'); }
-          mainTr.querySelector('[data-r="rend"]').textContent = fmtPct(line.rendement);
-          mainTr.querySelector('[data-r="rend"]').style.color = rendColor(line.rendement) || 'var(--text)';
-        }
-        refreshSummaryStrip();
-      });
-      grid.appendChild(inp);
+function recomputeChainRow(chain) {
+  const row = PRODUCTION[saisieMonth].daily[saisieDate].find(r => r.chain === chain);
+  if (!row) return;
+  const trs = document.querySelectorAll('#saisie-grid-body tr[data-chain="' + chain + '"]');
+  trs.forEach(tr => {
+    const key = tr.dataset.key;
+    const arr = row[key] || [];
+    const total = _sum(arr);
+    const totEl = tr.querySelector('[data-tot="row"]');
+    if (totEl) totEl.textContent = total ? fmtInt(total) : '—';
+    if (key === 'hours_exit') {
+      tr.querySelector('[data-tot="cumul"]').textContent   = fmtInt(row.cumul);
+      tr.querySelector('[data-tot="encours"]').textContent = fmtInt(row.encours);
+      const rEl = tr.querySelector('[data-tot="rend"]');
+      rEl.textContent = fmtPct(row.rendement);
+      rEl.style.color = rendColor(row.rendement) || 'var(--text)';
+    } else {
+      tr.querySelector('[data-tot="cumul"]').textContent = '';
+      tr.querySelector('[data-tot="encours"]').textContent = '';
+      tr.querySelector('[data-tot="rend"]').textContent = '';
     }
-  }
-  panel.appendChild(grid);
-
-  const hint = document.createElement('div'); hint.className = 'hd-actions';
-  hint.innerHTML = `<span>Total Entrée = somme heures · Total Sortie = somme heures · Effectifs = max heure</span>`;
-  panel.appendChild(hint);
-
-  wrap.appendChild(panel);
-  tr.appendChild(wrap);
-  return tr;
-}
-
-// Add a new model line for a given chain (today only)
-function addModelLine(chainNo) {
-  if (!isEditable()) { toast('Journée verrouillée — saisissez le PIN pour ajouter.', true); return; }
-  const arr = PRODUCTION[saisieMonth].daily[saisieDate];
-  if (!arr) return;
-  // Try to copy ph and chef from an existing line on the same chain (for convenience)
-  const seed = arr.find(r => r.chain === chainNo && r.client) || {};
-  const fresh = {
-    row: null, chain: chainNo, chain_code: chainNo * 100 + 1,
-    import: '', client: '', modele: '', qte_prevu: null,
-    desig: '', methodes: seed.methodes || null, ph: seed.ph || null,
-    entre_total: 0, sortie_total: 0, cumul: 0, encours: 0,
-    rendement: null, effectifs: seed.effectifs || null,
-    chef: seed.chef || '',
-    hours_entry:     new Array(HOUR_LABELS.length).fill(null),
-    hours_exit:      new Array(HOUR_LABELS.length).fill(null),
-    effectifs_hours: new Array(HOUR_LABELS.length).fill(null),
-    stagiaire_hours: new Array(HOUR_LABELS.length).fill(null),
-    client_norm: '', chef_norm: (seed.chef || '').toUpperCase(),
-    _added: true,
-  };
-  arr.push(fresh);
-  buildSaisieBody();
-  refreshSummaryStrip();
-  // Focus the new line's "modele" input
-  setTimeout(() => {
-    const all = document.querySelectorAll(`#saisie-grid-body tr[data-chain="${chainNo}"]`);
-    const last = all[all.length - 1];
-    if (last) last.querySelector('[data-f="modele"]').focus();
-  }, 30);
-}
-
-function removeModelLine(line) {
-  if (!isEditable()) { toast('Journée verrouillée.', true); return; }
-  if (!line._added) { toast('Seules les lignes ajoutées peuvent être supprimées.', true); return; }
-  if (!confirm(`Supprimer ce modèle (${line.modele || '—'}) de la chaîne Ch${String(line.chain).padStart(2,'0')} ?`)) return;
-  const arr = PRODUCTION[saisieMonth].daily[saisieDate];
-  const idx = arr.indexOf(line);
-  if (idx >= 0) arr.splice(idx, 1);
-  buildSaisieBody();
-  refreshSummaryStrip();
+  });
 }
 
 function refreshSummaryStrip() {
-  const chains = (PRODUCTION[saisieMonth].daily[saisieDate] || []).filter(c => c.client || c._added);
+  const chains = (PRODUCTION[saisieMonth].daily[saisieDate] || []).filter(c => c.chain != null && c.client);
   let entre=0, sortie=0, eff=0, stag=0, rendSum=0, rendCnt=0;
-  const chainSet = new Set();
   for (const c of chains) {
-    entre  += _num(c.entre_total)  || 0;
-    sortie += _num(c.sortie_total) || 0;
-    eff    += _num(c.effectifs)    || 0;
-    stag   += _num(c.stagiaire) || _max(c.stagiaire_hours) || 0;
+    entre  += _sum(c.hours_entry) || c.entre_total || 0;
+    sortie += _sum(c.hours_exit)  || c.sortie_total || 0;
+    eff    += _num(c.effectifs) || 0;
+    stag   += _max(c.stagiaire_hours);
     if (c.rendement && c.rendement > 0 && c.rendement < 2.5) { rendSum += c.rendement; rendCnt++; }
-    if (c.chain != null) chainSet.add(c.chain);
   }
-  document.getElementById('saisie-tot-entre').innerHTML = fmtInt(entre)+'<span class="unit">pcs</span>';
-  document.getElementById('saisie-tot-sortie').innerHTML = fmtInt(sortie)+'<span class="unit">pcs</span>';
-  document.getElementById('saisie-tot-eff').textContent = fmtInt(eff);
+  document.getElementById('saisie-tot-entre').innerHTML  = fmtInt(entre)  + '<span class="unit">pcs</span>';
+  document.getElementById('saisie-tot-sortie').innerHTML = fmtInt(sortie) + '<span class="unit">pcs</span>';
+  document.getElementById('saisie-tot-eff').textContent  = fmtInt(eff);
   document.getElementById('saisie-tot-stag').textContent = fmtInt(stag);
   document.getElementById('saisie-tot-rend').textContent = rendCnt ? fmtPct(rendSum / rendCnt) : '—';
-  document.getElementById('saisie-tot-ch').textContent = chainSet.size;
+  document.getElementById('saisie-tot-ch').textContent   = chains.length;
 }
 
 function renderSaisie() {
-  ensureTodayInData();
   if (!saisieMonth || !saisieDate) {
     const def = pickDefaultSaisieMonthDate();
     saisieMonth = def.month; saisieDate = def.date;
-  }
-  // Ensure today's date is the default if available in the current month
-  const today = todayFrString();
-  if (PRODUCTION[saisieMonth] && PRODUCTION[saisieMonth].daily_sheets.includes(today) && !saisieUserPickedDate) {
-    saisieDate = today;
   }
   populateSaisieMonth();
   populateSaisieDate();
@@ -3057,7 +2801,6 @@ function renderSaisie() {
   refreshSummaryStrip();
 }
 
-// Save: collect current values into overrides, persist, propagate
 function saveSaisie() {
   const overrides = saisieOverrides();
   const chains = PRODUCTION[saisieMonth].daily[saisieDate];
@@ -3065,41 +2808,29 @@ function saveSaisie() {
   if (!overrides[saisieMonth]) overrides[saisieMonth] = {};
   if (!overrides[saisieMonth][saisieDate]) overrides[saisieMonth][saisieDate] = {};
   const dayOv = overrides[saisieMonth][saisieDate];
-  for (const k of Object.keys(dayOv)) { if (k === '__added') continue; delete dayOv[k]; }
-  const addedList = [];
+  for (const k of Object.keys(dayOv)) delete dayOv[k];
   for (const c of chains) {
-    if (!c.client && !c._added) continue;
-    const payload = {
-      import: c.import, client: c.client, modele: c.modele, desig: c.desig,
-      chef: c.chef, ph: c.ph, qte_prevu: c.qte_prevu,
-      effectifs: c.effectifs, stagiaire: c.stagiaire || null,
-      entre_total: c.entre_total || 0, sortie_total: c.sortie_total || 0,
+    if (c.chain == null || !c.client) continue;
+    dayOv[c.chain] = {
       hours_entry:     (c.hours_entry || []).slice(),
       hours_exit:      (c.hours_exit  || []).slice(),
       effectifs_hours: (c.effectifs_hours || []).slice(),
       stagiaire_hours: (c.stagiaire_hours || []).slice(),
     };
-    if (c._added) addedList.push({ chain: c.chain, ...payload });
-    else {
-      const key = c.chain + (c.modele ? ('|' + c.modele) : '');
-      dayOv[key] = payload;
-    }
   }
-  if (addedList.length) dayOv.__added = addedList; else delete dayOv.__added;
   saveSaisieOverrides(overrides);
   recomputeMonthlyCumuls(saisieMonth);
-  document.querySelectorAll('#saisie-grid-body .dirty').forEach(i => i.classList.remove('dirty'));
+  document.querySelectorAll('#saisie-grid-body input.h-input.dirty').forEach(i => i.classList.remove('dirty'));
   toast('Saisie enregistrée. Les autres pages ont été mises à jour.');
   buildSaisieBody(); refreshSummaryStrip();
 }
 
-// Recompute cumul per chain across days: cumul[d] = cumul[d-1] (same chain & modele) + sortie_total[d]
 function recomputeMonthlyCumuls(month) {
   const info = PRODUCTION[month];
   const lastSortie = new Map();
   for (const d of info.daily_sheets) {
     for (const c of info.daily[d]) {
-      if (!c.client && !c._added) continue;
+      if (!c.client || c.chain == null) continue;
       const k = c.chain + '|' + (c.modele || '');
       const prev = lastSortie.get(k) || 0;
       const sortie = c.sortie_total || 0;
@@ -3112,7 +2843,7 @@ function recomputeMonthlyCumuls(month) {
 
 function resetSaisie() {
   if (!isEditable()) { toast('Journée verrouillée — saisissez le PIN pour modifier.', true); return; }
-  if (!confirm(`Réinitialiser la saisie du ${saisieDate} ? Cette action efface les valeurs personnalisées de cette journée.`)) return;
+  if (!confirm('Réinitialiser la saisie du ' + saisieDate + ' ?')) return;
   const overrides = saisieOverrides();
   if (overrides[saisieMonth] && overrides[saisieMonth][saisieDate]) {
     delete overrides[saisieMonth][saisieDate];
@@ -3121,7 +2852,6 @@ function resetSaisie() {
   location.reload();
 }
 
-// Lightweight toast
 function toast(msg, isError) {
   let t = document.getElementById('__toast');
   if (!t) {
@@ -3139,15 +2869,16 @@ function toast(msg, isError) {
   t.style.color = isError ? 'var(--red)' : 'var(--text)';
   t.textContent = msg;
   requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(-4px)'; });
-  clearTimeout(t._h); t._h = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(0)'; }, 2400);
+  clearTimeout(t._h);
+  t._h = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(0)'; }, 2400);
 }
 
-// PIN modal logic
 function openPinModal() {
   const m = document.getElementById('pin-modal');
   m.classList.add('open');
   const inp = document.getElementById('pin-input');
-  inp.value = ''; document.getElementById('pin-error').textContent = '';
+  inp.value = '';
+  document.getElementById('pin-error').textContent = '';
   setTimeout(() => inp.focus(), 60);
 }
 function closePinModal() { document.getElementById('pin-modal').classList.remove('open'); }
@@ -3165,24 +2896,26 @@ function confirmPin() {
   }
 }
 
-// Saisie event wiring
 document.getElementById('saisie-month').addEventListener('change', (e) => {
   saisieMonth = e.target.value;
   saisieDate = PRODUCTION[saisieMonth].daily_sheets[0];
   populateSaisieDate();
   updateLockBadges();
-  buildSaisieBody(); refreshSummaryStrip();
+  buildSaisieBody();
+  refreshSummaryStrip();
 });
 document.getElementById('saisie-date').addEventListener('change', (e) => {
   saisieDate = e.target.value;
-  saisieUserPickedDate = true;
   updateLockBadges();
-  buildSaisieBody(); refreshSummaryStrip();
+  buildSaisieBody();
+  refreshSummaryStrip();
 });
 document.getElementById('saisie-unlock-btn').addEventListener('click', () => {
   if (isToday(saisieDate)) return;
   if (saisieUnlocked) {
-    saisieUnlocked = false; updateLockBadges(); buildSaisieBody();
+    saisieUnlocked = false;
+    updateLockBadges();
+    buildSaisieBody();
     toast('Édition verrouillée.');
   } else {
     openPinModal();
@@ -3198,9 +2931,8 @@ document.getElementById('pin-confirm').addEventListener('click', confirmPin);
 document.getElementById('pin-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmPin(); });
 document.getElementById('pin-modal').addEventListener('click', (e) => { if (e.target.id === 'pin-modal') closePinModal(); });
 
-// Apply saved overrides before any rendering
+// Bootstrap
 applyAllOverrides();
-ensureTodayInData();
 for (const m of Object.keys(PRODUCTION)) recomputeMonthlyCumuls(m);
 
 let savedTheme = 'dark';
