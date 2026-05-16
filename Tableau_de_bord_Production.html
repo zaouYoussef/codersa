@@ -5257,7 +5257,7 @@ function syncExcelExtraHourHeader(i) {
 loadExcelExtraHours();
 const EXCEL_FIXED_COLS_BEFORE_HOURS = 10; // CH … DESIGN + METHODES(2) + libellé ligne
 const EXCEL_FREEZE_COLS = 4; // CH, IMPORT, CLIENT, MODELE — figées au scroll horizontal
-const EXCEL_TRAIL_COLS = 9; // Moy … %Rend (+ Cumul 2em°)
+const EXCEL_TRAIL_COLS = 7; // Moy · H.Lanc · Total · Cumul · AC · Encours · %Rend
 const EXCEL_HOUR_COLS_MW = 11; // colonnes heures M…W (Excel)
 const EXCEL_COL_U_INDEX = 8; // colonne U = 9ᵉ créneau (M…W)
 const EXCEL_LAB_SORTIE = 'Sortie Chaine'; // AB3 — critère SUMIF colonne L
@@ -5699,10 +5699,15 @@ function fmtNumX(v) {
   if (Math.abs(v - r) < 0.0001) return String(r);
   return fmtDecFr(v, 2);
 }
-/** Affichage décimal FR — toujours 2 chiffres après la virgule (VT, P/H, moy., encours j., 2em°…) */
+/** Affichage décimal FR — toujours 2 chiffres après la virgule (VT, moy., encours j.…) */
 function fmtNumFr(v) {
   if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '';
   return fmtDecFr(v, 2);
+}
+/** P/H — entier sans virgule (ex. 58) */
+function fmtPh(v) {
+  if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '';
+  return String(Math.round(Number(v)));
 }
 /** Parse saisie avec virgule ou point */
 function parseNumFr(s) {
@@ -5909,11 +5914,9 @@ function buildSaisieHeader() {
 
   const trailHdr = `
     <th style="min-width:60px" class="trail-moy" title="${excelMoyColHeaderTitle(saisieDate)}">Moy</th>
-    <th style="min-width:52px" class="trail-deux">2em°</th>
     <th style="min-width:80px" title="${excelHLancFormulaTitle(saisieDate)} · ● noir si objectif atteint (figé), ● rouge sinon">H.Lancement</th>
     <th style="min-width:60px" title="Sortie : somme heures M…W · Bandeau : SUMIF(L;Sortie Chaine;AB)">Total</th>
     <th style="min-width:70px">Cumul</th>
-    <th style="min-width:72px" title="Cumul 2ème = AE + 2em° (ligne Sortie)">Cumul 2em°</th>
     <th class="hidden-col" style="min-width:60px">AC</th>
     <th style="min-width:70px" title="Encours = cumul entrée − cumul sortie · (encours / 60) / heures jour">Encours</th>
     <th style="min-width:60px" title="=(VT×total sortie)/((effectifs+stagiaires/2)×60)">%Rend</th>`;
@@ -5986,7 +5989,7 @@ function excelDesigCell(line) {
 function excelMethodesBlockCell(line, c) {
   const rs = EXCEL_ROWS_PER_BLOCK;
   const vtVal = (line.methodes != null && line.methodes !== '' && !isNaN(line.methodes)) ? fmtNumFr(line.methodes) : '';
-  const phVal = (line.ph != null && line.ph !== '' && !isNaN(line.ph)) ? fmtNumFr(line.ph) : '';
+  const phVal = (line.ph != null && line.ph !== '' && !isNaN(line.ph)) ? fmtPh(line.ph) : '';
   const eff = fmtNumFr(line.effectifs);
   const pct = c.objRend != null ? fmtPctX(c.objRend) : '—';
   return `
@@ -6029,27 +6032,6 @@ function excelHourCells(field, hours) {
     const val = v != null && v !== '' ? v : '';
     return `<td class="h-cell"><input class="xs-inp" type="number" data-f="${field}" data-i="${i}" value="${val}"></td>`;
   }).join('');
-}
-
-function excel2emIdxHtml(c) {
-  const last = [...(c.r2h || [])].filter(x => x != null && x !== '').pop();
-  const k = c.k_obj || 0;
-  if (k === 0 || last == null) return '';
-  const d = Number(last) - k;
-  return fmtNumX(d < 0 ? 0 : d);
-}
-
-/**
- * Colonne 2em° (Excel col. Y) — vide sur les feuilles terrain.
- * Saisie optionnelle uniquement sur la ligne Sortie (équiv. Y7).
- */
-function excel2emCell(line, c, rowKind, editable) {
-  if (rowKind === 'sortie') {
-    const v = line.deuxieme != null && line.deuxieme !== '' ? fmtNumFr(line.deuxieme) : '';
-    const dis = editable ? '' : ' disabled';
-    return `<td class="calc-deux"><input class="xs-inp" type="text" inputmode="decimal" data-f="deuxieme" value="${v}" placeholder="" title="2em° (Excel col. Y — vide par défaut)"${dis}></td>`;
-  }
-  return `<td class="muted calc-deux" title="2em° (col. Y) — vide dans Excel"></td>`;
 }
 
 /** H.Lancement — fusion rowspan 5 : IF+Z, ● rouge (calcul) ou ● noir (objectif atteint, figé) */
@@ -6179,11 +6161,9 @@ function buildSaisieBody() {
         <td class="lab-l">Entre Chaine</td>
         ${excelHourCells('r0h', c.r0h)}
         <td class="calc calc-moy" data-r="r0_moy">${fmtMoyCell(c.moyEntre)}</td>
-        ${excel2emCell(line, c, 'entre', editable)}
         ${excelHLancFusionCell(c)}
         <td class="calc-2" data-r="r0_total">${fmtNumX(c.totalEntre)}</td>
         <td class="calc-2" data-r="r0_cumul">${fmtNumX(c.cumulEntre)}</td>
-        <td class="muted"></td>
         <td class="hidden-col">${fmtNumX(c.acEntre)}</td>
         ${excelEncoursFusionCell(c)}
         ${excelRendFusionCell(c)}
@@ -6198,10 +6178,8 @@ function buildSaisieBody() {
         <td class="lab-l">Sortie Chaine</td>
         ${excelHourCells('r1h', c.r1h)}
         <td class="calc calc-moy" data-r="r1_moy">${fmtMoyCell(c.moySortie)}</td>
-        ${excel2emCell(line, c, 'sortie', editable)}
         <td class="calc-2" data-r="r1_total">${fmtNumX(c.totalSortie)}</td>
         <td class="calc-2" data-r="r1_cumul">${fmtNumX(c.cumulSortie)}</td>
-        <td class="calc-2" data-r="r1_cumul_2em">${fmtNumX(c.cumul2em)}</td>
         <td class="hidden-col">${fmtNumX(c.acSortie)}</td>
       `;
       tbody.appendChild(tr1);
@@ -6214,9 +6192,7 @@ function buildSaisieBody() {
         <td class="lab-l">Effectifs</td>
         ${excelHourCells('r2h', c.r2h)}
         <td class="${moyEffCellClass(c.ecartEffMoy)}" data-r="r2_moy">${fmtMoyEffCol(c.ecartEffMoy)}</td>
-        ${excel2emCell(line, c, 'eff', editable)}
         <td class="calc-2" data-r="r2_total" title="${excelMW_UTitle(saisieDate)}">${fmtNumX(c.totalEff)}</td>
-        <td class="muted"></td>
         <td class="muted"></td>
         <td class="hidden-col"></td>
       `;
@@ -6231,9 +6207,7 @@ function buildSaisieBody() {
         <td class="lab-l">${r3_lab}</td>
         ${excelHourCells('r3h', c.r3h)}
         <td class="muted calc-moy"></td>
-        ${excel2emCell(line, c, 'stag', editable)}
         <td class="calc-2" data-r="r3_total" title="${excelMW_UTitle(saisieDate)}">${fmtNumX(c.totalStag)}</td>
-        <td class="muted"></td>
         <td class="muted"></td>
         <td class="hidden-col"></td>
       `;
@@ -6246,9 +6220,7 @@ function buildSaisieBody() {
         <td class="lab-l">Formation</td>
         ${excelHourCells('r4h', c.r4h)}
         <td class="muted calc-moy"></td>
-        ${excel2emCell(line, c, 'form', editable)}
         <td class="calc-2" data-r="r4_total" title="${excelMW_UTitle(saisieDate)}">${fmtNumX(c.totalFormation)}</td>
-        <td class="muted"></td>
         <td class="muted"></td>
         <td class="hidden-col"></td>
       `;
@@ -6765,7 +6737,8 @@ function onExcelInput(e, line) {
     if (f === 'client') line.client_norm = (v||'').toUpperCase();
     if (f === 'chef')   line.chef_norm   = (v||'').toUpperCase();
   }
-  if (['vt','ph','eff_meth','deuxieme','deuxieme_stag'].includes(f)) inp.value = v != null ? fmtNumFr(v) : '';
+  if (f === 'ph') inp.value = v != null ? fmtPh(v) : '';
+  else if (['vt','eff_meth','deuxieme','deuxieme_stag'].includes(f)) inp.value = v != null ? fmtNumFr(v) : '';
   refreshExcelRow(line);
   refreshSummaryStrip();
 }
@@ -6801,7 +6774,6 @@ function refreshExcelRow(line) {
   });
   set('[data-r="r1_total"]', fmtNumX(c.totalSortie));
   set('[data-r="r1_cumul"]', fmtNumX(c.cumulSortie));
-  set('[data-r="r1_cumul_2em"]', fmtNumX(c.cumul2em));
   set('[data-r="r1_moy"]',   fmtMoyCell(c.moySortie));
   refreshRendFusionCell(rk, c.rend);
   set('[data-r="r2_total"]', fmtNumX(c.totalEff));
@@ -6809,13 +6781,6 @@ function refreshExcelRow(line) {
     el.textContent = fmtMoyEffCol(c.ecartEffMoy);
     el.className = moyEffCellClass(c.ecartEffMoy);
   });
-  set('[data-r="r2_idx"]', (() => {
-    const last = [...(c.r2h || [])].filter(x => x != null && x !== '').pop();
-    const k = c.k_obj || 0;
-    if (k === 0 || last == null) return '';
-    const d = Number(last) - k;
-    return fmtNumX(d < 0 ? 0 : d);
-  })());
   set('[data-r="r3_total"]', fmtNumX(c.totalStag));
   set('[data-r="r4_total"]', fmtNumX(c.totalFormation));
   set('[data-r="r3_ratio"]', c.stagRatio != null ? fmtPctX(c.stagRatio) : '');
