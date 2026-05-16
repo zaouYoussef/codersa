@@ -103,11 +103,10 @@ def parse_daily_sheet(ws) -> list[dict]:
         chef = _str_or_none(ws.cell(stag_r, COL_D).value) if stag_r else None
         k_obj = _num(ws.cell(eff_r, COL_K).value) if eff_r else None
 
-        # 2em° = colonne Y (ligne Entrée) ; sur le terrain certaines feuilles mettent une valeur en Z entrée
-        deux = _num(ws.cell(entre_r, COL_Y).value)
-        if deux is None:
-            deux = _num(ws.cell(entre_r, COL_Z).value)
-        # Colonne Z ligne Stagiaire = terme H.Lancement (AA), pas le libellé « 2em° » (col. Y vide)
+        # 2em° = colonne Y uniquement (ligne Sortie) — vide sur toutes les feuilles terrain
+        deux_sortie = _num(ws.cell(r, COL_Y).value)
+        ae_2em = _num(ws.cell(row=r, column=31).value)
+        # Colonne Z ligne Stagiaire = terme H.Lancement (AA), pas « 2em° »
         hlanc_z = _num(ws.cell(stag_r, COL_Z).value) if stag_r else None
         # EFF équilibrage (bloc VT/P/H) : colonne K de la ligne Stagiaire (ex. 54), pas le total effectifs
         eff_equilibre = _num(ws.cell(stag_r, COL_K).value) if stag_r else None
@@ -156,9 +155,11 @@ def parse_daily_sheet(ws) -> list[dict]:
             "stagiaire_hours": excel_block["r3_hours"][:],
             "formation_hours": excel_block["r4_hours"][:],
         }
-        if deux is not None:
-            prod_row["deuxieme"] = deux
-            excel_block["deuxieme"] = deux
+        if ae_2em is not None:
+            excel_block["r1_cumul_2em_ae"] = ae_2em
+        if deux_sortie is not None:
+            prod_row["deuxieme"] = deux_sortie
+            excel_block["deuxieme"] = deux_sortie
         if hlanc_z is not None:
             prod_row["hlanc_z"] = hlanc_z
             excel_block["hlanc_z"] = hlanc_z
@@ -192,11 +193,19 @@ def main() -> int:
     prod_by_date: dict[str, list] = {}
 
     for sn in may_sheets:
-        parsed = parse_daily_sheet(wb[sn])
+        ws = wb[sn]
+        h_moy_sortie = _num(ws.cell(9, 40).value)
+        h_hlanc_ref = _num(ws.cell(3, 46).value)
+        parsed = parse_daily_sheet(ws)
         excel_blocks = []
         prod_rows = []
         for excel_b, prod_b, ac_e, ab_e, ac_s, ab_s in parsed:
-            excel_blocks.append(dict(excel_b))
+            eb = dict(excel_b)
+            if h_moy_sortie is not None:
+                eb["h_moy_sortie"] = h_moy_sortie
+            if h_hlanc_ref is not None:
+                eb["h_hlanc_ref"] = h_hlanc_ref
+            excel_blocks.append(eb)
             prod_rows.append(prod_b)
         excel_by_date[sn] = excel_blocks
         prod_by_date[sn] = prod_rows
