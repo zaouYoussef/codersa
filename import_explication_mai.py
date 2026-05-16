@@ -103,8 +103,14 @@ def parse_daily_sheet(ws) -> list[dict]:
         chef = _str_or_none(ws.cell(stag_r, COL_D).value) if stag_r else None
         k_obj = _num(ws.cell(eff_r, COL_K).value) if eff_r else None
 
-        deux = _num(ws.cell(r, COL_Y).value)
-        deux_stag = _num(ws.cell(stag_r, COL_Z).value) if stag_r else None
+        # 2em° = colonne Y (ligne Entrée) ; sur le terrain certaines feuilles mettent une valeur en Z entrée
+        deux = _num(ws.cell(entre_r, COL_Y).value)
+        if deux is None:
+            deux = _num(ws.cell(entre_r, COL_Z).value)
+        # Colonne Z ligne Stagiaire = terme H.Lancement (AA), pas le libellé « 2em° » (col. Y vide)
+        hlanc_z = _num(ws.cell(stag_r, COL_Z).value) if stag_r else None
+        # EFF équilibrage (bloc VT/P/H) : colonne K de la ligne Stagiaire (ex. 54), pas le total effectifs
+        eff_equilibre = _num(ws.cell(stag_r, COL_K).value) if stag_r else None
 
         excel_block = {
             "chain": int(chain),
@@ -125,6 +131,12 @@ def parse_daily_sheet(ws) -> list[dict]:
             "r3_hours": _hours_row(ws, stag_r) if stag_r else [None] * N_HOURS,
             "r4_hours": _hours_row(ws, form_r) if form_r else [None] * N_HOURS,
         }
+        if ac_entre is not None:
+            excel_block["r0_AC"] = ac_entre - ab_entre
+        if ac_sortie is not None:
+            excel_block["r1_AC"] = ac_sortie - ab_sortie
+        if eff_equilibre is not None:
+            excel_block["r2_eff"] = eff_equilibre
 
         prod_row = {
             "chain": int(chain),
@@ -147,23 +159,17 @@ def parse_daily_sheet(ws) -> list[dict]:
         if deux is not None:
             prod_row["deuxieme"] = deux
             excel_block["deuxieme"] = deux
-        if deux_stag is not None:
-            prod_row["deuxieme_stag"] = deux_stag
-            excel_block["deuxieme_stag"] = deux_stag
+        if hlanc_z is not None:
+            prod_row["hlanc_z"] = hlanc_z
+            excel_block["hlanc_z"] = hlanc_z
         if r2_size:
             prod_row["r2_size"] = r2_size
+        if eff_equilibre is not None:
+            prod_row["effectifs"] = eff_equilibre
 
         blocks.append((excel_block, prod_row, ac_entre, ab_entre, ac_sortie, ab_sortie))
 
     return blocks
-
-
-def apply_first_day_cumuls(excel_block: dict, ac_entre, ab_entre, ac_sortie, ab_sortie):
-    """Cumuls d'ouverture = AC − AB (avant la journée)."""
-    if ac_entre is not None:
-        excel_block["r0_AC"] = ac_entre - ab_entre
-    if ac_sortie is not None:
-        excel_block["r1_AC"] = ac_sortie - ab_sortie
 
 
 def main() -> int:
@@ -190,10 +196,7 @@ def main() -> int:
         excel_blocks = []
         prod_rows = []
         for excel_b, prod_b, ac_e, ab_e, ac_s, ab_s in parsed:
-            eb = dict(excel_b)
-            if sn == FIRST_DAY_MAI:
-                apply_first_day_cumuls(eb, ac_e, ab_e, ac_s, ab_s)
-            excel_blocks.append(eb)
+            excel_blocks.append(dict(excel_b))
             prod_rows.append(prod_b)
         excel_by_date[sn] = excel_blocks
         prod_by_date[sn] = prod_rows
