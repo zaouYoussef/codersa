@@ -1067,30 +1067,17 @@ footer {
 }
 .excel-saisie td.merge-cell.ch-cell { color: var(--accent); }
 .excel-saisie td.ch-cell .ch-num { display: block; font-size: 12px; }
-.excel-saisie td.ch-cell .ch-heures-badge {
+.excel-saisie td.modele-cell .modele-heures-badge {
   display: block;
   margin-top: 4px;
   font-size: 9px;
   font-weight: 700;
   color: var(--text-dim);
   letter-spacing: 0.02em;
+  font-family: 'JetBrains Mono', monospace;
 }
-.excel-saisie td.ch-cell .ch-heures-badge.supp {
+.excel-saisie td.modele-cell .modele-heures-badge.supp {
   color: var(--orange);
-}
-#saisie-day-heures-badge {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 8px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-}
-#saisie-day-heures-badge.saturday {
-  color: var(--orange);
-  border-color: rgba(251,146,60,0.35);
-  background: rgba(251,146,60,0.08);
 }
 .excel-saisie td.merge-cell input.xs-inp.txt { text-align: center; }
 .excel-saisie td.merge-cell.desig-cell input.xs-inp.txt {
@@ -2275,18 +2262,23 @@ table.data th {
   padding: 16px;
   box-shadow: var(--shadow);
 }
-.meth-rules-card h3 {
-  font-size: 14px;
+.meth-rules-card > h3:not(.meth-list-header h3) {
+  font-size: 13px;
   font-weight: 800;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-2);
   letter-spacing: -0.02em;
 }
 .meth-rules-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 16px;
-  align-items: flex-end;
-  margin-bottom: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 14px;
+  background: var(--surface-2);
+  border-radius: 10px;
+  border: 1px solid var(--border-2);
 }
 .meth-rules-filters .field { display: flex; flex-direction: column; gap: 4px; min-width: 140px; }
 .meth-rules-filters label {
@@ -2297,7 +2289,8 @@ table.data th {
   color: var(--text-dim);
 }
 .meth-rules-filters select,
-.meth-rules-filters input[type="text"] {
+.meth-rules-filters input[type="text"],
+.meth-rules-filters input[type="date"].meth-rule-date {
   padding: 7px 10px;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -2305,6 +2298,13 @@ table.data th {
   color: var(--text);
   font-size: 12px;
   font-family: inherit;
+  min-width: 148px;
+}
+.meth-rules-filters input[type="date"].meth-rule-date {
+  color-scheme: dark;
+}
+:root[data-theme="light"] .meth-rules-filters input[type="date"].meth-rule-date {
+  color-scheme: light;
 }
 .meth-rules-table-wrap {
   overflow: auto;
@@ -2360,8 +2360,208 @@ table.meth-rules-grid input:focus {
 .meth-rules-actions {
   display: flex;
   flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-2);
+}
+.meth-rules-actions .meth-btn {
+  flex: 1;
+  min-width: 148px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease, color .15s ease;
+}
+.meth-rules-actions .meth-btn:active { transform: translateY(0); }
+.meth-rules-actions .meth-btn-save {
+  background: var(--grad-a);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(56,189,248,0.32);
+}
+.meth-rules-actions .meth-btn-save:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(56,189,248,0.42);
+}
+.meth-rules-actions .meth-btn-new {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--border);
+}
+.meth-rules-actions .meth-btn-new:hover {
+  border-color: rgba(56,189,248,0.55);
+  color: var(--accent);
+  background: rgba(56,189,248,0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.meth-rules-actions .meth-btn-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+}
+.meth-rules-actions .meth-btn-save .meth-btn-icon {
+  background: rgba(255,255,255,0.22);
+}
+.meth-rules-actions .meth-btn-new .meth-btn-icon {
+  background: rgba(56,189,248,0.14);
+  color: var(--accent);
+}
+.meth-rules-actions .meth-btn-label { white-space: nowrap; }
+@media (max-width: 520px) {
+  .meth-rules-actions { flex-direction: column; }
+  .meth-rules-actions .meth-btn { width: 100%; min-width: 0; }
+}
+.meth-rules-card > h3,
+.meth-list-header h3 {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.meth-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-2);
+}
+.meth-list-count-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(56,189,248,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(56,189,248,0.25);
+  white-space: nowrap;
+}
+.meth-rules-card-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+@media (min-width: 961px) {
+  .meth-rules-card-list { position: sticky; top: 72px; }
+}
+.meth-list-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-top: 14px;
+  margin-bottom: 12px;
+}
+.meth-list-filters .meth-search-wrap { grid-column: 1 / -1; }
+.meth-search-wrap {
+  position: relative;
+}
+.meth-search-wrap::before {
+  content: "⌕";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+.meth-list-filters input#meth-list-search {
+  width: 100%;
+  padding: 9px 10px 9px 28px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 12px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.meth-list-filters input#meth-list-search:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+}
+.meth-list-filters select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.meth-list-filters select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.meth-chains-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(56,189,248,0.06) 0%, var(--surface-2) 100%);
+  border-radius: 10px;
+  border: 1px solid var(--border-2);
+}
+.meth-chains-toolbar > label:first-of-type {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-dim);
+}
+.meth-chains-toolbar select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 160px;
+}
+.meth-chains-toolbar .meth-chains-count {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  margin-left: auto;
+}
+.meth-chains-range-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+table.meth-rules-grid tr.meth-chain-hidden { display: none; }
+.meth-rules-list-empty {
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 12px 8px;
+  text-align: center;
 }
 .meth-rules-list {
   display: flex;
@@ -2372,16 +2572,21 @@ table.meth-rules-grid input:focus {
 }
 .meth-rule-item {
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-radius: 12px;
+  padding: 12px 14px;
   background: var(--surface-2);
   cursor: pointer;
-  transition: border-color .15s, background .15s;
+  transition: border-color .15s, background .15s, transform .12s, box-shadow .15s;
 }
-.meth-rule-item:hover { border-color: var(--accent); }
+.meth-rule-item:hover {
+  border-color: rgba(56,189,248,0.45);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
 .meth-rule-item.active {
   border-color: var(--accent);
-  background: rgba(56,189,248,0.08);
+  background: rgba(56,189,248,0.1);
+  box-shadow: 0 0 0 1px rgba(56,189,248,0.2);
 }
 .meth-rule-item .mri-title {
   font-weight: 800;
@@ -2391,6 +2596,39 @@ table.meth-rules-grid input:focus {
 .meth-rule-item .mri-sub {
   font-size: 11px;
   color: var(--text-dim);
+  line-height: 1.45;
+}
+.meth-rule-item .mri-dates {
+  display: inline-block;
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text);
+  opacity: 0.85;
+}
+.meth-rule-item .mri-chains {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  color: var(--text-dim);
+}
+.meth-rule-item .mri-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.meth-rule-item .mri-actions .btn {
+  padding: 5px 12px;
+  font-size: 11px;
+  border-radius: 8px;
 }
 .excel-saisie .meth-readonly {
   display: inline-block;
@@ -2515,13 +2753,12 @@ table.meth-rules-grid input:focus {
         <select id="saisie-date" class="minimal"></select>
       </div>
       <div class="grp">
-        <label for="saisie-partial-heure">9ᵉ créneau (U)</label>
-        <select id="saisie-partial-heure" class="minimal" title="Fraction du 9e creneau (col. U) : heures = pleins + 0,25 ou 0,75">
+        <label for="saisie-partial-heure">Heures de travail</label>
+        <select id="saisie-partial-heure" class="minimal" title="Complément sur la case partielle : +0,25 h ou +0,75 h">
           <option value="0.25">+ 0,25 h</option>
           <option value="0.75">+ 0,75 h</option>
         </select>
       </div>
-      <span id="saisie-day-heures-badge" title="Durée normale de la journée">—</span>
       <button type="button" class="btn" id="saisie-goto-today-btn" title="Ouvrir la feuille du jour">Aujourd'hui</button>
       <button type="button" class="btn" id="saisie-fill-yesterday-btn" title="Copier toutes les valeurs de la veille (heures incluses)">Remplir comme hier</button>
       <span class="badge today" id="saisie-day-status"><span class="dot"></span><span id="saisie-day-status-txt">Aujourd'hui</span></span>
@@ -2575,16 +2812,32 @@ table.meth-rules-grid input:focus {
         <div class="meth-rules-filters">
           <div class="field">
             <label for="meth-rule-modele">Modèle</label>
-            <select id="meth-rule-modele"></select>
+            <input type="text" id="meth-rule-modele" list="meth-rule-modele-datalist" placeholder="Saisir un modèle (nouveau ou existant)" autocomplete="off">
+            <datalist id="meth-rule-modele-datalist"></datalist>
           </div>
           <div class="field">
             <label for="meth-rule-debut">Date début</label>
-            <select id="meth-rule-debut"></select>
+            <input type="date" id="meth-rule-debut" class="meth-rule-date">
           </div>
           <div class="field">
             <label for="meth-rule-fin">Date fin</label>
-            <select id="meth-rule-fin"></select>
+            <input type="date" id="meth-rule-fin" class="meth-rule-date">
           </div>
+        </div>
+        <datalist id="meth-datalist-vt"></datalist>
+        <datalist id="meth-datalist-ph"></datalist>
+        <datalist id="meth-datalist-eff"></datalist>
+        <div class="meth-chains-toolbar" id="meth-chains-toolbar">
+          <label for="meth-chains-show">Afficher</label>
+          <select id="meth-chains-show" title="Réduire le tableau des chaînes">
+            <option value="all">Toutes (Ch01–Ch20)</option>
+            <option value="range">Plage personnalisée</option>
+          </select>
+          <label for="meth-chains-from" class="meth-chains-range-lbl" style="display:none">De</label>
+          <select id="meth-chains-from" class="meth-chains-range-sel" style="display:none"></select>
+          <label for="meth-chains-to" class="meth-chains-range-lbl" style="display:none">à</label>
+          <select id="meth-chains-to" class="meth-chains-range-sel" style="display:none"></select>
+          <span class="meth-chains-count" id="meth-chains-count">—</span>
         </div>
         <div class="meth-rules-table-wrap">
           <table class="meth-rules-grid">
@@ -2600,12 +2853,32 @@ table.meth-rules-grid input:focus {
           </table>
         </div>
         <div class="meth-rules-actions">
-          <button type="button" class="btn primary" id="meth-rule-save-btn">Enregistrer la période</button>
-          <button type="button" class="btn" id="meth-rule-new-btn">Nouvelle fiche</button>
+          <button type="button" class="meth-btn meth-btn-save" id="meth-rule-save-btn">
+            <span class="meth-btn-icon" aria-hidden="true">✓</span>
+            <span class="meth-btn-label">Enregistrer la période</span>
+          </button>
+          <button type="button" class="meth-btn meth-btn-new" id="meth-rule-new-btn">
+            <span class="meth-btn-icon" aria-hidden="true">+</span>
+            <span class="meth-btn-label">Nouvelle fiche</span>
+          </button>
         </div>
       </div>
-      <div class="meth-rules-card">
-        <h3>Périodes enregistrées</h3>
+      <div class="meth-rules-card meth-rules-card-list">
+        <div class="meth-list-header">
+          <h3>Périodes enregistrées</h3>
+          <span class="meth-list-count-pill" id="meth-toolbar-count">—</span>
+        </div>
+        <div class="meth-list-filters">
+          <div class="meth-search-wrap">
+            <input type="text" id="meth-list-search" placeholder="Rechercher modèle ou dates…" autocomplete="off">
+          </div>
+          <select id="meth-filter-modele" title="Filtrer par modèle"><option value="">Tous les modèles</option></select>
+          <select id="meth-list-sort" title="Ordre d'affichage">
+            <option value="date-desc">Plus récentes</option>
+            <option value="date-asc">Plus anciennes</option>
+            <option value="modele">Modèle A→Z</option>
+          </select>
+        </div>
         <div class="meth-rules-list" id="meth-rules-list"></div>
       </div>
     </div>
@@ -4819,6 +5092,292 @@ function collectModelesForMonth(month) {
   }
   return Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'fr'));
 }
+function collectMethModeleSuggestions(month) {
+  const map = new Map();
+  const info = PRODUCTION[month];
+  if (!info) return [];
+  for (const date of info.daily_sheets || []) {
+    for (const row of info.daily[date] || []) {
+      const m = ((row.modele || '') + '').trim();
+      const imp = ((row.import || '') + '').trim();
+      if (m) map.set('m:' + normalizeModeleKey(m), m);
+      if (imp) map.set('i:' + imp.toUpperCase(), imp);
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'fr'));
+}
+function getMethRuleModeleValue() {
+  return (document.getElementById('meth-rule-modele')?.value || '').trim();
+}
+function rowMatchesMethModele(row, modele) {
+  const q = (modele || '').trim();
+  if (!q || !row) return false;
+  if (normalizeModeleKey(row.modele) === normalizeModeleKey(q)) return true;
+  if (((row.import || '') + '').trim().toUpperCase() === q.toUpperCase()) return true;
+  return false;
+}
+/** VT / P/H / EFF par chaîne pour un modèle, d’après les feuilles du mois (dernière valeur connue). */
+function extractMethChainsForModele(month, modele) {
+  const info = PRODUCTION[month];
+  if (!info || !modele) return {};
+  const chains = {};
+  for (const date of info.daily_sheets || []) {
+    const excelArr = getExcelDataForDate(date);
+    for (const row of info.daily[date] || []) {
+      if (!rowMatchesMethModele(row, modele)) continue;
+      const ch = String(Number(row.chain));
+      if (!ch || isNaN(Number(ch))) continue;
+      const excel = excelArr ? findExcelBlock(excelArr, row) : null;
+      const vt = (row.methodes != null && !isNaN(row.methodes)) ? Number(row.methodes)
+        : (excel && excel.r1_meth != null && !isNaN(excel.r1_meth) ? Number(excel.r1_meth) : null);
+      const ph = (row.ph != null && !isNaN(row.ph)) ? Number(row.ph)
+        : (excel && excel.r1_ph != null && !isNaN(excel.r1_ph) ? Number(excel.r1_ph) : null);
+      const eff = (row.effectifs != null && !isNaN(row.effectifs)) ? Number(row.effectifs)
+        : (excel && excel.r2_eff != null && !isNaN(excel.r2_eff) ? Number(excel.r2_eff) : null);
+      if (vt == null && ph == null && eff == null) continue;
+      chains[ch] = { vt, ph, eff };
+    }
+  }
+  return chains;
+}
+function buildMethRulesFromProductionData(month) {
+  const info = PRODUCTION[month];
+  if (!info) return [];
+  const sheets = info.daily_sheets || [];
+  if (!sheets.length) return [];
+  const dateDebut = sheets[0];
+  const dateFin = sheets[sheets.length - 1];
+  const rules = [];
+  for (const modele of collectModelesForMonth(month)) {
+    const chains = extractMethChainsForModele(month, modele);
+    if (!Object.keys(chains).length) continue;
+    rules.push({ id: newMethRuleId(), modele, dateDebut, dateFin, chains });
+  }
+  return rules;
+}
+function mergeMethRulesFromProduction(month, replaceAll) {
+  const built = buildMethRulesFromProductionData(month);
+  if (!built.length) return 0;
+  let rules = replaceAll ? [] : methRulesForMonth(month).slice();
+  for (const nr of built) {
+    const nk = normalizeModeleKey(nr.modele);
+    const idx = rules.findIndex(r => normalizeModeleKey(r.modele) === nk);
+    if (idx >= 0) {
+      rules[idx] = { ...rules[idx], modele: nr.modele, dateDebut: nr.dateDebut, dateFin: nr.dateFin, chains: nr.chains };
+    } else {
+      rules.push(nr);
+    }
+  }
+  saveMethRulesForMonth(month, rules);
+  applyMethRulesToMonth(month);
+  syncMethRulesToOverrides(month);
+  syncMonthProductionMetrics(month);
+  if (saisieMonth === month && saisieDate) { buildSaisieBody(); refreshSummaryStrip(); }
+  return built.length;
+}
+function ensureMethRulesImportedFromData(month) {
+  if (methRulesForMonth(month).length) return false;
+  return mergeMethRulesFromProduction(month, true) > 0;
+}
+function fillMethRuleFormFromProductionForModele(month, modele) {
+  if (!modele) return;
+  fillMethRuleChainsForm(extractMethChainsForModele(month, modele));
+}
+function populateMethRuleModeleDatalist(month) {
+  const dl = document.getElementById('meth-rule-modele-datalist');
+  if (!dl) return;
+  dl.innerHTML = collectMethModeleSuggestions(month)
+    .map(m => `<option value="${m.replace(/"/g, '&quot;')}"></option>`).join('');
+}
+function getMethRuleDateFr(which) {
+  const el = document.getElementById(which === 'fin' ? 'meth-rule-fin' : 'meth-rule-debut');
+  if (!el || !el.value) return '';
+  return el.type === 'date' ? _isoToFr(el.value) : (el.value || '');
+}
+function setMethRuleDateFr(which, frDate) {
+  const el = document.getElementById(which === 'fin' ? 'meth-rule-fin' : 'meth-rule-debut');
+  if (!el) return;
+  el.value = frDate ? _frToIso(frDate) : '';
+}
+function syncMethRuleDatePickerBounds(month) {
+  const info = PRODUCTION[month];
+  const sheets = info?.daily_sheets || [];
+  const d0 = document.getElementById('meth-rule-debut');
+  const d1 = document.getElementById('meth-rule-fin');
+  if (!sheets.length) return;
+  const min = _frToIso(sheets[0]);
+  const max = _frToIso(sheets[sheets.length - 1]);
+  if (d0) { d0.min = min; d0.max = max; }
+  if (d1) { d1.min = min; d1.max = max; }
+}
+function collectMethValueSuggestions(month, field, modele) {
+  const set = new Set();
+  const addNum = (v, asPh) => {
+    if (v == null || v === '' || isNaN(v)) return;
+    set.add(asPh ? fmtPh(Number(v)) : fmtNumFr(Number(v)));
+  };
+  const info = PRODUCTION[month];
+  if (info) {
+    for (const date of info.daily_sheets || []) {
+      const excelArr = getExcelDataForDate(date);
+      for (const row of info.daily[date] || []) {
+        if (modele && !rowMatchesMethModele(row, modele)) continue;
+        const excel = excelArr ? findExcelBlock(excelArr, row) : null;
+        if (field === 'vt') {
+          addNum(row.methodes, false);
+          addNum(excel?.r1_meth, false);
+        } else if (field === 'ph') {
+          addNum(row.ph, true);
+          addNum(excel?.r1_ph, true);
+        } else if (field === 'eff') {
+          addNum(row.effectifs, false);
+          addNum(excel?.r2_eff, false);
+        }
+      }
+    }
+  }
+  for (const rule of methRulesForMonth(month)) {
+    if (modele && normalizeModeleKey(rule.modele) !== normalizeModeleKey(modele)) continue;
+    for (const ce of Object.values(rule.chains || {})) {
+      if (!ce) continue;
+      if (field === 'vt') addNum(ce.vt, false);
+      else if (field === 'ph') addNum(ce.ph, true);
+      else if (field === 'eff') addNum(ce.eff, false);
+    }
+  }
+  return Array.from(set).sort((a, b) => {
+    const na = parseNumFr(a), nb = parseNumFr(b);
+    if (na != null && nb != null) return na - nb;
+    return String(a).localeCompare(String(b), 'fr');
+  });
+}
+function populateMethValueDatalists(month, modele) {
+  const mod = modele || getMethRuleModeleValue();
+  const fill = (id, field) => {
+    const dl = document.getElementById(id);
+    if (!dl) return;
+    let vals = collectMethValueSuggestions(month, field, mod);
+    if (mod && !vals.length) vals = collectMethValueSuggestions(month, field, null);
+    dl.innerHTML = vals.map(v => `<option value="${String(v).replace(/"/g, '&quot;')}"></option>`).join('');
+  };
+  fill('meth-datalist-vt', 'vt');
+  fill('meth-datalist-ph', 'ph');
+  fill('meth-datalist-eff', 'eff');
+}
+function updateMethRuleSaveBtnLabel() {
+  const lbl = document.querySelector('#meth-rule-save-btn .meth-btn-label');
+  if (!lbl) return;
+  lbl.textContent = methRuleEditId ? 'Enregistrer les modifications' : 'Enregistrer la période';
+}
+function populateMethChainsRangeSelects() {
+  const from = document.getElementById('meth-chains-from');
+  const to = document.getElementById('meth-chains-to');
+  if (!from || !to) return;
+  const opts = Array.from({ length: METH_CHAIN_COUNT }, (_, i) => {
+    const n = i + 1;
+    return `<option value="${n}">Ch${String(n).padStart(2, '0')}</option>`;
+  }).join('');
+  from.innerHTML = opts;
+  to.innerHTML = opts;
+  if (!from.value) from.value = '1';
+  if (!to.value) to.value = String(METH_CHAIN_COUNT);
+}
+function applyMethChainsTableFilter() {
+  const tbody = document.getElementById('meth-rules-chains-body');
+  if (!tbody) return;
+  const showSel = document.getElementById('meth-chains-show');
+  const mode = showSel?.value || 'all';
+  const rangeLbls = document.querySelectorAll('.meth-chains-range-lbl');
+  const rangeSels = document.querySelectorAll('.meth-chains-range-sel');
+  const showRange = mode === 'range';
+  rangeLbls.forEach(el => { el.style.display = showRange ? '' : 'none'; });
+  rangeSels.forEach(el => { el.style.display = showRange ? '' : 'none'; });
+  const from = Number(document.getElementById('meth-chains-from')?.value) || 1;
+  const to = Number(document.getElementById('meth-chains-to')?.value) || METH_CHAIN_COUNT;
+  let visible = 0;
+  tbody.querySelectorAll('tr[data-chain]').forEach(tr => {
+    const ch = Number(tr.dataset.chain);
+    const show = mode !== 'range' || (ch >= from && ch <= to);
+    tr.classList.toggle('meth-chain-hidden', !show);
+    if (show) visible++;
+  });
+  const cnt = document.getElementById('meth-chains-count');
+  if (cnt) cnt.textContent = visible + ' / ' + METH_CHAIN_COUNT + ' chaîne(s)';
+}
+function getMethRulesFilterState() {
+  const q = (document.getElementById('meth-list-search')?.value || '').trim().toLowerCase();
+  const mod = (document.getElementById('meth-filter-modele')?.value || '').trim();
+  return { q, mod };
+}
+function filterMethRulesForDisplay(month, rules) {
+  const { q, mod } = getMethRulesFilterState();
+  let list = rules.slice();
+  if (mod) {
+    const mk = normalizeModeleKey(mod);
+    list = list.filter(r => normalizeModeleKey(r.modele) === mk);
+  }
+  if (q) {
+    list = list.filter(r => {
+      const hay = ((r.modele || '') + ' ' + (r.dateDebut || '') + ' ' + (r.dateFin || '')).toLowerCase();
+      return hay.includes(q);
+    });
+  }
+  const sort = document.getElementById('meth-list-sort')?.value || 'date-desc';
+  if (sort === 'modele') {
+    list.sort((a, b) => (a.modele || '').localeCompare(b.modele || '', 'fr'));
+  } else if (sort === 'date-asc') {
+    list.sort((a, b) => compareFrDate(a.dateDebut, b.dateDebut));
+  } else {
+    list.sort((a, b) => compareFrDate(b.dateDebut, a.dateDebut));
+  }
+  return list;
+}
+function populateMethFilterModeleSelect(month) {
+  const sel = document.getElementById('meth-filter-modele');
+  if (!sel) return;
+  const prev = sel.value;
+  const map = new Map();
+  for (const m of collectModelesForMonth(month)) map.set(normalizeModeleKey(m), m);
+  for (const r of methRulesForMonth(month)) {
+    const m = (r.modele || '').trim();
+    if (m) map.set(normalizeModeleKey(m), m);
+  }
+  const modeles = Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'fr'));
+  sel.innerHTML = '<option value="">Tous les modèles</option>'
+    + modeles.map(m => `<option value="${m.replace(/"/g, '&quot;')}">${m.replace(/</g, '&lt;')}</option>`).join('');
+  if (prev && modeles.includes(prev)) sel.value = prev;
+}
+function updateMethToolbarCount(month, shown, total) {
+  const el = document.getElementById('meth-toolbar-count');
+  if (!el) return;
+  if (total === 0) el.textContent = 'Aucune période';
+  else if (shown === total) el.textContent = total + ' période(s)';
+  else el.textContent = shown + ' / ' + total + ' période(s)';
+}
+function onMethFiltersChanged() {
+  const month = currentMonth;
+  renderMethRulesList(month);
+  applyMethChainsTableFilter();
+}
+function onMethFilterModeleSelect() {
+  const sel = document.getElementById('meth-filter-modele');
+  const modInp = document.getElementById('meth-rule-modele');
+  const month = currentMonth;
+  if (sel?.value && modInp) {
+    modInp.value = sel.value;
+    fillMethRuleFormFromProductionForModele(month, sel.value);
+    populateMethValueDatalists(month, sel.value);
+  }
+  onMethFiltersChanged();
+}
+function initMethFilterControls(month) {
+  populateMethFilterModeleSelect(month);
+  populateMethChainsRangeSelects();
+  const showSel = document.getElementById('meth-chains-show');
+  if (showSel && (showSel.value === 'active' || showSel.value === 'filled')) showSel.value = 'all';
+  if (showSel && !showSel.value) showSel.value = 'all';
+  applyMethChainsTableFilter();
+}
 /** Valeurs VT/P/H/EFF pour une chaîne+modèle à une date (dernière règle correspondante). */
 function findMethRuleValues(month, date, chain, modele) {
   const mod = normalizeModeleKey(modele);
@@ -4947,6 +5506,7 @@ function fillMethRuleChainsForm(chains) {
     set('[data-meth="ph"]', ce.ph, fmtPh);
     set('[data-meth="eff"]', ce.eff, fmtNumFr);
   });
+  applyMethChainsTableFilter();
 }
 function buildMethRulesChainsTable() {
   const tbody = document.getElementById('meth-rules-chains-body');
@@ -4957,18 +5517,25 @@ function buildMethRulesChainsTable() {
     tr.dataset.chain = String(ch);
     tr.innerHTML = `
       <td class="chain-lab">Ch${String(ch).padStart(2, '0')}</td>
-      <td><input type="text" inputmode="decimal" data-meth="vt" placeholder="—" autocomplete="off"></td>
-      <td><input type="text" inputmode="decimal" data-meth="ph" placeholder="—" autocomplete="off"></td>
-      <td><input type="text" inputmode="decimal" data-meth="eff" placeholder="—" autocomplete="off"></td>`;
+      <td><input type="text" inputmode="decimal" data-meth="vt" list="meth-datalist-vt" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>
+      <td><input type="text" inputmode="decimal" data-meth="ph" list="meth-datalist-ph" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>
+      <td><input type="text" inputmode="decimal" data-meth="eff" list="meth-datalist-eff" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>`;
     tbody.appendChild(tr);
   }
+  applyMethChainsTableFilter();
 }
 function renderMethRulesList(month) {
   const list = document.getElementById('meth-rules-list');
   if (!list) return;
-  const rules = methRulesForMonth(month).slice().sort((a, b) => compareFrDate(b.dateDebut, a.dateDebut));
+  const allRules = methRulesForMonth(month);
+  const rules = filterMethRulesForDisplay(month, allRules);
+  updateMethToolbarCount(month, rules.length, allRules.length);
+  if (!allRules.length) {
+    list.innerHTML = '<p class="meth-rules-list-empty">Aucune période enregistrée pour ce mois.</p>';
+    return;
+  }
   if (!rules.length) {
-    list.innerHTML = '<p style="font-size:12px;color:var(--text-dim);padding:8px 4px">Aucune période enregistrée pour ce mois.</p>';
+    list.innerHTML = '<p class="meth-rules-list-empty">Aucune période ne correspond aux filtres.</p>';
     return;
   }
   list.innerHTML = '';
@@ -4982,10 +5549,20 @@ function renderMethRulesList(month) {
     }).length : 0;
     el.innerHTML = `
       <div class="mri-title">${(rule.modele || '—').replace(/</g, '&lt;')}</div>
-      <div class="mri-sub">${rule.dateDebut} → ${rule.dateFin} · ${nCh} chaîne(s)</div>
-      <button type="button" class="btn danger" style="margin-top:8px;padding:4px 10px;font-size:11px" data-del-rule="${rule.id}">Supprimer</button>`;
+      <div class="mri-sub">
+        <span class="mri-dates">${rule.dateDebut} → ${rule.dateFin}</span>
+        <span class="mri-chains">${nCh} ch.</span>
+      </div>
+      <div class="mri-actions">
+        <button type="button" class="btn" data-edit-rule="${rule.id}">Modifier</button>
+        <button type="button" class="btn danger" data-del-rule="${rule.id}">Supprimer</button>
+      </div>`;
+    el.querySelector('[data-edit-rule]')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      loadMethRuleIntoForm(month, rule.id);
+    });
     el.addEventListener('click', (e) => {
-      if (e.target.closest('[data-del-rule]')) return;
+      if (e.target.closest('[data-del-rule]') || e.target.closest('[data-edit-rule]')) return;
       loadMethRuleIntoForm(month, rule.id);
     });
     el.querySelector('[data-del-rule]')?.addEventListener('click', (e) => {
@@ -4999,34 +5576,41 @@ function loadMethRuleIntoForm(month, ruleId) {
   const rule = methRulesForMonth(month).find(r => r.id === ruleId);
   if (!rule) return;
   methRuleEditId = rule.id;
-  const modSel = document.getElementById('meth-rule-modele');
-  const d0 = document.getElementById('meth-rule-debut');
-  const d1 = document.getElementById('meth-rule-fin');
-  if (modSel) modSel.value = rule.modele || '';
-  if (d0) d0.value = rule.dateDebut || '';
-  if (d1) d1.value = rule.dateFin || '';
+  const modInp = document.getElementById('meth-rule-modele');
+  if (modInp) modInp.value = rule.modele || '';
+  setMethRuleDateFr('debut', rule.dateDebut || '');
+  setMethRuleDateFr('fin', rule.dateFin || '');
   fillMethRuleChainsForm(rule.chains || {});
+  populateMethValueDatalists(month, rule.modele);
+  const fsel = document.getElementById('meth-filter-modele');
+  if (fsel && rule.modele) fsel.value = rule.modele;
+  updateMethRuleSaveBtnLabel();
+  applyMethChainsTableFilter();
   renderMethRulesList(month);
 }
 function resetMethRuleForm(month) {
   methRuleEditId = null;
   const info = PRODUCTION[month];
   const sheets = info?.daily_sheets || [];
-  const d0 = document.getElementById('meth-rule-debut');
-  const d1 = document.getElementById('meth-rule-fin');
-  if (d0 && sheets.length) d0.value = sheets[0];
-  if (d1 && sheets.length) d1.value = sheets[sheets.length - 1];
+  const modInp = document.getElementById('meth-rule-modele');
+  if (modInp) modInp.value = '';
+  if (sheets.length) {
+    setMethRuleDateFr('debut', sheets[0]);
+    setMethRuleDateFr('fin', sheets[sheets.length - 1]);
+  } else {
+    setMethRuleDateFr('debut', '');
+    setMethRuleDateFr('fin', '');
+  }
   fillMethRuleChainsForm({});
+  updateMethRuleSaveBtnLabel();
+  applyMethChainsTableFilter();
   renderMethRulesList(month);
 }
 function saveMethRuleFromForm(month) {
-  const modSel = document.getElementById('meth-rule-modele');
-  const d0 = document.getElementById('meth-rule-debut');
-  const d1 = document.getElementById('meth-rule-fin');
-  const modele = (modSel?.value || '').trim();
-  const dateDebut = d0?.value || '';
-  const dateFin = d1?.value || '';
-  if (!modele) { toast('Choisissez un modèle.', true); return; }
+  const modele = getMethRuleModeleValue();
+  const dateDebut = getMethRuleDateFr('debut');
+  const dateFin = getMethRuleDateFr('fin');
+  if (!modele) { toast('Saisissez un modèle.', true); return; }
   if (!dateDebut || !dateFin) { toast('Choisissez les dates début et fin.', true); return; }
   if (compareFrDate(dateDebut, dateFin) > 0) { toast('La date de début doit être avant la date de fin.', true); return; }
   const chains = readMethRuleChainsFromForm();
@@ -5050,8 +5634,10 @@ function saveMethRuleFromForm(month) {
     buildSaisieBody();
     refreshSummaryStrip();
   }
+  populateMethFilterModeleSelect(month);
+  updateMethRuleSaveBtnLabel();
   renderMethRulesList(month);
-  toast('VT / P/H / EFF enregistrés pour ' + modele + ' (' + dateDebut + ' → ' + dateFin + ').');
+  toast(methRuleEditId ? ('Période mise à jour — ' + modele) : ('VT / P/H / EFF enregistrés pour ' + modele + ' (' + dateDebut + ' → ' + dateFin + ').'));
 }
 function deleteMethRule(month, ruleId) {
   if (!confirm('Supprimer cette période VT / P/H / EFF ?')) return;
@@ -5068,29 +5654,40 @@ function renderMethodesPage() {
   const month = currentMonth;
   const info = PRODUCTION[month];
   if (!info) return;
+  ensureMethRulesImportedFromData(month);
   const pill = document.getElementById('meth-rules-month-pill');
   if (pill) pill.textContent = info.label || month;
-  const modSel = document.getElementById('meth-rule-modele');
-  const d0 = document.getElementById('meth-rule-debut');
-  const d1 = document.getElementById('meth-rule-fin');
-  const modeles = collectModelesForMonth(month);
+  const modInp = document.getElementById('meth-rule-modele');
   const sheets = info.daily_sheets || [];
-  if (modSel) {
-    const prev = modSel.value;
-    modSel.innerHTML = '<option value="">— Modèle —</option>'
-      + modeles.map(m => `<option value="${m.replace(/"/g, '&quot;')}">${m.replace(/</g, '&lt;')}</option>`).join('');
-    if (prev && modeles.includes(prev)) modSel.value = prev;
-    else if (modeles.length) modSel.value = modeles[0];
-  }
-  const dateOpts = sheets.map(d => `<option value="${d}">${d}</option>`).join('');
-  if (d0) { d0.innerHTML = dateOpts; if (!d0.value && sheets[0]) d0.value = sheets[0]; }
-  if (d1) { d1.innerHTML = dateOpts; if (!d1.value && sheets.length) d1.value = sheets[sheets.length - 1]; }
+  populateMethRuleModeleDatalist(month);
+  syncMethRuleDatePickerBounds(month);
+  const prevMod = modInp?.value || '';
+  const prevDebut = getMethRuleDateFr('debut');
+  const prevFin = getMethRuleDateFr('fin');
   if (!document.getElementById('meth-rules-chains-body')?.children.length) buildMethRulesChainsTable();
-  if (!methRuleEditId) resetMethRuleForm(month);
-  else loadMethRuleIntoForm(month, methRuleEditId);
+  populateMethValueDatalists(month, prevMod || null);
+  if (!methRuleEditId) {
+    resetMethRuleForm(month);
+    if (modInp && prevMod) modInp.value = prevMod;
+    if (prevDebut) setMethRuleDateFr('debut', prevDebut);
+    if (prevFin) setMethRuleDateFr('fin', prevFin);
+  } else {
+    loadMethRuleIntoForm(month, methRuleEditId);
+  }
+  populateMethValueDatalists(month, getMethRuleModeleValue() || null);
+  initMethFilterControls(month);
   renderMethRulesList(month);
 }
-
+function onMethRuleModeleInput() {
+  const month = currentMonth;
+  const modele = getMethRuleModeleValue();
+  populateMethValueDatalists(month, modele || null);
+  const fsel = document.getElementById('meth-filter-modele');
+  if (fsel && modele && Array.from(fsel.options).some(o => o.value === modele)) fsel.value = modele;
+  applyMethChainsTableFilter();
+  if (methRuleEditId) return;
+  if (modele) fillMethRuleFormFromProductionForModele(month, modele);
+}
 // Apply saved overrides over the in-memory PRODUCTION model
 function applyAllOverrides() {
   const all = saisieOverrides();
@@ -5860,66 +6457,47 @@ function lastFilledHourIndex(hours) {
   return -1;
 }
 
+/** Index de la colonne « partielle » (8ᵉ samedi, 9ᵉ lun–ven). */
+function getPartialColIndex(dateStr) {
+  return isSaturdayDate(dateStr) ? 7 : EXCEL_COL_U_INDEX;
+}
+
 /**
- * Heures travaillées déduites de la ligne :
- * · créneaux 1…8 (M…T) = 1 h chacun si rempli ;
- * · dès que le 9ᵉ (U, index 8) est rempli → créneaux pleins avant U + 0,25 ou 0,75 ;
- * · samedi : base 7,25 h + 1 h par colonne heures supp. (après U).
+ * Heures travaillées (ligne Sortie) :
+ * Lun–ven : cases 1–8 = 1 h · 9ᵉ = +0,25 ou +0,75 · 10ᵉ+ = +1 h chacune.
+ * Samedi  : cases 1–7 = 1 h · 8ᵉ = +0,25 ou +0,75 · 9ᵉ+ = +1 h chacune.
  */
 function calcHeuresJourFromSaisie(hours, dateStr) {
   const partial = Number(getPartialHeureForDate(dateStr)) || 0.25;
   const hrs = excelHoursMW(hours);
-  const last = lastFilledHourIndex(hours);
-  if (last < 0) return 0;
-  let base = 0;
-  if (last >= EXCEL_COL_U_INDEX) {
-    let full = 0;
-    for (let i = 0; i < EXCEL_COL_U_INDEX; i++) {
-      if (hrs[i] != null && hrs[i] !== '') full++;
-    }
-    base = full + partial;
-  } else {
-    for (let i = 0; i <= last; i++) {
-      if (hrs[i] != null && hrs[i] !== '') base++;
-    }
+  const partIdx = getPartialColIndex(dateStr);
+  let total = 0;
+  for (let i = 0; i < hrs.length; i++) {
+    if (hrs[i] == null || hrs[i] === '') continue;
+    total += (i === partIdx) ? partial : 1;
   }
+  return total;
+}
+
+function heuresSortieRecapTitle(dateStr) {
+  const p = fmtOffsetFr(getPartialHeureForDate(dateStr) || 0.25);
   if (isSaturdayDate(dateStr)) {
-    let supp = 0;
-    for (let i = EXCEL_COL_U_INDEX + 1; i < hrs.length; i++) {
-      if (hrs[i] != null && hrs[i] !== '') supp++;
-    }
-    return base + supp;
+    return 'Samedi : 7 cases = 7 h · 8ᵉ = +' + p + ' h · 9ᵉ+ = +1 h/case';
   }
-  if (last > EXCEL_COL_U_INDEX) {
-    for (let i = EXCEL_COL_U_INDEX + 1; i <= last; i++) {
-      if (hrs[i] != null && hrs[i] !== '') base++;
-    }
-  }
-  return base;
+  return 'Lun–ven : 8 cases = 8 h · 9ᵉ = +' + p + ' h · 10ᵉ+ = +1 h/case';
 }
 
-function calcChainHeuresJour(chainLines, excelArr, dateStr) {
-  let maxH = 0;
-  for (const line of chainLines) {
-    if (!line.client && !line._added && !line.modele) continue;
-    const excel = excelArr ? findExcelBlock(excelArr, line) : null;
-    const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
-    const h = calcHeuresJourFromSaisie(r1h, dateStr);
-    if (h > maxH) maxH = h;
-  }
-  return maxH > 0 ? maxH : getExpectedHeuresJour(dateStr);
+function getModeleSortieHours(line, excelArr) {
+  const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+  return (line.hours_exit && line.hours_exit.length)
+    ? line.hours_exit
+    : ((excel && excel.r1_hours) || []);
 }
 
-function updateSaisieDayHeuresUI() {
-  const badge = document.getElementById('saisie-day-heures-badge');
-  if (!badge || !saisieDate) return;
-  const h = getExpectedHeuresJour(saisieDate);
-  const sam = isSaturdayDate(saisieDate);
-  badge.textContent = sam ? (fmtOffsetFr(h) + ' h + supp.') : (fmtOffsetFr(h) + ' h');
-  badge.classList.toggle('saturday', sam);
-  badge.title = sam
-    ? 'Samedi : journée de 7,25 h (7 créneaux + 0,25). Heures supplémentaires : colonnes 10–12 après le 9ᵉ créneau.'
-    : ('Journée normale : ' + fmtOffsetFr(h) + ' h');
+/** Heures affichées sous le modèle (même règle que les formules). */
+function calcModeleHeuresAffichee(line, excelArr, dateStr) {
+  const d = dateStr || saisieDate;
+  return calcHeuresJourFromSaisie(getModeleSortieHours(line, excelArr), d);
 }
 
 /** Coef. U pour SUM(M:W)−U×coef (7,25 h → 1,75 ; 8,25 → 0,25 ; 8,75 → 0,75) */
@@ -5958,14 +6536,13 @@ function syncSaisiePartialHeureSelect() {
     setPartialHeureForDate(saisieDate, '0.25');
     sel.value = '0.25';
     sel.disabled = true;
-    sel.title = 'Samedi : 7,25 h fixes. Heures supp. : colonnes 10–12.';
+    sel.title = 'Samedi : case partielle verrouillée à +0,25 h. Heures supp. : colonnes suivantes.';
   } else {
     sel.disabled = false;
-    sel.title = 'Fraction du 9e créneau (col. U) : heures = pleins + 0,25 ou 0,75';
+    sel.title = 'Complément sur la case partielle : +0,25 h ou +0,75 h';
     const v = getPartialHeureForDate(saisieDate);
     if (sel.value !== v) sel.value = v;
   }
-  updateSaisieDayHeuresUI();
 }
 
 function onSaisiePartialHeureChange() {
@@ -6530,25 +7107,29 @@ function _max(arr) { let m = 0; for (const v of (arr || [])) if (typeof v === 'n
 
 const EXCEL_ROWS_PER_BLOCK = 5;
 /** N° chaîne fusionné sur toute la hauteur de la chaîne (plusieurs modèles). */
-function excelChainNumberCell(chLabel, chainMerge, heuresJour) {
+function excelChainNumberCell(chLabel, chainMerge) {
   if (chainMerge && !chainMerge.emitCh) return '';
   const rs = chainMerge && chainMerge.chainRowspan ? chainMerge.chainRowspan : EXCEL_ROWS_PER_BLOCK;
-  const expected = saisieDate ? getExpectedHeuresJour(saisieDate) : null;
-  const supp = expected != null && heuresJour != null && heuresJour > expected + 0.001;
-  const hTxt = heuresJour != null ? fmtOffsetFr(heuresJour) + ' h' : '';
-  const hBadge = hTxt
-    ? `<span class="ch-heures-badge${supp ? ' supp' : ''}" title="${supp ? 'Heures du jour (dont supp. samedi)' : 'Heures travaillées (ligne sortie)'}">${hTxt}</span>`
-    : '';
-  return `<td rowspan="${rs}" class="merge-cell ch-cell excel-freeze excel-freeze-0" data-ch-heures="${heuresJour != null ? heuresJour : ''}"><span class="ch-num">${chLabel}</span>${hBadge}</td>`;
+  return `<td rowspan="${rs}" class="merge-cell ch-cell excel-freeze excel-freeze-0"><span class="ch-num">${chLabel}</span></td>`;
 }
+
+function excelModeleHeuresBadgeHtml(hHeures, dateStr) {
+  if (hHeures == null || hHeures <= 0) return '';
+  const expected = dateStr ? getExpectedHeuresJour(dateStr) : null;
+  const supp = expected != null && hHeures > expected + 0.001;
+  const title = heuresSortieRecapTitle(dateStr);
+  return `<span class="modele-heures-badge${supp ? ' supp' : ''}" data-r="modele_heures" title="${title}">${fmtOffsetFr(hHeures)} h</span>`;
+}
+
 /** Import / client / modèle / chef : un bloc par modèle (5 lignes). */
-function excelModelMetaCells(line) {
+function excelModelMetaCells(line, nHeuresSortie) {
   const esc = (s) => (s || '').replace(/"/g, '&quot;');
   const rs = EXCEL_ROWS_PER_BLOCK;
+  const hBadge = excelModeleHeuresBadgeHtml(nHeuresSortie, saisieDate);
   return `
     <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-1"><input class="xs-inp txt" data-f="import" value="${esc(line.import)}" placeholder="—"></td>
     <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-2"><input class="xs-inp txt" data-f="client" value="${esc(line.client)}" placeholder="—"></td>
-    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-3 last-freeze"><input class="xs-inp txt" data-f="modele" value="${esc(line.modele)}" placeholder="—"></td>
+    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-3 last-freeze modele-cell" data-modele-heures="${nHeuresSortie || ''}"><input class="xs-inp txt" data-f="modele" value="${esc(line.modele)}" placeholder="—">${hBadge}</td>
     <td rowspan="${rs}" class="merge-cell"><input class="xs-inp txt" data-f="chef" value="${esc(line.chef)}" placeholder="—"></td>`;
 }
 
@@ -6701,7 +7282,6 @@ function buildSaisieBody() {
     const lines = byChain.get(chainNo).filter(l => l.client || l._added || l.modele);
     if (lines.length === 0) continue;
     const chLabel = `Ch${String(chainNo).padStart(2,'0')}`;
-    const chainHeures = calcChainHeuresJour(lines, excelArr, saisieDate);
     const chainMetaRowspan = lines.length * EXCEL_ROWS_PER_BLOCK;
     let lineIndexInChain = 0;
     const chainTotalSortie = calcSumifSortieChain(lines, excelArr);
@@ -6743,6 +7323,7 @@ function buildSaisieBody() {
       const rowKey = (chainNo + '|' + (line.modele || ''));
       line._rowKey = rowKey;
       const chainMerge = { emitCh: lineIndexInChain === 0, chainRowspan: chainMetaRowspan };
+      const modeleHeures = calcModeleHeuresAffichee(line, excelArr, saisieDate);
 
       // Row 0 - Entre Chaine
       const tr0 = document.createElement('tr');
@@ -6751,8 +7332,8 @@ function buildSaisieBody() {
       tr0.dataset.rk = rowKey;
       tr0.dataset.chain = chainNo;
       tr0.innerHTML = `
-        ${excelChainNumberCell(chLabel, chainMerge, chainHeures)}
-        ${excelModelMetaCells(line)}
+        ${excelChainNumberCell(chLabel, chainMerge)}
+        ${excelModelMetaCells(line, modeleHeures)}
         ${excelQtePrevuCell(line, c)}
         ${excelDesigCell(line)}
         ${excelMethodesBlockCell(line, c)}
@@ -7354,29 +7935,30 @@ function onExcelInput(e, line) {
   refreshSummaryStrip();
 }
 
-function refreshChainHeuresBadge(chainNo) {
-  if (chainNo == null || isNaN(chainNo) || !saisieMonth || !saisieDate) return;
+function refreshModeleHeuresBadge(line) {
+  if (!line || !line._rowKey || !saisieMonth || !saisieDate) return;
   const tbody = document.getElementById('excel-grid-body');
   if (!tbody) return;
-  const chainLines = (PRODUCTION[saisieMonth].daily[saisieDate] || []).filter(
-    l => Number(l.chain) === Number(chainNo) && (l.client || l._added || l.modele)
-  );
   const excelArr = getExcelDataForDate(saisieDate);
-  const h = calcChainHeuresJour(chainLines, excelArr, saisieDate);
-  const cell = tbody.querySelector(`tr.block-sep-chain[data-chain="${chainNo}"] td.ch-cell`);
+  const h = calcModeleHeuresAffichee(line, excelArr, saisieDate);
+  const cell = tbody.querySelector(`tr[data-rk="${CSS.escape(String(line._rowKey))}"] td.modele-cell`);
   if (!cell) return;
+  cell.dataset.modeleHeures = h > 0 ? String(h) : '';
+  let badge = cell.querySelector('[data-r="modele_heures"]');
+  if (!h || h <= 0) {
+    if (badge) badge.remove();
+    return;
+  }
   const expected = getExpectedHeuresJour(saisieDate);
   const supp = h > expected + 0.001;
-  cell.dataset.chHeures = String(h);
-  let badge = cell.querySelector('.ch-heures-badge');
   if (!badge) {
     badge = document.createElement('span');
-    badge.className = 'ch-heures-badge';
+    badge.dataset.r = 'modele_heures';
     cell.appendChild(badge);
   }
-  badge.className = 'ch-heures-badge' + (supp ? ' supp' : '');
+  badge.className = 'modele-heures-badge' + (supp ? ' supp' : '');
   badge.textContent = fmtOffsetFr(h) + ' h';
-  badge.title = supp ? 'Heures du jour (dont supp. samedi)' : 'Heures travaillées (ligne sortie)';
+  badge.title = heuresSortieRecapTitle(saisieDate);
 }
 
 function refreshExcelRow(line) {
@@ -7438,7 +8020,7 @@ function refreshExcelRow(line) {
     tbody.querySelectorAll(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="r1_moy"]`)
       .forEach(el => { el.textContent = fmtMoyCell(co.moySortie); });
   });
-  refreshChainHeuresBadge(line.chain);
+  refreshModeleHeuresBadge(line);
 }
 
 const excelGridEl = document.getElementById('excel-grid');
@@ -7701,11 +8283,25 @@ document.getElementById('saisie-add-modal').addEventListener('click', (e) => { i
 document.getElementById('add-line-modele').addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmSaisieAddLine(); });
 document.getElementById('meth-rule-save-btn')?.addEventListener('click', () => saveMethRuleFromForm(currentMonth));
 document.getElementById('meth-rule-new-btn')?.addEventListener('click', () => resetMethRuleForm(currentMonth));
+document.getElementById('meth-rule-modele')?.addEventListener('input', onMethRuleModeleInput);
+document.getElementById('meth-rule-modele')?.addEventListener('change', onMethRuleModeleInput);
+document.getElementById('meth-list-search')?.addEventListener('input', onMethFiltersChanged);
+document.getElementById('meth-filter-modele')?.addEventListener('change', onMethFilterModeleSelect);
+document.getElementById('meth-list-sort')?.addEventListener('change', onMethFiltersChanged);
+document.getElementById('meth-chains-show')?.addEventListener('change', applyMethChainsTableFilter);
+document.getElementById('meth-chains-from')?.addEventListener('change', applyMethChainsTableFilter);
+document.getElementById('meth-chains-to')?.addEventListener('change', applyMethChainsTableFilter);
+document.getElementById('meth-rules-chains-body')?.addEventListener('input', (e) => {
+  if (e.target?.dataset?.meth) applyMethChainsTableFilter();
+});
 
 // Bootstrap
 ensureTodayInData();
 applyAllOverrides();
-for (const m of Object.keys(PRODUCTION)) applyMethRulesToMonth(m);
+for (const m of Object.keys(PRODUCTION)) {
+  ensureMethRulesImportedFromData(m);
+  applyMethRulesToMonth(m);
+}
 finalizeSaisieDaysAfterOverrides();
 syncAllProductionMetrics();
 
