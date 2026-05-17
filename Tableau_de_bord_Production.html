@@ -4510,6 +4510,7 @@ document.getElementById('detail-search').addEventListener('input', (e) => {
 // SAISIE — Daily data entry
 // ============================================================
 const SAISIE_STORAGE_KEY = 'prodH-saisie-overrides-v1';
+const METH_GLOBAL_STORAGE_KEY = 'prodH-meth-global-v1';
 const PIN_CODE = '1234';
 const HOUR_LABELS = ['8:45','9:45','10:45','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
 let saisieMonth = null;
@@ -4523,6 +4524,80 @@ function saisieOverrides() {
 }
 function saveSaisieOverrides(o) {
   try { localStorage.setItem(SAISIE_STORAGE_KEY, JSON.stringify(o)); } catch (e) {}
+}
+
+function globalMethStore() {
+  try { return JSON.parse(localStorage.getItem(METH_GLOBAL_STORAGE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function saveGlobalMethStore(store) {
+  try { localStorage.setItem(METH_GLOBAL_STORAGE_KEY, JSON.stringify(store)); } catch (e) {}
+}
+function globalMethKey(month, line) {
+  return month + '|' + modelChainKey(line);
+}
+function getGlobalMeth(month, line) {
+  return globalMethStore()[globalMethKey(month, line)] || null;
+}
+function setGlobalMeth(month, line, patch) {
+  const store = globalMethStore();
+  const k = globalMethKey(month, line);
+  const cur = store[k] || {};
+  if (patch.methodes !== undefined) cur.methodes = patch.methodes;
+  if (patch.ph !== undefined) cur.ph = patch.ph;
+  if (patch.effectifs !== undefined) cur.effectifs = patch.effectifs;
+  store[k] = cur;
+  saveGlobalMethStore(store);
+}
+/** Applique VT / P/H / EFF globaux sur tout le mois (prioritaire sur Excel et anciennes sauvegardes jour). */
+function applyGlobalMethFieldsToMonth(month) {
+  const store = globalMethStore();
+  const info = PRODUCTION[month];
+  if (!info) return;
+  const prefix = month + '|';
+  for (const key of Object.keys(store)) {
+    if (!key.startsWith(prefix)) continue;
+    const g = store[key];
+    const rest = key.slice(prefix.length);
+    const sep = rest.indexOf('|');
+    if (sep < 0) continue;
+    const ch = Number(rest.slice(0, sep));
+    const mod = rest.slice(sep + 1);
+    if (!ch || !mod) continue;
+    for (const date of info.daily_sheets || []) {
+      const dayArr = info.daily[date] || [];
+      const excelArr = getExcelDataForDate(date);
+      for (const row of dayArr) {
+        if (Number(row.chain) !== ch) continue;
+        if (((row.modele || '') + '').trim().toUpperCase() !== mod) continue;
+        if (g.methodes != null && g.methodes !== '' && !isNaN(g.methodes)) row.methodes = Number(g.methodes);
+        if (g.ph != null && g.ph !== '' && !isNaN(g.ph)) row.ph = Number(g.ph);
+        if (g.effectifs != null && g.effectifs !== '' && !isNaN(g.effectifs)) row.effectifs = Number(g.effectifs);
+        const excel = excelArr ? findExcelBlock(excelArr, row) : null;
+        if (excel) {
+          if (g.methodes != null && !isNaN(g.methodes)) excel.r1_meth = Number(g.methodes);
+          if (g.ph != null && !isNaN(g.ph)) excel.r1_ph = Number(g.ph);
+          if (g.effectifs != null && !isNaN(g.effectifs)) excel.r2_eff = Number(g.effectifs);
+        }
+      }
+      if (window.EXCEL_SAISIE_DATA && window.EXCEL_SAISIE_DATA[date]) {
+        for (const block of window.EXCEL_SAISIE_DATA[date]) {
+          if (Number(block.chain) !== ch) continue;
+          if (((block.modele || '') + '').trim().toUpperCase() !== mod) continue;
+          if (g.methodes != null && !isNaN(g.methodes)) block.r1_meth = Number(g.methodes);
+          if (g.ph != null && !isNaN(g.ph)) block.r1_ph = Number(g.ph);
+          if (g.effectifs != null && !isNaN(g.effectifs)) block.r2_eff = Number(g.effectifs);
+        }
+      }
+    }
+  }
+}
+function applyGlobalMethToLine(month, line) {
+  const g = getGlobalMeth(month, line);
+  if (!g) return;
+  if (g.methodes != null && !isNaN(g.methodes)) line.methodes = Number(g.methodes);
+  if (g.ph != null && !isNaN(g.ph)) line.ph = Number(g.ph);
+  if (g.effectifs != null && !isNaN(g.effectifs)) line.effectifs = Number(g.effectifs);
 }
 
 // Apply saved overrides over the in-memory PRODUCTION model
@@ -5942,10 +6017,10 @@ function excelMethodesBlockCell(line, c) {
         </tr>
         <tr>
           <td rowspan="2" class="meth-vt-val">
-            <div class="meth-c"><input class="xs-inp meth-num" type="text" inputmode="decimal" data-f="vt" value="${vtVal}" placeholder="—" title="VT"></div>
+            <div class="meth-c"><input class="xs-inp meth-num" type="text" inputmode="decimal" data-f="vt" value="${vtVal}" placeholder="—" title="VT — tous les jours (même chaîne, même modèle)"></div>
           </td>
           <td rowspan="2" class="meth-ph-val">
-            <div class="meth-c"><input class="xs-inp meth-num" type="text" inputmode="decimal" data-f="ph" value="${phVal}" placeholder="—" title="P/H"></div>
+            <div class="meth-c"><input class="xs-inp meth-num" type="text" inputmode="decimal" data-f="ph" value="${phVal}" placeholder="—" title="P/H — tous les jours (même chaîne, même modèle)"></div>
           </td>
         </tr>
         <tr></tr>
@@ -5957,7 +6032,7 @@ function excelMethodesBlockCell(line, c) {
         </tr>
         <tr>
           <td class="meth-ph-eff">
-            <div class="meth-c"><input class="xs-inp meth-num" type="text" inputmode="decimal" data-f="eff_meth" value="${eff}" placeholder="—" title="Eff"></div>
+            <div class="meth-c"><input class="xs-inp meth-num" type="text" inputmode="decimal" data-f="eff_meth" value="${eff}" placeholder="—" title="EFF — tous les jours (même chaîne, même modèle)"></div>
           </td>
         </tr>
         </tbody>
@@ -6029,6 +6104,7 @@ function buildSaisieBody() {
   const tbody = document.getElementById('excel-grid-body');
   if (!tbody) return;
   tbody.innerHTML = '';
+  if (saisieMonth) applyGlobalMethFieldsToMonth(saisieMonth);
   const editable = isEditable();
   const chains = PRODUCTION[saisieMonth].daily[saisieDate] || [];
   const excelArr = getExcelDataForDate(saisieDate);
@@ -6052,6 +6128,7 @@ function buildSaisieBody() {
     let lineIndexInChain = 0;
     const chainTotalSortie = calcSumifSortieChain(lines, excelArr);
     for (const line of lines) {
+      applyGlobalMethToLine(saisieMonth, line);
       const excel = (!line._added && excelArr) ? findExcelBlock(excelArr, line) : null;
       // Seed hour arrays from Excel data if line doesn't have them yet
       if (excel) {
@@ -6663,6 +6740,42 @@ function renderAnomalies(month) {
   });
 }
 
+/** Clé chaîne + modèle (normalisée). */
+function modelChainKey(line) {
+  return Number(line.chain) + '|' + ((line.modele || '') + '').trim().toUpperCase();
+}
+
+/** Met à jour les sauvegardes locales de chaque jour pour ce modèle (VT / P/H / EFF). */
+function syncMethOverridesAllDays(month, sourceLine, patch) {
+  const info = PRODUCTION[month];
+  if (!info) return;
+  const all = saisieOverrides();
+  if (!all[month]) all[month] = {};
+  const rk = sourceLine.chain + '|' + (sourceLine.modele || '').trim();
+  for (const date of info.daily_sheets || []) {
+    const dayArr = info.daily[date] || [];
+    if (!dayArr.some(r => (r.chain + '|' + (r.modele || '').trim()) === rk)) continue;
+    if (!all[month][date]) all[month][date] = {};
+    if (!all[month][date][rk]) all[month][date][rk] = {};
+    const ov = all[month][date][rk];
+    if (patch.methodes !== undefined) ov.methodes = patch.methodes;
+    if (patch.ph !== undefined) ov.ph = patch.ph;
+    if (patch.effectifs !== undefined) ov.effectifs = patch.effectifs;
+  }
+  saveSaisieOverrides(all);
+}
+
+/**
+ * VT / P/H / EFF : une modification est recopiée sur tous les jours du mois
+ * (mémoire + registre global localStorage + sauvegardes par jour).
+ */
+function propagateMethFieldsToAllDays(month, sourceLine, patch) {
+  if (!month || !sourceLine || !patch) return;
+  setGlobalMeth(month, sourceLine, patch);
+  applyGlobalMethFieldsToMonth(month);
+  syncMethOverridesAllDays(month, sourceLine, patch);
+}
+
 function onExcelInput(e, line) {
   if (!isEditable()) return;
   const inp = e.target;
@@ -6681,12 +6794,21 @@ function onExcelInput(e, line) {
   if (f === 'r0h') { ensure('hours_entry'); line.hours_entry[idx] = v; line.entre_total = _sumArr(line.hours_entry); }
   else if (f === 'r1h') { ensure('hours_exit'); line.hours_exit[idx] = v; line.sortie_total = _sumArr(line.hours_exit); }
   else if (f === 'r2h') { ensure('effectifs_hours'); line.effectifs_hours[idx] = v; }
-  else if (f === 'eff_meth') line.effectifs = v;
+  else if (f === 'eff_meth') {
+    line.effectifs = v;
+    propagateMethFieldsToAllDays(saisieMonth, line, { effectifs: v });
+  }
   else if (f === 'r3h') { ensure('stagiaire_hours'); line.stagiaire_hours[idx] = v; line.stagiaire = Math.max(0, ...line.stagiaire_hours.filter(x=>x!=null).map(Number)); }
   else if (f === 'r4h') { ensure('formation_hours'); line.formation_hours[idx] = v; line.formation_total = _sumArr(line.formation_hours); }
   else if (f === 'form_topic') line.formation_topic = v;
-  else if (f === 'vt') line.methodes = v;
-  else if (f === 'ph') line.ph = v;
+  else if (f === 'vt') {
+    line.methodes = v;
+    propagateMethFieldsToAllDays(saisieMonth, line, { methodes: v });
+  }
+  else if (f === 'ph') {
+    line.ph = v;
+    propagateMethFieldsToAllDays(saisieMonth, line, { ph: v });
+  }
   else if (f === 'obj_k') line.objective = v;
   else if (f === 'qte_prevu') line.qte_prevu = v;
   else if (f === 'deuxieme') line.deuxieme = v;
@@ -6699,6 +6821,9 @@ function onExcelInput(e, line) {
   }
   if (f === 'ph') inp.value = v != null ? fmtPh(v) : '';
   else if (['vt','eff_meth','deuxieme','deuxieme_stag'].includes(f)) inp.value = v != null ? fmtNumFr(v) : '';
+  if (f === 'vt' || f === 'ph' || f === 'eff_meth') {
+    syncMonthProductionMetrics(saisieMonth);
+  }
   refreshExcelRow(line);
   refreshSummaryStrip();
 }
@@ -6763,6 +6888,24 @@ function refreshExcelRow(line) {
 
 const excelGridEl = document.getElementById('excel-grid');
 if (excelGridEl) {
+  excelGridEl.addEventListener('change', (e) => {
+    const inp = e.target;
+    if (!inp || !inp.classList || !inp.classList.contains('meth-num')) return;
+    if (!isEditable()) return;
+    const tr = inp.closest('tr[data-rk]');
+    if (!tr || !saisieMonth || !saisieDate) return;
+    const rk = tr.dataset.rk;
+    const chains = PRODUCTION[saisieMonth].daily[saisieDate] || [];
+    const line = chains.find(l => String(l._rowKey) === String(rk));
+    if (!line) return;
+    const f = inp.dataset.f;
+    const v = parseNumFr(inp.value);
+    if (f === 'vt') propagateMethFieldsToAllDays(saisieMonth, line, { methodes: v });
+    else if (f === 'ph') propagateMethFieldsToAllDays(saisieMonth, line, { ph: v });
+    else if (f === 'eff_meth') propagateMethFieldsToAllDays(saisieMonth, line, { effectifs: v });
+    buildSaisieBody();
+    refreshSummaryStrip();
+  });
   excelGridEl.addEventListener('keydown', handleExcelGridKeydown, true);
   excelGridEl.addEventListener('focusin', (e) => {
     const inp = e.target;
@@ -6860,7 +7003,26 @@ function gotoSaisieToday() {
   toast("Feuille du jour : " + saisieDate);
 }
 
+/** Lit VT / P/H / EFF depuis la grille visible (avant enregistrer). */
+function flushMethFieldsFromGridForCurrentDay() {
+  const tbody = document.getElementById('excel-grid-body');
+  if (!tbody || !saisieMonth || !saisieDate) return;
+  const chains = PRODUCTION[saisieMonth].daily[saisieDate] || [];
+  for (const line of chains) {
+    if (!line._rowKey) continue;
+    const tr = tbody.querySelector(`tr[data-rk="${CSS.escape(String(line._rowKey))}"]`);
+    if (!tr) continue;
+    const vtInp = tr.querySelector('[data-f="vt"]');
+    const phInp = tr.querySelector('[data-f="ph"]');
+    const effInp = tr.querySelector('[data-f="eff_meth"]');
+    if (vtInp) line.methodes = parseNumFr(vtInp.value);
+    if (phInp) line.ph = parseNumFr(phInp.value);
+    if (effInp) line.effectifs = parseNumFr(effInp.value);
+  }
+}
+
 function saveSaisie() {
+  flushMethFieldsFromGridForCurrentDay();
   const overrides = saisieOverrides();
   const chains = PRODUCTION[saisieMonth].daily[saisieDate];
   if (!chains) return;
@@ -6887,9 +7049,17 @@ function saveSaisie() {
   if (addedSnaps.length) dayOv.__added = addedSnaps;
   else delete dayOv.__added;
   saveSaisieOverrides(overrides);
+  for (const c of chains) {
+    if (c.chain == null || (!c.client && !c._added && !c.modele)) continue;
+    propagateMethFieldsToAllDays(saisieMonth, c, {
+      methodes: c.methodes,
+      ph: c.ph,
+      effectifs: c.effectifs
+    });
+  }
   syncMonthProductionMetrics(saisieMonth);
   document.querySelectorAll('#excel-grid-body .dirty').forEach(i => i.classList.remove('dirty'));
-  toast('Saisie enregistrée. Les autres pages ont été mises à jour.');
+  toast('Saisie enregistrée — VT / P/H / EFF appliqués à tous les jours du modèle.');
   buildSaisieBody(); refreshSummaryStrip();
 }
 
@@ -7022,6 +7192,7 @@ document.getElementById('add-line-modele').addEventListener('keydown', (e) => { 
 // Bootstrap
 ensureTodayInData();
 applyAllOverrides();
+for (const m of Object.keys(PRODUCTION)) applyGlobalMethFieldsToMonth(m);
 finalizeSaisieDaysAfterOverrides();
 syncAllProductionMetrics();
 
