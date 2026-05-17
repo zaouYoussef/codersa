@@ -21,7 +21,7 @@ XLSX_PATH = os.path.join(BASE, "explication.xlsx")
 
 COL_B, COL_D, COL_F, COL_G, COL_H, COL_I, COL_J, COL_K, COL_L = 2, 4, 6, 7, 8, 9, 10, 11, 12
 COL_M, COL_W = 13, 23
-COL_Y, COL_Z, COL_AB, COL_AC = 25, 26, 28, 29
+COL_Y, COL_Z, COL_AA, COL_AB, COL_AC = 25, 26, 27, 28, 29
 N_HOURS = 11
 FIRST_DAY_MAI = "01-05-2026"
 MONTH_KEY = "MAI"
@@ -108,6 +108,7 @@ def parse_daily_sheet(ws) -> list[dict]:
         ae_2em = _num(ws.cell(row=r, column=31).value)
         # Colonne Z ligne Stagiaire = terme H.Lancement (AA), pas « 2em° »
         hlanc_z = _num(ws.cell(stag_r, COL_Z).value) if stag_r else None
+        hlanc_aa = _num(ws.cell(entre_r, COL_AA).value)
         # EFF équilibrage (bloc VT/P/H) : colonne K de la ligne Stagiaire (ex. 54), pas le total effectifs
         eff_equilibre = _num(ws.cell(stag_r, COL_K).value) if stag_r else None
 
@@ -168,7 +169,7 @@ def parse_daily_sheet(ws) -> list[dict]:
         if eff_equilibre is not None:
             prod_row["effectifs"] = eff_equilibre
 
-        blocks.append((excel_block, prod_row, ac_entre, ab_entre, ac_sortie, ab_sortie))
+        blocks.append((excel_block, prod_row, ac_entre, ab_entre, ac_sortie, ab_sortie, hlanc_aa))
 
     return blocks
 
@@ -199,12 +200,17 @@ def main() -> int:
         parsed = parse_daily_sheet(ws)
         excel_blocks = []
         prod_rows = []
-        for excel_b, prod_b, ac_e, ab_e, ac_s, ab_s in parsed:
+        for excel_b, prod_b, ac_e, ab_e, ac_s, ab_s, hlanc_aa in parsed:
             eb = dict(excel_b)
             if h_moy_sortie is not None:
                 eb["h_moy_sortie"] = h_moy_sortie
             if h_hlanc_ref is not None:
                 eb["h_hlanc_ref"] = h_hlanc_ref
+            if sn == FIRST_DAY_MAI and hlanc_aa is not None:
+                eb["hlanc_manual"] = hlanc_aa
+                prod_b["hlanc_manual"] = hlanc_aa
+                if abs(hlanc_aa) < 0.0001:
+                    prod_b["hlanc_fixe"] = 0
             excel_blocks.append(eb)
             prod_rows.append(prod_b)
         excel_by_date[sn] = excel_blocks
