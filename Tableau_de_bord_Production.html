@@ -1066,6 +1066,32 @@ footer {
   border-right: 1px solid var(--border);
 }
 .excel-saisie td.merge-cell.ch-cell { color: var(--accent); }
+.excel-saisie td.ch-cell .ch-num { display: block; font-size: 12px; }
+.excel-saisie td.ch-cell .ch-heures-badge {
+  display: block;
+  margin-top: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+}
+.excel-saisie td.ch-cell .ch-heures-badge.supp {
+  color: var(--orange);
+}
+#saisie-day-heures-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+#saisie-day-heures-badge.saturday {
+  color: var(--orange);
+  border-color: rgba(251,146,60,0.35);
+  background: rgba(251,146,60,0.08);
+}
 .excel-saisie td.merge-cell input.xs-inp.txt { text-align: center; }
 .excel-saisie td.merge-cell.desig-cell input.xs-inp.txt {
   text-align: center;
@@ -2495,6 +2521,7 @@ table.meth-rules-grid input:focus {
           <option value="0.75">+ 0,75 h</option>
         </select>
       </div>
+      <span id="saisie-day-heures-badge" title="Durée normale de la journée">—</span>
       <button type="button" class="btn" id="saisie-goto-today-btn" title="Ouvrir la feuille du jour">Aujourd'hui</button>
       <button type="button" class="btn" id="saisie-fill-yesterday-btn" title="Copier toutes les valeurs de la veille (heures incluses)">Remplir comme hier</button>
       <span class="badge today" id="saisie-day-status"><span class="dot"></span><span id="saisie-day-status-txt">Aujourd'hui</span></span>
@@ -5734,10 +5761,14 @@ function excelManualHourLabel(i) {
 }
 
 function excelManualHourTimeCellsHtml() {
+  const sam = saisieDate && isSaturdayDate(saisieDate);
   return EXCEL_MANUAL_HOUR_TIMES.map((t, i) => {
     const esc = (s) => (s || '').replace(/"/g, '&quot;');
     const col = EXCEL_HOUR_FIXED_COUNT + i + 1;
-    return `<td class="h-time-cell"><input class="xs-inp txt h-time-manual" type="text" data-manual-hour="${i}" value="${esc(t)}" title="Heure de saisie (colonne ${col})"></td>`;
+    const title = sam
+      ? `Heures supp. samedi — colonne ${col} (+1 h si production saisie)`
+      : `Heure de saisie (colonne ${col})`;
+    return `<td class="h-time-cell"><input class="xs-inp txt h-time-manual" type="text" data-manual-hour="${i}" value="${esc(t)}" title="${title}"></td>`;
   }).join('');
 }
 
@@ -5769,7 +5800,27 @@ function fmtOffsetFr(n) {
   return String(n).replace('.', ',');
 }
 
-/** Défaut 9ᵉ créneau : ven 0,25 (8,75 h) · lun–jeu 0,75 (8,25 h) · sam 0,25 (souvent 7,25 h si 7 créneaux + U) */
+function isSaturdayDate(dateStr) {
+  const d = parseFrDate(dateStr);
+  return !isNaN(d.getTime()) && d.getDay() === 6;
+}
+function isFridayDate(dateStr) {
+  const d = parseFrDate(dateStr);
+  return !isNaN(d.getTime()) && d.getDay() === 5;
+}
+/** Heures normales : lun–jeu 8,25 · ven 8,75 · sam 7,25 */
+function getExpectedHeuresJour(dateStr) {
+  if (isSaturdayDate(dateStr)) return 7.25;
+  if (isFridayDate(dateStr)) return 8.75;
+  return 8.25;
+}
+/** Coef. U dans SUM(M:W)−U×coef : 8,75→0,75 · 8,25→0,25 · 7,25→1,75 */
+function getUdeductCoefForDate(dateStr) {
+  if (isSaturdayDate(dateStr)) return 1.75;
+  const partial = Number(getPartialHeureForDate(dateStr)) || 0.25;
+  return partial >= 0.75 ? 0.25 : 0.75;
+}
+/** Défaut 9ᵉ créneau : ven 0,25 (8,75 h) · lun–jeu 0,75 (8,25 h) · sam 0,25 (7,25 h) */
 function defaultPartialHeureForDate(dateStr) {
   const d = parseFrDate(dateStr);
   if (isNaN(d.getTime())) return '0.25';
@@ -5812,34 +5863,72 @@ function lastFilledHourIndex(hours) {
 /**
  * Heures travaillées déduites de la ligne :
  * · créneaux 1…8 (M…T) = 1 h chacun si rempli ;
- * · dès que le 9ᵉ (U, index 8) ou au-delà est rempli → (créneaux pleins avant le dernier) + 0,25 ou 0,75.
+ * · dès que le 9ᵉ (U, index 8) est rempli → créneaux pleins avant U + 0,25 ou 0,75 ;
+ * · samedi : base 7,25 h + 1 h par colonne heures supp. (après U).
  */
 function calcHeuresJourFromSaisie(hours, dateStr) {
   const partial = Number(getPartialHeureForDate(dateStr)) || 0.25;
   const hrs = excelHoursMW(hours);
   const last = lastFilledHourIndex(hours);
   if (last < 0) return 0;
+  let base = 0;
   if (last >= EXCEL_COL_U_INDEX) {
     let full = 0;
-    for (let i = 0; i < last; i++) {
+    for (let i = 0; i < EXCEL_COL_U_INDEX; i++) {
       if (hrs[i] != null && hrs[i] !== '') full++;
     }
-    return full + partial;
+    base = full + partial;
+  } else {
+    for (let i = 0; i <= last; i++) {
+      if (hrs[i] != null && hrs[i] !== '') base++;
+    }
   }
-  let n = 0;
-  for (let i = 0; i <= last; i++) {
-    if (hrs[i] != null && hrs[i] !== '') n++;
+  if (isSaturdayDate(dateStr)) {
+    let supp = 0;
+    for (let i = EXCEL_COL_U_INDEX + 1; i < hrs.length; i++) {
+      if (hrs[i] != null && hrs[i] !== '') supp++;
+    }
+    return base + supp;
   }
-  return n;
+  if (last > EXCEL_COL_U_INDEX) {
+    for (let i = EXCEL_COL_U_INDEX + 1; i <= last; i++) {
+      if (hrs[i] != null && hrs[i] !== '') base++;
+    }
+  }
+  return base;
 }
 
-/** uDeduct = 1 − partial (col. U dans SUM(M:W)−U×coef) */
+function calcChainHeuresJour(chainLines, excelArr, dateStr) {
+  let maxH = 0;
+  for (const line of chainLines) {
+    if (!line.client && !line._added && !line.modele) continue;
+    const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+    const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
+    const h = calcHeuresJourFromSaisie(r1h, dateStr);
+    if (h > maxH) maxH = h;
+  }
+  return maxH > 0 ? maxH : getExpectedHeuresJour(dateStr);
+}
+
+function updateSaisieDayHeuresUI() {
+  const badge = document.getElementById('saisie-day-heures-badge');
+  if (!badge || !saisieDate) return;
+  const h = getExpectedHeuresJour(saisieDate);
+  const sam = isSaturdayDate(saisieDate);
+  badge.textContent = sam ? (fmtOffsetFr(h) + ' h + supp.') : (fmtOffsetFr(h) + ' h');
+  badge.classList.toggle('saturday', sam);
+  badge.title = sam
+    ? 'Samedi : journée de 7,25 h (7 créneaux + 0,25). Heures supplémentaires : colonnes 10–12 après le 9ᵉ créneau.'
+    : ('Journée normale : ' + fmtOffsetFr(h) + ' h');
+}
+
+/** Coef. U pour SUM(M:W)−U×coef (7,25 h → 1,75 ; 8,25 → 0,25 ; 8,75 → 0,75) */
 function getJourHeuresConfig(dateStr, hoursRef) {
   const partial = Number(getPartialHeureForDate(dateStr)) || 0.25;
-  const uDeduct = Math.round((1 - partial) * 100) / 100;
+  const uDeduct = getUdeductCoefForDate(dateStr);
   const h = (hoursRef && lastFilledHourIndex(hoursRef) >= 0)
     ? calcHeuresJourFromSaisie(hoursRef, dateStr)
-    : (8 + partial);
+    : getExpectedHeuresJour(dateStr);
   return {
     partial,
     h,
@@ -5865,8 +5954,18 @@ function getDayHeuresRefs(dateStr, excel, r1h) {
 function syncSaisiePartialHeureSelect() {
   const sel = document.getElementById('saisie-partial-heure');
   if (!sel || !saisieDate) return;
-  const v = getPartialHeureForDate(saisieDate);
-  if (sel.value !== v) sel.value = v;
+  if (isSaturdayDate(saisieDate)) {
+    setPartialHeureForDate(saisieDate, '0.25');
+    sel.value = '0.25';
+    sel.disabled = true;
+    sel.title = 'Samedi : 7,25 h fixes. Heures supp. : colonnes 10–12.';
+  } else {
+    sel.disabled = false;
+    sel.title = 'Fraction du 9e créneau (col. U) : heures = pleins + 0,25 ou 0,75';
+    const v = getPartialHeureForDate(saisieDate);
+    if (sel.value !== v) sel.value = v;
+  }
+  updateSaisieDayHeuresUI();
 }
 
 function onSaisiePartialHeureChange() {
@@ -6431,10 +6530,16 @@ function _max(arr) { let m = 0; for (const v of (arr || [])) if (typeof v === 'n
 
 const EXCEL_ROWS_PER_BLOCK = 5;
 /** N° chaîne fusionné sur toute la hauteur de la chaîne (plusieurs modèles). */
-function excelChainNumberCell(chLabel, chainMerge) {
+function excelChainNumberCell(chLabel, chainMerge, heuresJour) {
   if (chainMerge && !chainMerge.emitCh) return '';
   const rs = chainMerge && chainMerge.chainRowspan ? chainMerge.chainRowspan : EXCEL_ROWS_PER_BLOCK;
-  return `<td rowspan="${rs}" class="merge-cell ch-cell excel-freeze excel-freeze-0">${chLabel}</td>`;
+  const expected = saisieDate ? getExpectedHeuresJour(saisieDate) : null;
+  const supp = expected != null && heuresJour != null && heuresJour > expected + 0.001;
+  const hTxt = heuresJour != null ? fmtOffsetFr(heuresJour) + ' h' : '';
+  const hBadge = hTxt
+    ? `<span class="ch-heures-badge${supp ? ' supp' : ''}" title="${supp ? 'Heures du jour (dont supp. samedi)' : 'Heures travaillées (ligne sortie)'}">${hTxt}</span>`
+    : '';
+  return `<td rowspan="${rs}" class="merge-cell ch-cell excel-freeze excel-freeze-0" data-ch-heures="${heuresJour != null ? heuresJour : ''}"><span class="ch-num">${chLabel}</span>${hBadge}</td>`;
 }
 /** Import / client / modèle / chef : un bloc par modèle (5 lignes). */
 function excelModelMetaCells(line) {
@@ -6596,6 +6701,7 @@ function buildSaisieBody() {
     const lines = byChain.get(chainNo).filter(l => l.client || l._added || l.modele);
     if (lines.length === 0) continue;
     const chLabel = `Ch${String(chainNo).padStart(2,'0')}`;
+    const chainHeures = calcChainHeuresJour(lines, excelArr, saisieDate);
     const chainMetaRowspan = lines.length * EXCEL_ROWS_PER_BLOCK;
     let lineIndexInChain = 0;
     const chainTotalSortie = calcSumifSortieChain(lines, excelArr);
@@ -6645,7 +6751,7 @@ function buildSaisieBody() {
       tr0.dataset.rk = rowKey;
       tr0.dataset.chain = chainNo;
       tr0.innerHTML = `
-        ${excelChainNumberCell(chLabel, chainMerge)}
+        ${excelChainNumberCell(chLabel, chainMerge, chainHeures)}
         ${excelModelMetaCells(line)}
         ${excelQtePrevuCell(line, c)}
         ${excelDesigCell(line)}
@@ -7248,6 +7354,31 @@ function onExcelInput(e, line) {
   refreshSummaryStrip();
 }
 
+function refreshChainHeuresBadge(chainNo) {
+  if (chainNo == null || isNaN(chainNo) || !saisieMonth || !saisieDate) return;
+  const tbody = document.getElementById('excel-grid-body');
+  if (!tbody) return;
+  const chainLines = (PRODUCTION[saisieMonth].daily[saisieDate] || []).filter(
+    l => Number(l.chain) === Number(chainNo) && (l.client || l._added || l.modele)
+  );
+  const excelArr = getExcelDataForDate(saisieDate);
+  const h = calcChainHeuresJour(chainLines, excelArr, saisieDate);
+  const cell = tbody.querySelector(`tr.block-sep-chain[data-chain="${chainNo}"] td.ch-cell`);
+  if (!cell) return;
+  const expected = getExpectedHeuresJour(saisieDate);
+  const supp = h > expected + 0.001;
+  cell.dataset.chHeures = String(h);
+  let badge = cell.querySelector('.ch-heures-badge');
+  if (!badge) {
+    badge = document.createElement('span');
+    badge.className = 'ch-heures-badge';
+    cell.appendChild(badge);
+  }
+  badge.className = 'ch-heures-badge' + (supp ? ' supp' : '');
+  badge.textContent = fmtOffsetFr(h) + ' h';
+  badge.title = supp ? 'Heures du jour (dont supp. samedi)' : 'Heures travaillées (ligne sortie)';
+}
+
 function refreshExcelRow(line) {
   const excelArr = getExcelDataForDate(saisieDate);
   const excel = excelArr ? findExcelBlock(excelArr, line) : null;
@@ -7307,6 +7438,7 @@ function refreshExcelRow(line) {
     tbody.querySelectorAll(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="r1_moy"]`)
       .forEach(el => { el.textContent = fmtMoyCell(co.moySortie); });
   });
+  refreshChainHeuresBadge(line.chain);
 }
 
 const excelGridEl = document.getElementById('excel-grid');
