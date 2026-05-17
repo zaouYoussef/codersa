@@ -1763,6 +1763,477 @@ table.data th {
 }
 
 /* ============================================================ */
+/* AMÉLIORATIONS D'AFFICHAGE — v2 (raffinements visuels)        */
+/* Pure CSS · aucun ajout de contenu · aucun impact logique     */
+/* ============================================================ */
+
+/* ----- Animations partagées additionnelles ----- */
+@keyframes softGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(56,189,248,0); }
+  50%      { box-shadow: 0 0 0 6px rgba(56,189,248,0.06); }
+}
+@keyframes sheen {
+  0%   { background-position: -120% 0; }
+  100% { background-position: 220% 0; }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2px); }
+}
+
+/* ----- En-tête de page : halo discret + sous-titre raffiné ----- */
+.page-head {
+  position: relative;
+  padding: 14px 16px 16px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--surface) 85%, transparent) 0%,
+    color-mix(in srgb, var(--surface-2) 80%, transparent) 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.page-head::before {
+  content: "";
+  position: absolute;
+  inset: -1px -1px auto -1px;
+  height: 2px;
+  background: var(--grad-a);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.page-head::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(56,189,248,0.10) 0%, transparent 65%);
+  pointer-events: none;
+  filter: blur(2px);
+}
+.page-head .left { position: relative; z-index: 1; }
+.page-head .pill-meta { position: relative; z-index: 1; }
+.page-head h2 {
+  padding-bottom: 10px;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.06);
+}
+.page-head h2::after {
+  width: 72px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 60%, transparent 100%);
+  box-shadow: 0 0 14px rgba(56,189,248,0.55);
+}
+.page-head h2 .accent {
+  background: var(--grad-a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,0.05));
+}
+.page-head .sub {
+  margin-top: 6px;
+  line-height: 1.55;
+  max-width: 760px;
+  color: var(--text-dim);
+}
+.page-head .pill-meta {
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--surface) 70%, transparent) 0%,
+    color-mix(in srgb, var(--surface-2) 60%, transparent) 100%);
+  border: 1px solid var(--border-2);
+  backdrop-filter: blur(8px);
+}
+.page-head .pill-meta .dot {
+  box-shadow: 0 0 8px var(--accent);
+  background: var(--accent);
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+/* ----- KPI : reflet de lumière + bordure tactile ----- */
+.kpi {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--surface) 90%, transparent) 0%,
+    color-mix(in srgb, var(--surface-2) 75%, transparent) 100%);
+  border-radius: 14px;
+  position: relative;
+}
+.kpi::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(110deg,
+    transparent 30%,
+    rgba(255,255,255,0.04) 50%,
+    transparent 70%);
+  background-size: 220% 100%;
+  background-position: -120% 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .35s;
+}
+.kpi:hover::after {
+  opacity: 1;
+  animation: sheen 1.4s ease-out;
+}
+.kpi-ic {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18), 0 0 0 1px var(--border) inset;
+}
+.kpi-value {
+  letter-spacing: -0.02em;
+  font-feature-settings: 'tnum';
+}
+.kpi-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+/* ----- Cartes : tête de carte plus expressive ----- */
+.card {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--surface) 92%, transparent) 0%,
+    color-mix(in srgb, var(--surface-2) 88%, transparent) 100%);
+  border-radius: 16px;
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-title {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.card-title::before {
+  height: 16px;
+  width: 3px;
+  background: var(--grad-a);
+  box-shadow: 0 0 10px rgba(56,189,248,0.5);
+}
+.card-sub {
+  color: var(--text-dim);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+/* ----- Page SAISIE — toolbar enrichie ----- */
+.saisie-toolbar {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.saisie-toolbar::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    var(--accent) 0%, var(--accent-2) 50%, var(--accent-3) 100%);
+  opacity: 0.55;
+}
+.saisie-toolbar label {
+  color: var(--text-dim);
+  font-weight: 800;
+}
+.saisie-toolbar select.minimal,
+.saisie-toolbar input.minimal {
+  background: var(--surface-2);
+  border-radius: 9px;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.saisie-toolbar select.minimal:hover,
+.saisie-toolbar input.minimal:hover {
+  border-color: var(--border-2);
+}
+.saisie-toolbar select.minimal:focus,
+.saisie-toolbar input.minimal:focus {
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.18);
+}
+.saisie-toolbar .btn {
+  border-radius: 10px;
+  font-size: 12px;
+}
+.saisie-toolbar .badge {
+  border-radius: 999px;
+  padding: 5px 11px;
+}
+
+/* ----- Page SAISIE — tuiles d'info plus lisibles ----- */
+.saisie-info-strip .info-tile {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--surface) 90%, transparent) 0%,
+    color-mix(in srgb, var(--surface-2) 85%, transparent) 100%);
+  border-radius: 14px;
+}
+.saisie-info-strip .info-tile::before {
+  width: 4px;
+  border-radius: 4px 0 0 4px;
+  box-shadow: 0 0 10px currentColor;
+}
+.saisie-info-strip .info-tile::after {
+  content: "";
+  position: absolute;
+  right: -30px; top: -30px;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.saisie-info-strip .info-lab {
+  font-size: 10px;
+  letter-spacing: 0.07em;
+}
+.saisie-info-strip .info-val {
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+.saisie-info-strip .info-val .unit {
+  opacity: 0.7;
+  font-size: 10.5px;
+}
+.saisie-info-strip .info-tile-vers {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--surface) 88%, transparent) 0%,
+    rgba(250,204,21,0.05) 100%);
+  border-color: rgba(250,204,21,0.20);
+}
+
+/* ----- Page METHODES — cartes & boutons raffinés ----- */
+.meth-rules-card {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--surface) 92%, transparent) 0%,
+    color-mix(in srgb, var(--surface-2) 86%, transparent) 100%);
+  border-radius: 16px;
+  transition: border-color .25s, box-shadow .25s;
+}
+.meth-rules-card:hover {
+  border-color: var(--border-2);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+}
+.meth-rules-card h3 {
+  position: relative;
+  padding-left: 12px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.meth-rules-card h3::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 16px;
+  border-radius: 2px;
+  background: var(--grad-a);
+  box-shadow: 0 0 10px rgba(56,189,248,0.5);
+}
+.meth-btn {
+  transition: all .22s cubic-bezier(.2,.7,.2,1);
+  border-radius: 10px;
+}
+.meth-btn:hover {
+  transform: translateY(-1px);
+}
+.meth-btn-save:hover { box-shadow: 0 6px 18px rgba(56,189,248,0.30); }
+.meth-btn-new:hover  { box-shadow: 0 6px 18px rgba(129,140,248,0.30); }
+.meth-list-count-pill {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+  border: 1px solid var(--border-2);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+/* ----- Page OVERVIEW — Ring renforcé ----- */
+.hero-ring {
+  position: relative;
+}
+.hero-ring .ring-box {
+  filter: drop-shadow(0 12px 28px rgba(56,189,248,0.22));
+  transition: filter .3s;
+}
+.hero-ring:hover .ring-box {
+  filter: drop-shadow(0 16px 36px rgba(56,189,248,0.32));
+}
+.mini-stats .ms {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--surface-2) 90%, transparent) 0%,
+    color-mix(in srgb, var(--surface) 80%, transparent) 100%);
+  border-radius: 12px;
+}
+
+/* ----- Page ANOMALIES — bannière plus présente ----- */
+.anomalies-banner {
+  border-radius: 14px;
+  border-left-width: 4px;
+  padding: 14px 16px;
+}
+.anomalies-banner .anom-chip {
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+/* ----- Page RENDEMENT — heatmap & légende ----- */
+.heatmap .cell {
+  border-radius: 6px;
+  transition: transform .15s, box-shadow .15s;
+}
+.heatmap .cell:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 2;
+}
+.legend {
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.legend-sw {
+  border-radius: 4px;
+}
+
+/* ----- Page CHAINES / CLIENTS / MODELES — tableaux ----- */
+.table-wrap {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+table.data thead th {
+  font-weight: 800;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+table.data tbody td {
+  border-color: var(--border);
+}
+table.data tbody tr:hover td {
+  background: rgba(56,189,248,0.04);
+}
+:root[data-theme="light"] table.data tbody tr:hover td {
+  background: rgba(2,132,199,0.05);
+}
+
+/* ----- Page EFFECTIFS — leaderboard plus dynamique ----- */
+.lb-row {
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.lb-rank {
+  font-weight: 800;
+  border-radius: 10px;
+  width: 32px; height: 32px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.lb-name {
+  font-weight: 700;
+}
+.lb-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+}
+
+/* ----- Page PREP — KPI plus expressifs ----- */
+#page-prep .kpi {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--surface) 92%, transparent) 0%,
+    color-mix(in srgb, var(--surface-2) 80%, transparent) 100%);
+}
+#page-prep .kpi-value {
+  font-feature-settings: 'tnum';
+}
+
+/* ----- Page DETAIL — chips & contrôles ----- */
+.detail-controls {
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.detail-controls::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-3) 100%);
+  opacity: 0.5;
+}
+.chip {
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 6px 12px;
+}
+.chip:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.16);
+}
+
+/* ----- Modales (PIN, ajout ligne) ----- */
+.pin-modal {
+  border-radius: 18px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--surface) 96%, transparent) 0%,
+    color-mix(in srgb, var(--surface-2) 92%, transparent) 100%);
+  box-shadow: 0 24px 56px rgba(0,0,0,0.45), 0 0 0 1px var(--border-2);
+}
+.pin-modal h3 {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.pin-input {
+  border-radius: 10px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.pin-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.18);
+}
+
+/* ----- Onglets : indicateur sous l'onglet actif ----- */
+.tab.active::after {
+  content: "";
+  position: absolute;
+  left: 14%; right: 14%;
+  bottom: -5px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--accent);
+  opacity: 0.85;
+}
+
+/* ----- Topbar : ombre douce quand on défile ----- */
+header.topbar {
+  box-shadow: 0 1px 0 var(--border), 0 8px 24px rgba(0,0,0,0.10);
+}
+.brand-text h1 {
+  background: var(--grad-a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ----- Responsive complémentaire ----- */
+@media (max-width: 720px) {
+  .page-head { padding: 12px 14px; border-radius: 14px; }
+  .page-head h2 { font-size: 18px; }
+  .saisie-info-strip .info-val { font-size: 18px; }
+  .card { border-radius: 14px; }
+}
+
+/* ============================================================ */
 /* PAGE ANOMALIES — nouveau contenu                              */
 /* ============================================================ */
 
