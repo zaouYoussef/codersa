@@ -916,9 +916,27 @@ footer {
 
 /* === EXCEL-style saisie grid (replica of Excel sheet) === */
 .excel-saisie-wrap {
-  overflow-x: auto; border: 1px solid var(--border);
-  border-radius: 12px; background: var(--surface);
-  box-shadow: var(--shadow); margin-top: 12px;
+  overflow: auto;
+  max-height: calc(100vh - 240px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  margin-top: 12px;
+  scrollbar-width: auto;
+  scrollbar-color: var(--border-2) var(--surface-2);
+}
+.excel-saisie-wrap::-webkit-scrollbar {
+  width: 10px;
+  height: 12px;
+}
+.excel-saisie-wrap::-webkit-scrollbar-thumb {
+  background: var(--border-2);
+  border-radius: 6px;
+  border: 2px solid var(--surface-2);
+}
+.excel-saisie-wrap::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
 }
 .excel-saisie {
   width: 100%; min-width: 1800px;
@@ -4621,18 +4639,26 @@ function applyAllOverrides() {
           row = dayArr.find(r => r.chain === ch);
         }
         if (!row) continue;
-        applyOverrideToRow(row, ov);
+        applyOverrideToRow(row, ov, month);
       }
     }
   }
   applyAddedOverrides();
 }
 
-function applyOverrideToRow(row, ov) {
+function applyOverrideToRow(row, ov, month) {
+  const g = month ? getGlobalMeth(month, row) : null;
+  const skipPh  = g && g.ph != null && !isNaN(g.ph);
+  const skipVt  = g && g.methodes != null && !isNaN(g.methodes);
+  const skipEff = g && g.effectifs != null && !isNaN(g.effectifs);
   // Plain field overrides
   ['import','client','modele','desig','chef','ph','methodes','qte_prevu','effectifs','entre_total','sortie_total','stagiaire',
    'deuxieme','hlanc_z','deuxieme_stag','hlanc_fixe','hlanc_manual','objective','r2_size','formation_topic'].forEach(f => {
-    if (ov[f] !== undefined) row[f] = ov[f];
+    if (ov[f] === undefined) return;
+    if (f === 'ph' && skipPh) return;
+    if (f === 'methodes' && skipVt) return;
+    if (f === 'effectifs' && skipEff) return;
+    row[f] = ov[f];
   });
   if (ov.client !== undefined) row.client_norm = (ov.client || '').toUpperCase();
   if (ov.chef   !== undefined) row.chef_norm   = (ov.chef   || '').toUpperCase();
@@ -7009,8 +7035,9 @@ function flushMethFieldsFromGridForCurrentDay() {
   if (!tbody || !saisieMonth || !saisieDate) return;
   const chains = PRODUCTION[saisieMonth].daily[saisieDate] || [];
   for (const line of chains) {
-    if (!line._rowKey) continue;
-    const tr = tbody.querySelector(`tr[data-rk="${CSS.escape(String(line._rowKey))}"]`);
+    if (line.chain == null || (!line.client && !line._added && !line.modele)) continue;
+    const rk = String(line.chain) + '|' + (line.modele || '').trim();
+    const tr = tbody.querySelector(`tr[data-rk="${CSS.escape(rk)}"]`);
     if (!tr) continue;
     const vtInp = tr.querySelector('[data-f="vt"]');
     const phInp = tr.querySelector('[data-f="ph"]');
