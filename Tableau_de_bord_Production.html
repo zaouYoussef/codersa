@@ -3060,9 +3060,22 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
   box-shadow: 0 0 0 1px rgba(56,189,248,0.2);
 }
 .meth-rule-item .mri-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
   font-weight: 800;
   font-size: 12px;
   margin-bottom: 4px;
+}
+.meth-rule-item .mri-multi {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(56,189,248,0.14);
+  color: var(--accent);
+  border: 1px solid rgba(56,189,248,0.28);
 }
 .meth-rule-item .mri-sub {
   font-size: 11px;
@@ -6044,6 +6057,11 @@ function renderMethRulesList(month) {
     list.innerHTML = '<p class="meth-rules-list-empty">Aucune période ne correspond aux filtres.</p>';
     return;
   }
+  const countByMod = {};
+  for (const r of allRules) {
+    const k = normalizeModeleKey(r.modele);
+    if (k) countByMod[k] = (countByMod[k] || 0) + 1;
+  }
   list.innerHTML = '';
   for (const rule of rules) {
     const el = document.createElement('div');
@@ -6053,8 +6071,13 @@ function renderMethRulesList(month) {
       const c = rule.chains[k];
       return c && (c.vt != null || c.ph != null || c.eff != null);
     }).length : 0;
+    const modKey = normalizeModeleKey(rule.modele);
+    const nSameMod = modKey ? (countByMod[modKey] || 1) : 1;
+    const multiBadge = nSameMod > 1
+      ? `<span class="mri-multi" title="${nSameMod} périodes pour ce modèle">${nSameMod} pér.</span>`
+      : '';
     el.innerHTML = `
-      <div class="mri-title">${(rule.modele || '—').replace(/</g, '&lt;')}</div>
+      <div class="mri-title">${(rule.modele || '—').replace(/</g, '&lt;')}${multiBadge}</div>
       <div class="mri-sub">
         <span class="mri-dates">${rule.dateDebut} → ${rule.dateFin}</span>
         <span class="mri-chains">${nCh} ch.</span>
@@ -6088,8 +6111,7 @@ function loadMethRuleIntoForm(month, ruleId) {
   setMethRuleDateFr('fin', rule.dateFin || '');
   fillMethRuleChainsForm(rule.chains || {});
   populateMethValueDatalists(month, rule.modele);
-  const fsel = document.getElementById('meth-filter-modele');
-  if (fsel && rule.modele) fsel.value = rule.modele;
+  syncMethListFilterToModele(rule.modele || '');
   updateMethRuleSaveBtnLabel();
   applyMethChainsTableFilter();
   renderMethRulesList(month);
@@ -6099,7 +6121,8 @@ function resetMethRuleForm(month) {
   const info = PRODUCTION[month];
   const sheets = info?.daily_sheets || [];
   const modInp = document.getElementById('meth-rule-modele');
-  if (modInp) modInp.value = '';
+  const keepMod = modInp?.value || '';
+  if (modInp) modInp.value = keepMod;
   if (sheets.length) {
     setMethRuleDateFr('debut', sheets[0]);
     setMethRuleDateFr('fin', sheets[sheets.length - 1]);
@@ -6108,9 +6131,32 @@ function resetMethRuleForm(month) {
     setMethRuleDateFr('fin', '');
   }
   fillMethRuleChainsForm({});
+  if (keepMod) syncMethListFilterToModele(keepMod);
+  else {
+    const ls = document.getElementById('meth-list-search');
+    const fs = document.getElementById('meth-filter-modele');
+    if (ls) ls.value = '';
+    if (fs) fs.value = '';
+  }
   updateMethRuleSaveBtnLabel();
   applyMethChainsTableFilter();
   renderMethRulesList(month);
+}
+function methRuleDatesOverlap(aDebut, aFin, bDebut, bFin) {
+  return compareFrDate(aDebut, bFin) <= 0 && compareFrDate(bDebut, aFin) <= 0;
+}
+function countMethRulesForModele(rules, modele) {
+  const mk = normalizeModeleKey(modele);
+  return rules.filter(r => normalizeModeleKey(r.modele) === mk).length;
+}
+function syncMethListFilterToModele(modele) {
+  const q = (modele || '').trim();
+  const listSearch = document.getElementById('meth-list-search');
+  const fsel = document.getElementById('meth-filter-modele');
+  if (listSearch) listSearch.value = q;
+  if (fsel) {
+    fsel.value = (q && Array.from(fsel.options).some(o => o.value === q)) ? q : '';
+  }
 }
 function saveMethRuleFromForm(month) {
   const modele = getMethRuleModeleValue();
@@ -6123,14 +6169,33 @@ function saveMethRuleFromForm(month) {
   if (!Object.keys(chains).length) { toast('Saisissez au moins une valeur sur une chaîne.', true); return; }
   const rules = methRulesForMonth(month).slice();
   const payload = { modele, dateDebut, dateFin, chains };
-  if (methRuleEditId) {
+  const wasEdit = !!methRuleEditId;
+  const mk = normalizeModeleKey(modele);
+  if (!wasEdit) {
+    const sameDates = rules.find(r =>
+      normalizeModeleKey(r.modele) === mk && r.dateDebut === dateDebut && r.dateFin === dateFin
+    );
+    if (sameDates) {
+      toast('Une période existe déjà pour ce modèle et ces dates — cliquez « Modifier » sur la fiche ou changez les dates.', true);
+      return;
+    }
+  } else {
+    const overlap = rules.find(r =>
+      r.id !== methRuleEditId && normalizeModeleKey(r.modele) === mk
+      && methRuleDatesOverlap(dateDebut, dateFin, r.dateDebut, r.dateFin)
+    );
+    if (overlap) {
+      toast('Les dates chevauchent une autre période du même modèle (' + overlap.dateDebut + ' → ' + overlap.dateFin + ').', true);
+      return;
+    }
+  }
+  if (wasEdit) {
     const idx = rules.findIndex(r => r.id === methRuleEditId);
     if (idx >= 0) rules[idx] = { ...rules[idx], ...payload };
     else rules.push({ id: methRuleEditId, ...payload });
   } else {
-    const newId = newMethRuleId();
-    rules.push({ id: newId, ...payload });
-    methRuleEditId = newId;
+    rules.push({ id: newMethRuleId(), ...payload });
+    methRuleEditId = null;
   }
   saveMethRulesForMonth(month, rules);
   applyMethRulesToMonth(month);
@@ -6141,9 +6206,17 @@ function saveMethRuleFromForm(month) {
     refreshSummaryStrip();
   }
   populateMethFilterModeleSelect(month);
+  syncMethListFilterToModele(modele);
   updateMethRuleSaveBtnLabel();
   renderMethRulesList(month);
-  toast(methRuleEditId ? ('Période mise à jour — ' + modele) : ('VT / P/H / EFF enregistrés pour ' + modele + ' (' + dateDebut + ' → ' + dateFin + ').'));
+  const nSame = countMethRulesForModele(rules, modele);
+  if (wasEdit) {
+    toast('Période mise à jour — ' + modele + ' (' + dateDebut + ' → ' + dateFin + ').');
+  } else if (nSame > 1) {
+    toast(nSame + ' périodes pour « ' + modele + ' ». Modifiez les dates puis Enregistrer pour en ajouter une autre.');
+  } else {
+    toast('Période enregistrée — ' + modele + ' (' + dateDebut + ' → ' + dateFin + ').');
+  }
 }
 function deleteMethRule(month, ruleId) {
   if (!confirm('Supprimer cette période VT / P/H / EFF ?')) return;
@@ -6188,8 +6261,10 @@ function onMethRuleModeleInput() {
   const month = currentMonth;
   const modele = getMethRuleModeleValue();
   populateMethValueDatalists(month, modele || null);
-  const fsel = document.getElementById('meth-filter-modele');
-  if (fsel && modele && Array.from(fsel.options).some(o => o.value === modele)) fsel.value = modele;
+  if (modele && modele.length >= 2) {
+    syncMethListFilterToModele(modele);
+    renderMethRulesList(month);
+  }
   applyMethChainsTableFilter();
   if (methRuleEditId) return;
   if (modele) fillMethRuleFormFromProductionForModele(month, modele);
