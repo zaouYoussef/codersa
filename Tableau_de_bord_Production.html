@@ -3736,7 +3736,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         <div class="card-head">
           <div>
             <div class="card-title">Rendement par Chaîne</div>
-            <div class="card-sub">Performance moyenne sur le mois</div>
+            <div class="card-sub">Summary % mois par chaîne (formule Vers Final / Excel)</div>
           </div>
         </div>
         <div class="h-280"><canvas id="chart-rend-chain"></canvas></div>
@@ -3749,7 +3749,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         <div class="card-head">
           <div>
             <div class="card-title">🏆 Top 5 performeurs</div>
-            <div class="card-sub">Meilleur rendement moyen sur le mois (≥3 observations)</div>
+            <div class="card-sub">Meilleur Summary % mois (≥3 jours de production)</div>
           </div>
         </div>
         <div class="lb" id="rd-top-list"></div>
@@ -4440,19 +4440,53 @@ function lineStagiaireJour(c) {
   for (const v of c.stagiaire_hours) if (v != null && !isNaN(v)) m = Math.max(m, Number(v));
   return m;
 }
-/** %Rend moyen pondéré par sortie (formule saisie sur chaque ligne). */
-function monthRendementWeighted(month) {
-  let sum = 0, w = 0;
+/**
+ * % Summary / Vers Final Excel : Σ(AB_sortie×VT) / Σ((AB_eff+AB_stag/2)×60)
+ * — même formule que le bandeau saisie (#saisie-tot-vers) et SUBTOTAL(AL)/SUBTOTAL(AK).
+ * @param {string} month
+ * @param {string|null} date — jour précis, ou null = tout le mois
+ * @param {number|null} chain — filtre chaîne, ou null = toutes
+ */
+function accumVersFinalFromLine(line, excel, date, acc) {
+  if (!line || !acc) return;
+  const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
+  const r2h = (line.effectifs_hours && line.effectifs_hours.length) ? line.effectifs_hours : ((excel && excel.r2_hours) || []);
+  const r3h = (line.stagiaire_hours && line.stagiaire_hours.length) ? line.stagiaire_hours : ((excel && excel.r3_hours) || []);
+  const vt = (line.methodes != null && !isNaN(line.methodes)) ? Number(line.methodes)
+    : ((excel && excel.r1_meth != null) ? Number(excel.r1_meth) : 0);
+  if (!vt) return;
+  const abSortie = calcTotalSortieRow(r1h);
+  const abEff = calcTotalEffectifsRow(r2h, date);
+  const abStag = calcTotalStagiaireRow(r3h, date);
+  const ai = calcVersFinalAI(abEff, abStag);
+  acc.al += calcVersFinalAL(abSortie, vt);
+  acc.ak += calcVersFinalAK(ai);
+}
+function calcRendementSummaryPct(acc) {
+  if (!acc || !acc.ak || !isFinite(acc.ak)) return null;
+  const r = acc.al / acc.ak;
+  return isFinite(r) ? r : null;
+}
+function calcRendementSummary(month, date, chain) {
   const info = PRODUCTION[month];
-  if (!info) return 0;
-  for (const date of info.daily_sheets || []) {
-    for (const c of info.daily[date] || []) {
-      if (!isActiveProductionRow(c)) continue;
-      const r = c.rendement, s = c.sortie_total || 0;
-      if (r != null && r > 0 && r < 2.5 && s > 0) { sum += r * s; w += s; }
+  if (!info) return null;
+  const acc = { al: 0, ak: 0 };
+  const dates = date ? [date] : (info.daily_sheets || []);
+  const chFilter = (chain != null && !isNaN(chain)) ? Number(chain) : null;
+  for (const d of dates) {
+    const excelArr = getExcelDataForDate(d);
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line)) continue;
+      if (chFilter != null && Number(line.chain) !== chFilter) continue;
+      const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+      accumVersFinalFromLine(line, excel, d, acc);
     }
   }
-  return w ? sum / w : 0;
+  return calcRendementSummaryPct(acc);
+}
+/** %Rend mois entier — formule Summary (Vers Final). */
+function monthRendementWeighted(month) {
+  return calcRendementSummary(month, null, null) || 0;
 }
 
 function activeChains(month) {
@@ -4473,7 +4507,7 @@ function dailyTotals(month) {
   const arr = [];
   for (const date of info.daily_sheets) {
     const chains = info.daily[date];
-    let entre=0, sortie=0, eff=0, encours=0, stag=0, rendWSum=0, rendW=0;
+    let entre=0, sortie=0, eff=0, encours=0, stag=0;
     const chainsActive = new Set();
     for (const c of chains) {
       if (isActiveProductionRow(c)) {
@@ -4482,12 +4516,11 @@ function dailyTotals(month) {
         eff += lineEffectifsJour(c);
         if (c.encours != null && !isNaN(c.encours)) encours += c.encours;
         stag += lineStagiaireJour(c);
-        const r = c.rendement, s = c.sortie_total || 0;
-        if (r != null && r > 0 && r < 2.5 && s > 0) { rendWSum += r * s; rendW += s; }
         if (c.chain != null) chainsActive.add(c.chain);
       }
     }
-    arr.push({ date, entre, sortie, eff, encours, stag, rend: rendW ? rendWSum / rendW : null, chains: chainsActive.size });
+    const rend = calcRendementSummary(month, date, null);
+    arr.push({ date, entre, sortie, eff, encours, stag, rend, chains: chainsActive.size });
   }
   return arr;
 }
@@ -4767,20 +4800,22 @@ function renderRendement(month) {
     options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 10, font: { size: 11 } } } }, scales: { x: { grid: { display: false }, ticks: { color: css('--text-dim'), font: { size: 10 } } }, y: { grid: { color: css('--grid') }, ticks: { color: css('--text-dim'), callback: v=>v+'%' }, suggestedMin: 0, suggestedMax: 110 } } }
   });
 
-  // Rendement bars by chain
+  // Rendement bars by chain (Summary % mois par chaîne)
   destroy('rendChain');
-  const ch = activeChains(month);
-  const byChain = {};
-  for (const c of ch) {
-    if (c.chain == null) continue;
-    if (c.rendement == null || c.rendement <= 0 || c.rendement >= 2.5) continue;
-    if (!byChain[c.chain]) byChain[c.chain] = { rendWSum: 0, rendW: 0 };
-    const s = c.sortie_total || 0;
-    if (s > 0) { byChain[c.chain].rendWSum += c.rendement * s; byChain[c.chain].rendW += s; }
+  const info = PRODUCTION[month];
+  const chainsSet = new Set();
+  for (const d of info.daily_sheets || []) {
+    for (const c of info.daily[d] || []) {
+      if (c.chain != null && isActiveProductionRow(c)) chainsSet.add(Number(c.chain));
+    }
   }
-  const keys = Object.keys(byChain).map(Number).sort((a,b)=>a-b);
-  const labs = keys.map(k=>'Ch'+String(k).padStart(2,'0'));
-  const vals = keys.map(k => byChain[k].rendW ? (byChain[k].rendWSum / byChain[k].rendW) * 100 : 0);
+  const keys = [...chainsSet].sort((a, b) => a - b);
+  const dates = info.daily_sheets;
+  const chainRendRows = keys.map(k => ({ k, r: calcRendementSummary(month, null, k) }))
+    .filter(x => x.r != null && x.r > 0 && x.r < 2.5);
+  const keysR = chainRendRows.map(x => x.k);
+  const labs = keysR.map(k => 'Ch' + String(k).padStart(2, '0'));
+  const vals = chainRendRows.map(x => x.r * 100);
   const ctx2 = document.getElementById('chart-rend-chain').getContext('2d');
   charts.rendChain = new Chart(ctx2, {
     type: 'bar',
@@ -4788,12 +4823,8 @@ function renderRendement(month) {
     options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c=>`${c.parsed.x.toFixed(1)}%` } } }, scales: { x: { grid: { color: css('--grid') }, ticks: { color: css('--text-dim'), callback: v=>v+'%' }, suggestedMin: 0, suggestedMax: 100 }, y: { grid: { display: false }, ticks: { color: css('--text-dim'), font: { size: 11, weight: 700 } } } } }
   });
 
-  // Heatmap
-  const info = PRODUCTION[month];
-  const dates = info.daily_sheets;
-  const chainsSet = new Set();
-  for (const d of dates) for (const c of info.daily[d]) if (c.chain != null && isActiveProductionRow(c)) chainsSet.add(c.chain);
-  const chainKeys = [...chainsSet].sort((a,b)=>a-b);
+  // Heatmap — Summary % chaîne × jour
+  const chainKeys = keys;
   const heatmap = document.getElementById('heatmap');
   heatmap.innerHTML = '';
   heatmap.style.gridTemplateColumns = `48px repeat(${dates.length}, minmax(30px, 1fr))`;
@@ -4802,14 +4833,20 @@ function renderRendement(month) {
   for (const k of chainKeys) {
     const lab = document.createElement('div'); lab.className='lab'; lab.textContent='Ch'+String(k).padStart(2,'0'); heatmap.appendChild(lab);
     for (const d of dates) {
-      const chains = info.daily[d].filter(c => c.chain === k && isActiveProductionRow(c));
-      const rv = chains.map(c=>c.rendement).filter(v=>v!=null && v>0 && v<2.5);
+      const rv = calcRendementSummary(month, d, k);
       const cell = document.createElement('div');
-      if (rv.length === 0) { cell.className='cell empty'; cell.textContent='—'; }
-      else { cell.className='cell'; const avg = rv.reduce((s,x)=>s+x,0)/rv.length; cell.style.background = rendColor(avg); cell.textContent = Math.round(avg*100); cell.title = `Ch${k} · ${d}: ${fmtPct(avg)}`; }
+      if (rv == null || rv <= 0 || rv >= 2.5) { cell.className='cell empty'; cell.textContent='—'; }
+      else {
+        cell.className='cell';
+        cell.style.background = rendColor(rv);
+        cell.textContent = Math.round(rv * 100);
+        cell.title = `Ch${k} · ${d} · Summary %: ${fmtPct(rv)}`;
+      }
       heatmap.appendChild(cell);
     }
   }
+
+  const ch = activeChains(month);
 
   // Distribution
   destroy('rendDist');
@@ -4866,26 +4903,29 @@ function renderRendement(month) {
   const elStdF = document.getElementById('kpi-rd-std-foot');
   if (elStdF) elStdF.textContent = stdRend < 5 ? 'Très stable sur le mois' : stdRend < 12 ? 'Stabilité moyenne' : 'Forte volatilité — à investiguer';
 
-  // Top / Flop : pondéré sur 3 obs min
-  const byChainFull = {};
-  for (const c of ch) {
-    if (c.chain == null) continue;
-    if (c.rendement == null || c.rendement <= 0 || c.rendement >= 2.5) continue;
-    if (!byChainFull[c.chain]) byChainFull[c.chain] = [];
-    byChainFull[c.chain].push(c.rendement);
+  // Top / Flop : Summary % mois par chaîne (≥3 jours avec données)
+  const chainPerfs = [];
+  for (const k of chainKeys) {
+    const rend = calcRendementSummary(month, null, k);
+    if (rend == null || rend <= 0 || rend >= 2.5) continue;
+    let nDays = 0;
+    for (const d of dates) {
+      const rd = calcRendementSummary(month, d, k);
+      if (rd != null && rd > 0 && rd < 2.5) nDays++;
+    }
+    if (nDays >= 3) chainPerfs.push({ chain: k, rend, n: nDays });
   }
-  const chainPerfs = Object.entries(byChainFull).filter(([_,arr])=>arr.length>=3).map(([k,arr]) => ({ chain: +k, rend: arr.reduce((s,x)=>s+x,0)/arr.length, n: arr.length }));
 
   const best = [...chainPerfs].sort((a,b)=>b.rend - a.rend).slice(0,5);
   const worst = [...chainPerfs].sort((a,b)=>a.rend - b.rend).slice(0,5);
   const elBest = document.getElementById('rd-top-list');
   if (elBest) {
-    elBest.innerHTML = best.length ? best.map((p,i)=>`<div class="lb-row"><div class="lb-rank">${i+1}</div><div class="lb-name">Ch${String(p.chain).padStart(2,'0')}<small>${p.n} observations</small></div><div class="lb-val" style="color:${rendColor(p.rend)}">${fmtPct(p.rend)}</div></div>`).join('')
+    elBest.innerHTML = best.length ? best.map((p,i)=>`<div class="lb-row"><div class="lb-rank">${i+1}</div><div class="lb-name">Ch${String(p.chain).padStart(2,'0')}<small>${p.n} jour(s)</small></div><div class="lb-val" style="color:${rendColor(p.rend)}">${fmtPct(p.rend)}</div></div>`).join('')
       : '<div class="anom-inspector-empty">Pas assez d\'observations (≥3) pour classer</div>';
   }
   const elFlop = document.getElementById('rd-flop-list');
   if (elFlop) {
-    elFlop.innerHTML = worst.length ? worst.map((p,i)=>`<div class="lb-row"><div class="lb-rank" style="background:linear-gradient(135deg,var(--red) 0%,var(--orange) 100%);box-shadow:0 4px 10px rgba(244,63,94,0.30)">${i+1}</div><div class="lb-name">Ch${String(p.chain).padStart(2,'0')}<small>${p.n} observations</small></div><div class="lb-val" style="color:${rendColor(p.rend)}">${fmtPct(p.rend)}</div></div>`).join('')
+    elFlop.innerHTML = worst.length ? worst.map((p,i)=>`<div class="lb-row"><div class="lb-rank" style="background:linear-gradient(135deg,var(--red) 0%,var(--orange) 100%);box-shadow:0 4px 10px rgba(244,63,94,0.30)">${i+1}</div><div class="lb-name">Ch${String(p.chain).padStart(2,'0')}<small>${p.n} jour(s)</small></div><div class="lb-val" style="color:${rendColor(p.rend)}">${fmtPct(p.rend)}</div></div>`).join('')
       : '<div class="anom-inspector-empty">Aucune chaîne en sous-performance — tout va bien</div>';
   }
   // Meilleure chaîne KPI
@@ -7220,28 +7260,14 @@ function calcVersFinalAL(abSortie, vt) {
 }
 
 function calcMetaVersFinalPct(lines, excelArr, month, date) {
-  let sumAK = 0;
-  let sumAL = 0;
   const d = date || saisieDate;
+  const acc = { al: 0, ak: 0 };
   for (const line of lines) {
     if (!isActiveProductionRow(line)) continue;
     const excel = excelArr ? findExcelBlock(excelArr, line) : null;
-    const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
-    const r2h = (line.effectifs_hours && line.effectifs_hours.length) ? line.effectifs_hours : ((excel && excel.r2_hours) || []);
-    const r3h = (line.stagiaire_hours && line.stagiaire_hours.length) ? line.stagiaire_hours : ((excel && excel.r3_hours) || []);
-    const vt = (line.methodes != null && !isNaN(line.methodes)) ? Number(line.methodes)
-      : ((excel && excel.r1_meth != null) ? Number(excel.r1_meth) : 0);
-    if (!vt) continue;
-    const abSortie = calcTotalSortieRow(r1h);
-    const abEff = calcTotalEffectifsRow(r2h, d);
-    const abStag = calcTotalStagiaireRow(r3h, d);
-    const ai = calcVersFinalAI(abEff, abStag);
-    sumAK += calcVersFinalAK(ai);
-    sumAL += calcVersFinalAL(abSortie, vt);
+    accumVersFinalFromLine(line, excel, d, acc);
   }
-  if (!sumAK || !isFinite(sumAK)) return null;
-  const r = sumAL / sumAK;
-  return isFinite(r) ? r : null;
+  return calcRendementSummaryPct(acc);
 }
 
 function updateExcelMetaVersPct() {
