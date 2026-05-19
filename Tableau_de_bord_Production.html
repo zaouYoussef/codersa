@@ -2711,8 +2711,11 @@ header.topbar {
   white-space: nowrap;
   vertical-align: middle;
 }
-.rap-table thead tr + tr th { border-top: none; }
+.rap-table thead tr + tr th { border-top: none; border-bottom: none; }
 .rap-table thead tr:last-child th { border-bottom: 1px solid #000; }
+.rap-table thead th.rap-hd-empty { border-top: none; border-bottom: none; background: transparent; }
+.rap-table thead tr:first-child th.rap-hd-empty { border-top: 1px solid #000; }
+.rap-table thead tr:last-child th.rap-hd-empty { border-bottom: 1px solid #000; }
 .rap-table tbody td {
   padding: 2px 4px;
   border: none;
@@ -6333,25 +6336,24 @@ function rapHtmlHManq(month, dates) {
     html += rapCegidFooter(1);
     return html;
   }
-  html += '<table class="rap-table">';
-  /* Ordre exact des 15 colonnes (cf. en-tête CEGID demandé) :
-     CH | DATE | N°IMP | MODELE | DT | HRS/J | PROD. |
-     DESIG | VT | H PRES | PR/H | H . MANQ |
-     Rend % | OB.H.LA | % MQ                                       */
+  html += '<table class="rap-table rap-table-hmanq">';
+  /* Ordre exact des 15 colonnes demandé par l'utilisateur :
+     CH | DATE | N°IMP | MODELE | DESIG | VT | H PRES | DT |
+     PR/H | HRS/J | PROD. | REND % | H.MANQ | OB.H.LA | % MQ */
   html += '<thead><tr>'
     + '<th class="center">CH</th>'
     + '<th class="center">DATE</th>'
     + '<th class="center">N°IMP</th>'
     + '<th class="left">MODELE</th>'
-    + '<th class="center">DT</th>'
-    + '<th class="right">HRS/J</th>'
-    + '<th class="right">PROD.</th>'
     + '<th class="left">DESIG</th>'
     + '<th class="right">VT</th>'
     + '<th class="right">H PRES</th>'
+    + '<th class="center">DT</th>'
     + '<th class="right">PR/H</th>'
+    + '<th class="right">HRS/J</th>'
+    + '<th class="right">PROD.</th>'
+    + '<th class="right">REND %</th>'
     + '<th class="right">H . MANQ</th>'
-    + '<th class="right">Rend %</th>'
     + '<th class="right">OB.H.LA</th>'
     + '<th class="right">% MQ</th>'
     + '</tr></thead><tbody>';
@@ -6362,32 +6364,30 @@ function rapHtmlHManq(month, dates) {
       + `<td class="center">${rapFmtDate(r.date)}</td>`
       + `<td class="center">${_rapEscapeHtml(r.imp || '')}</td>`
       + `<td class="left">${_rapEscapeHtml(r.modele || '')}</td>`
-      + `<td class="center">${r.dt}</td>`
-      + `<td class="num">${rapFmtHrs(r.hJour)}</td>`
-      + `<td class="num">${rapFmtInt(r.prod)}</td>`
       + `<td class="left">${_rapEscapeHtml(r.desig || '')}</td>`
-      + `<td class="num">${fmtDecFr(r.vt, 2)}</td>`
-      + `<td class="num">${rapFmtHrs(r.hPres)}</td>`
+      + `<td class="num">${r.vt ? fmtDecFr(r.vt, 2) : ''}</td>`
+      + `<td class="num">${r.hPres ? rapFmtHrs(r.hPres) : ''}</td>`
+      + `<td class="center">${r.dt}</td>`
       + `<td class="num">${rapFmtInt(r.prh)}</td>`
-      + `<td class="num ${hManqCls}">${rapFmtSigned(r.hManq)}</td>`
+      + `<td class="num">${r.hJour ? rapFmtHrs(r.hJour) : ''}</td>`
+      + `<td class="num">${r.sortie ? rapFmtInt(r.sortie) : ''}</td>`
       + `<td class="pct">${rapFmtPct(r.rend)}</td>`
+      + `<td class="num ${hManqCls}">${rapFmtSigned(r.hManq)}</td>`
       + `<td class="num">${rapFmtHrs(r.obHla)}</td>`
       + `<td class="pct">${rapFmtPctDec(r.pctMq)}</td>`
       + '</tr>';
   }
   html += '</tbody><tfoot>'
     + '<tr>'
-    +   '<td colspan="3" class="left">Cumul</td>'
-    +   '<td class="left"></td>'
-    +   '<td class="center"></td>'
-    +   `<td class="num">${rapFmtHrs(data.tot.hrsJ)}</td>`
-    +   '<td class="num"></td>'
-    +   '<td class="left"></td>'
+    +   '<td colspan="5" class="left">Cumul</td>'
     +   `<td class="num">${data.tot.vt != null ? fmtDecFr(data.tot.vt, 2) : ''}</td>`
     +   `<td class="num">${rapFmtHrs(data.tot.hPres)}</td>`
+    +   '<td class="center"></td>'
     +   '<td class="num"></td>'
-    +   `<td class="num">${rapFmtSigned(data.tot.hManq)}</td>`
+    +   `<td class="num">${rapFmtHrs(data.tot.hrsJ)}</td>`
+    +   `<td class="num">${rapFmtInt(data.tot.sortie)}</td>`
     +   `<td class="pct">${rapFmtPctDec(data.tot.rend)}</td>`
+    +   `<td class="num">${rapFmtSigned(data.tot.hManq)}</td>`
     +   `<td class="num">${rapFmtHrs(data.tot.obHla)}</td>`
     +   `<td class="pct">${rapFmtPctDec(data.tot.pctMq)}</td>`
     + '</tr>'
