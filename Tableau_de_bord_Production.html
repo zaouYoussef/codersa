@@ -5842,15 +5842,40 @@ function _rapFrToIsoLocal(fr) {
   return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : fr;
 }
 
+/**
+ * Compare deux dates sous forme [Y,M,D] (M 1-indexé). Retourne <0, 0, >0.
+ * Comparaison purement numérique : indépendante du fuseau horaire,
+ * donc dateDebut et dateFin sont toutes deux strictement inclusives.
+ */
+function _rapCmpYMD(a, b) {
+  if (a[0] !== b[0]) return a[0] - b[0];
+  if (a[1] !== b[1]) return a[1] - b[1];
+  return a[2] - b[2];
+}
+function _rapFrYMD(fr) {
+  if (!fr) return null;
+  const p = String(fr).split('-');
+  if (p.length !== 3) return null;
+  return [+p[2], +p[1], +p[0]];
+}
+function _rapIsoYMD(iso) {
+  if (!iso) return null;
+  const p = String(iso).split('-');
+  if (p.length !== 3) return null;
+  return [+p[0], +p[1], +p[2]];
+}
 function rapDatesInRange(month) {
   const info = PRODUCTION[month];
   if (!info) return [];
   const all = info.daily_sheets || [];
-  const t0 = RAPPORTS_STATE.dateDebutIso ? new Date(RAPPORTS_STATE.dateDebutIso).getTime() : -Infinity;
-  const t1 = RAPPORTS_STATE.dateFinIso ? new Date(RAPPORTS_STATE.dateFinIso).getTime() : Infinity;
+  const ymdMin = _rapIsoYMD(RAPPORTS_STATE.dateDebutIso);
+  const ymdMax = _rapIsoYMD(RAPPORTS_STATE.dateFinIso);
   return all.filter(fr => {
-    const t = _rapFrToTs(fr);
-    return !isNaN(t) && t >= t0 && t <= t1;
+    const ymd = _rapFrYMD(fr);
+    if (!ymd) return false;
+    if (ymdMin && _rapCmpYMD(ymd, ymdMin) < 0) return false;
+    if (ymdMax && _rapCmpYMD(ymd, ymdMax) > 0) return false;
+    return true;
   });
 }
 
