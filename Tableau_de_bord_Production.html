@@ -6118,19 +6118,21 @@ function rapHtmlRdtCh(month, dates) {
     +   '<th>HEURES PRESENCE</th>'
     + '</tr>'
     + '</thead><tbody>';
+  /* G.pdf indique "HEURES PRODUCTION" / "HEURES PRESENCE" : on convertit
+     les minutes en heures (arrondi à l'entier, séparateur espace). */
   for (const r of data.rows) {
     html += '<tr>'
       + `<td class="left strong">${rapFmtCh(r.chain)}</td>`
       + `<td class="pct">${rapFmtPct(r.rendPct)}</td>`
-      + `<td class="num">${rapFmtIntSp(r.prodMin)}</td>`
-      + `<td class="num">${rapFmtIntSp(r.presMin)}</td>`
+      + `<td class="num">${rapFmtIntSp(Math.round(r.prodMin / 60))}</td>`
+      + `<td class="num">${rapFmtIntSp(Math.round(r.presMin / 60))}</td>`
       + '</tr>';
   }
   html += '</tbody><tfoot><tr>'
     + '<td class="left">Cumul</td>'
     + `<td class="pct">${rapFmtPct(data.totals.rendPct)}</td>`
-    + `<td class="num">${rapFmtIntSp(data.totals.prodMin)}</td>`
-    + `<td class="num">${rapFmtIntSp(data.totals.presMin)}</td>`
+    + `<td class="num">${rapFmtIntSp(Math.round(data.totals.prodMin / 60))}</td>`
+    + `<td class="num">${rapFmtIntSp(Math.round(data.totals.presMin / 60))}</td>`
     + '</tr></tfoot></table>';
   html += rapCegidFooter(1);
   return html;
@@ -6201,15 +6203,17 @@ function rapHtmlSituation(month, dates) {
     return html;
   }
   html += '<table class="rap-table">';
+  /* Ordre exact des 8 colonnes demandé par l'utilisateur :
+     Chaine | Modele | N° Import | Designation | Client | ENTRE | Encours | SORTIE */
   html += '<thead><tr>'
+    + '<th class="center">Chaine</th>'
     + '<th class="left">Modele</th>'
     + '<th class="center">N° Import</th>'
     + '<th class="left">Designation</th>'
+    + '<th class="left">Client</th>'
     + '<th class="right">ENTRE</th>'
     + '<th class="right">Encours</th>'
     + '<th class="right">SORTIE</th>'
-    + '<th class="left">Client</th>'
-    + '<th class="center">Chaine</th>'
     + '</tr></thead><tbody>';
   for (const g of data.groups) {
     let subEntre = 0, subSortie = 0, subEncours = 0;
@@ -6217,32 +6221,30 @@ function rapHtmlSituation(month, dates) {
       const r = g.rows[i];
       subEntre += r.entre; subSortie += r.sortie; subEncours += r.encours;
       html += '<tr>'
+        + `<td class="center">${rapChShort(r.chain)}</td>`
         + `<td class="left">${i === 0 ? _rapEscapeHtml(g.modele) : ''}</td>`
         + `<td class="center">${i === 0 ? _rapEscapeHtml(g.import) : ''}</td>`
         + `<td class="left">${i === 0 ? _rapEscapeHtml(g.desig) : ''}</td>`
+        + `<td class="left">${_rapEscapeHtml(r.client)}</td>`
         + `<td class="num">${rapFmtInt(r.entre)}</td>`
         + `<td class="num">${rapFmtInt(r.encours)}</td>`
         + `<td class="num">${rapFmtInt(r.sortie)}</td>`
-        + `<td class="left">${_rapEscapeHtml(r.client)}</td>`
-        + `<td class="center">${rapChShort(r.chain)}</td>`
         + '</tr>';
     }
     html += '<tr class="subtotal">'
-      + '<td colspan="3" class="right">&nbsp;</td>'
+      + '<td colspan="4" class="right">&nbsp;</td>'
+      + '<td class="left strong">TOTAL</td>'
       + `<td class="num">${rapFmtInt(subEntre)}</td>`
       + `<td class="num">${rapFmtInt(subEncours)}</td>`
       + `<td class="num">${rapFmtInt(subSortie)}</td>`
-      + '<td class="left strong">TOTAL</td>'
-      + '<td></td>'
       + '</tr>';
   }
   html += '</tbody><tfoot><tr class="totalg">'
-    + '<td colspan="3" class="right">&nbsp;</td>'
+    + '<td colspan="4" class="right">&nbsp;</td>'
+    + '<td class="left strong">TOTAL</td>'
     + `<td class="num">${rapFmtInt(data.totals.entre)}</td>`
     + `<td class="num">${rapFmtInt(data.totals.encours)}</td>`
     + `<td class="num">${rapFmtInt(data.totals.sortie)}</td>`
-    + '<td class="left strong">TOTAL</td>'
-    + '<td></td>'
     + '</tr></tfoot></table>';
   html += rapCegidFooter(1);
   return html;
@@ -6367,7 +6369,7 @@ function rapHtmlHManq(month, dates) {
       + `<td class="left">${_rapEscapeHtml(r.desig || '')}</td>`
       + `<td class="num">${r.vt ? fmtDecFr(r.vt, 2) : ''}</td>`
       + `<td class="num">${r.hPres ? rapFmtHrs(r.hPres) : ''}</td>`
-      + `<td class="center">${r.dt}</td>`
+      + `<td class="num">${r.prod ? rapFmtInt(r.prod) : ''}</td>`
       + `<td class="num">${rapFmtInt(r.prh)}</td>`
       + `<td class="num">${r.hJour ? rapFmtHrs(r.hJour) : ''}</td>`
       + `<td class="num">${r.sortie ? rapFmtInt(r.sortie) : ''}</td>`
@@ -6392,8 +6394,7 @@ function rapHtmlHManq(month, dates) {
     +   `<td class="pct">${rapFmtPctDec(data.tot.pctMq)}</td>`
     + '</tr>'
     + '<tr>'
-    +   '<td colspan="6" class="right strong">Heures manquantes Net :</td>'
-    +   `<td colspan="9" class="num strong">${rapFmtSigned(data.tot.hManq)} h  (Σ |H.MANQ| = ${rapFmtSigned(data.tot.hManqAbs)} h)</td>`
+    +   `<td colspan="15" class="right strong">Heures manquantes Net : ${rapFmtSigned(data.tot.hManq)} h &nbsp;(Σ |H.MANQ| = ${rapFmtSigned(data.tot.hManqAbs)} h)</td>`
     + '</tr>'
     + '</tfoot></table>';
   html += rapCegidFooter(1);
@@ -6442,7 +6443,6 @@ function rapBuildSuivi(month, dates) {
       const minProd = abSortie * vt;
       const minPres = ai * 60;
       const rend = minPres ? minProd / minPres : null;
-      const sec = vt ? vt * 60 : null;
       const sortieObj = (ph && hJour) ? ph * hJour : null;
       const ret = (sortieObj != null) ? sortieObj - abSortie : null;
       const pctRet = (sortieObj && ret != null) ? ret / sortieObj : null;
@@ -6451,12 +6451,23 @@ function rapBuildSuivi(month, dates) {
       byCh.get(chKey).rows.push({
         date: d, imp: line.import, entre: abEntre, minProd,
         modele: mod, desig: line.desig, sortie: abSortie, rend,
-        sec, vt, minPres, hJour, ret, pctRet,
+        vt, minPres, hJour, ret, pctRet,
       });
     }
   }
   const groups = Array.from(byCh.values()).sort((a, b) => (a.chain || 0) - (b.chain || 0));
   for (const g of groups) g.rows.sort((a, b) => _rapFrToTs(a.date) - _rapFrToTs(b.date));
+  /* Attribution du numéro SEC : rang d'apparition du modèle dans la chaîne,
+     formaté sur 2 chiffres (01, 02, …) — conforme aux rapports CEGID. */
+  for (const g of groups) {
+    const modSeq = new Map();
+    for (const r of g.rows) {
+      const key = String(r.modele || '');
+      if (!modSeq.has(key)) modSeq.set(key, modSeq.size + 1);
+      const n = modSeq.get(key);
+      r.sec = n < 10 ? ('0' + n) : String(n);
+    }
+  }
   const totGroup = g => ({
     entre:   g.rows.reduce((a, r) => a + (r.entre   || 0), 0),
     sortie:  g.rows.reduce((a, r) => a + (r.sortie  || 0), 0),
@@ -6497,19 +6508,22 @@ function rapHtmlSuivi(month, dates) {
     return html;
   }
   html += '<table class="rap-table">';
+  /* Ordre exact des 14 colonnes demandé par l'utilisateur :
+     SEC | DATE | N°IMP | MODELE | DESIG | VT | HRS/J | MIN PROD | MIN PRES |
+     ENTRE | SORTIE | REND % | RET | % RET */
   html += '<thead><tr>'
+    + '<th class="center">SEC</th>'
     + '<th class="center">DATE</th>'
     + '<th class="center">N°IMP</th>'
-    + '<th class="right">ENTRE</th>'
-    + '<th class="right">Min Prod</th>'
     + '<th class="left">MODELE</th>'
     + '<th class="left">DESIG</th>'
+    + '<th class="right">VT</th>'
+    + '<th class="right">HRS/J</th>'
+    + '<th class="right">Min Prod</th>'
+    + '<th class="right">Min Pres</th>'
+    + '<th class="right">ENTRE</th>'
     + '<th class="right">SORTIE</th>'
     + '<th class="right">Rend %</th>'
-    + '<th class="right">SEC</th>'
-    + '<th class="right">VT</th>'
-    + '<th class="right">Min Pres</th>'
-    + '<th class="right">Hrs/J</th>'
     + '<th class="right">RET</th>'
     + '<th class="right">% RET</th>'
     + '</tr></thead><tbody>';
@@ -6517,46 +6531,46 @@ function rapHtmlSuivi(month, dates) {
     for (const r of g.rows) {
       const retCls = r.ret != null && r.ret > 0 ? 'neg' : (r.ret != null && r.ret < 0 ? 'pos' : '');
       html += '<tr>'
+        + `<td class="center">${_rapEscapeHtml(r.sec || '')}</td>`
         + `<td class="center">${rapFmtDateFull(r.date)}</td>`
         + `<td class="center">${_rapEscapeHtml(r.imp || '')}</td>`
-        + `<td class="num">${rapFmtInt(r.entre)}</td>`
-        + `<td class="num">${rapFmtIntSp(r.minProd)}</td>`
         + `<td class="left">${_rapEscapeHtml(r.modele || '')}</td>`
         + `<td class="left">${_rapEscapeHtml(r.desig || '')}</td>`
+        + `<td class="num">${fmtDecFr(r.vt, 2)}</td>`
+        + `<td class="num">${rapFmtHrs(r.hJour)}</td>`
+        + `<td class="num">${rapFmtIntSp(r.minProd)}</td>`
+        + `<td class="num">${rapFmtIntSp(r.minPres)}</td>`
+        + `<td class="num">${rapFmtInt(r.entre)}</td>`
         + `<td class="num">${rapFmtInt(r.sortie)}</td>`
         + `<td class="pct">${rapFmtPctDec(r.rend)}</td>`
-        + `<td class="num">${r.sec != null ? fmtDecFr(r.sec, 2) : ''}</td>`
-        + `<td class="num">${fmtDecFr(r.vt, 2)}</td>`
-        + `<td class="num">${rapFmtIntSp(r.minPres)}</td>`
-        + `<td class="num">${rapFmtHrs(r.hJour)}</td>`
         + `<td class="num ${retCls}">${rapFmtInt(r.ret)}</td>`
         + `<td class="pct">${rapFmtPctDec(r.pctRet)}</td>`
         + '</tr>';
     }
     html += '<tr class="subtotal">'
-      + `<td colspan="2" class="left strong">${rapFmtCh(g.chain)}</td>`
-      + `<td class="num">${rapFmtInt(g.totals.entre)}</td>`
+      + `<td colspan="4" class="left strong">${rapFmtCh(g.chain)}</td>`
+      + '<td></td>'
+      + '<td></td>'
+      + `<td class="num">${rapFmtHrs(g.totals.hrsJ)}</td>`
       + `<td class="num">${rapFmtIntSp(g.totals.minProd)}</td>`
-      + '<td colspan="2"></td>'
+      + `<td class="num">${rapFmtIntSp(g.totals.minPres)}</td>`
+      + `<td class="num">${rapFmtInt(g.totals.entre)}</td>`
       + `<td class="num">${rapFmtInt(g.totals.sortie)}</td>`
       + `<td class="pct">${rapFmtPctDec(g.totals.rend)}</td>`
-      + '<td></td><td></td>'
-      + `<td class="num">${rapFmtIntSp(g.totals.minPres)}</td>`
-      + `<td class="num">${rapFmtHrs(g.totals.hrsJ)}</td>`
       + `<td class="num">${rapFmtInt(g.totals.ret)}</td>`
       + `<td class="pct">${rapFmtPctDec(g.totals.pctRet)}</td>`
       + '</tr>';
   }
   html += '</tbody><tfoot><tr class="totalg">'
-    + '<td colspan="2" class="left strong">Cumul</td>'
-    + `<td class="num">${rapFmtInt(data.cumul.entre)}</td>`
+    + '<td colspan="4" class="left strong">Cumul</td>'
+    + '<td></td>'
+    + '<td></td>'
+    + `<td class="num">${rapFmtHrs(data.cumul.hrsJ)}</td>`
     + `<td class="num">${rapFmtIntSp(data.cumul.minProd)}</td>`
-    + '<td colspan="2"></td>'
+    + `<td class="num">${rapFmtIntSp(data.cumul.minPres)}</td>`
+    + `<td class="num">${rapFmtInt(data.cumul.entre)}</td>`
     + `<td class="num">${rapFmtInt(data.cumul.sortie)}</td>`
     + `<td class="pct">${rapFmtPctDec(data.cumul.rend)}</td>`
-    + '<td></td><td></td>'
-    + `<td class="num">${rapFmtIntSp(data.cumul.minPres)}</td>`
-    + `<td class="num">${rapFmtHrs(data.cumul.hrsJ)}</td>`
     + `<td class="num">${rapFmtInt(data.cumul.ret)}</td>`
     + `<td class="pct">${rapFmtPctDec(data.cumul.pctRet)}</td>`
     + '</tr></tfoot></table>';
@@ -7301,23 +7315,20 @@ function saveMethRuleFromForm(month) {
   const payload = { modele, dateDebut, dateFin, chains };
   const wasEdit = !!methRuleEditId;
   const mk = normalizeModeleKey(modele);
-  if (!wasEdit) {
-    const sameDates = rules.find(r =>
-      normalizeModeleKey(r.modele) === mk && r.dateDebut === dateDebut && r.dateFin === dateFin
-    );
-    if (sameDates) {
+  /* Vérification : pas de chevauchement avec une autre période du même modèle
+     (sauf elle-même en mode édition). Évite l'ambiguïté entre règles concurrentes. */
+  const overlap = rules.find(r =>
+    (!wasEdit || r.id !== methRuleEditId)
+    && normalizeModeleKey(r.modele) === mk
+    && methRuleDatesOverlap(dateDebut, dateFin, r.dateDebut, r.dateFin)
+  );
+  if (overlap) {
+    if (overlap.dateDebut === dateDebut && overlap.dateFin === dateFin) {
       toast('Une période existe déjà pour ce modèle et ces dates — cliquez « Modifier » sur la fiche ou changez les dates.', true);
-      return;
-    }
-  } else {
-    const overlap = rules.find(r =>
-      r.id !== methRuleEditId && normalizeModeleKey(r.modele) === mk
-      && methRuleDatesOverlap(dateDebut, dateFin, r.dateDebut, r.dateFin)
-    );
-    if (overlap) {
+    } else {
       toast('Les dates chevauchent une autre période du même modèle (' + overlap.dateDebut + ' → ' + overlap.dateFin + ').', true);
-      return;
     }
+    return;
   }
   if (wasEdit) {
     const idx = rules.findIndex(r => r.id === methRuleEditId);
@@ -7328,9 +7339,16 @@ function saveMethRuleFromForm(month) {
     methRuleEditId = null;
   }
   saveMethRulesForMonth(month, rules);
-  applyMethRulesToMonth(month);
+  /* Reset depuis snapshot puis ré-application : indispensable en mode édition
+     pour purger les anciennes valeurs si on a réduit la portée (retiré une
+     chaîne, raccourci la période, etc.). En création, c'est aussi propre. */
+  if (typeof reapplyAllOverridesAndMethRules === 'function') {
+    reapplyAllOverridesAndMethRules();
+  } else {
+    applyMethRulesToMonth(month);
+    syncMonthProductionMetrics(month);
+  }
   syncMethRulesToOverrides(month);
-  syncMonthProductionMetrics(month);
   if (saisieMonth === month && saisieDate) {
     buildSaisieBody();
     refreshSummaryStrip();
@@ -7353,8 +7371,15 @@ function deleteMethRule(month, ruleId) {
   const rules = methRulesForMonth(month).filter(r => r.id !== ruleId);
   saveMethRulesForMonth(month, rules);
   if (methRuleEditId === ruleId) resetMethRuleForm(month);
-  applyMethRulesToMonth(month);
-  syncMonthProductionMetrics(month);
+  /* Restauration propre : on repart des données originales puis on ré-applique
+     les overrides de saisie et les règles méthodes restantes. Sans cela, les
+     valeurs déjà injectées par la règle supprimée resteraient en mémoire. */
+  if (typeof reapplyAllOverridesAndMethRules === 'function') {
+    reapplyAllOverridesAndMethRules();
+  } else {
+    applyMethRulesToMonth(month);
+    syncMonthProductionMetrics(month);
+  }
   if (saisieMonth === month) { buildSaisieBody(); refreshSummaryStrip(); }
   renderMethRulesList(month);
   toast('Période supprimée.');
@@ -9943,6 +9968,27 @@ document.getElementById('meth-rules-chains-body')?.addEventListener('input', (e)
 
 // Bootstrap
 ensureTodayInData();
+/* Snapshot des données originales — utilisé pour restaurer correctement
+   l'état d'origine avant ré-application des règles méthodes (notamment
+   après une suppression de règle, sans recharger la page). */
+const __PRODUCTION_ORIGINAL = JSON.parse(JSON.stringify(PRODUCTION));
+const __EXCEL_SAISIE_ORIGINAL = window.EXCEL_SAISIE_DATA
+  ? JSON.parse(JSON.stringify(window.EXCEL_SAISIE_DATA))
+  : null;
+function restoreProductionFromSnapshot() {
+  for (const m of Object.keys(__PRODUCTION_ORIGINAL)) {
+    PRODUCTION[m] = JSON.parse(JSON.stringify(__PRODUCTION_ORIGINAL[m]));
+  }
+  if (__EXCEL_SAISIE_ORIGINAL) {
+    window.EXCEL_SAISIE_DATA = JSON.parse(JSON.stringify(__EXCEL_SAISIE_ORIGINAL));
+  }
+}
+function reapplyAllOverridesAndMethRules() {
+  restoreProductionFromSnapshot();
+  applyAllOverrides();
+  for (const m of Object.keys(PRODUCTION)) applyMethRulesToMonth(m);
+  syncAllProductionMetrics();
+}
 applyAllOverrides();
 for (const m of Object.keys(PRODUCTION)) {
   ensureMethRulesImportedFromData(m);
