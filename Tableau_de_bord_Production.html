@@ -2516,6 +2516,272 @@ header.topbar {
 .anom-cal-day.clean .cd-c { color: var(--green); }
 
 /* ============================================================ */
+/* PAGE RAPPORTS — tableaux style CEGID + export PDF              */
+/* ============================================================ */
+
+.rap-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+}
+.rap-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+}
+.rap-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-2);
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.rap-tab:hover { background: var(--surface-2); color: var(--text); }
+.rap-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.rap-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+.rap-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 140px;
+}
+.rap-field label {
+  font-size: 11px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+.rap-field input,
+.rap-field select {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 9px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.rap-field input:focus,
+.rap-field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(76,140,255,.18);
+}
+.rap-field-actions {
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-end;
+  min-width: 0;
+}
+.rap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background .15s, color .15s, border-color .15s, transform .1s;
+}
+.rap-btn:hover { background: var(--surface); transform: translateY(-1px); }
+.rap-btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
+.rap-btn-print {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.rap-btn-print:hover { background: var(--accent); color: #fff; filter: brightness(1.05); }
+.rap-field[hidden] { display: none !important; }
+
+/* Document imprimable */
+.rap-doc {
+  background: #fff;
+  color: #111;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.18);
+  font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
+  font-size: 11.5px;
+  line-height: 1.45;
+  min-height: 600px;
+}
+[data-theme="dark"] .rap-doc {
+  background: #fafafa;
+  color: #111;
+}
+.rap-doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #111;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+.rap-doc-brand-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .05em;
+}
+.rap-doc-brand-sub {
+  font-size: 11px;
+  color: #666;
+}
+.rap-doc-meta {
+  text-align: right;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.rap-doc-meta strong { font-weight: 700; }
+.rap-doc-body { margin-top: 6px; overflow-x: auto; }
+@media print { .rap-doc-body { overflow: visible !important; } }
+.rap-doc-footer {
+  margin-top: 14px;
+  padding-top: 8px;
+  border-top: 1px dashed #888;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: #555;
+}
+
+.rap-empty {
+  text-align: center;
+  color: #999;
+  padding: 60px 20px;
+  font-family: var(--font-sans, system-ui), sans-serif;
+  font-size: 13px;
+}
+
+/* Tableaux CEGID-like */
+.rap-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 14px;
+  font-size: 11px;
+}
+.rap-table caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 6px 0;
+  letter-spacing: .03em;
+}
+.rap-table thead th {
+  background: #e9e9e9;
+  border-top: 1.5px solid #111;
+  border-bottom: 1.5px solid #111;
+  padding: 5px 6px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.rap-table tbody td {
+  padding: 4px 6px;
+  border-bottom: 1px dotted #bbb;
+  vertical-align: middle;
+}
+.rap-table tbody tr:nth-child(even) td { background: #f6f6f6; }
+.rap-table tbody tr:hover td { background: #fff3cd; }
+.rap-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.rap-table .pct { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.rap-table .pct.good { color: #1f7a3a; }
+.rap-table .pct.warn { color: #b86b00; }
+.rap-table .pct.bad  { color: #b3261e; }
+.rap-table .center { text-align: center; }
+.rap-table .ch { font-weight: 700; }
+.rap-table .neg { color: #b3261e; }
+.rap-table .pos { color: #1f7a3a; }
+.rap-table tfoot td {
+  border-top: 1.5px solid #111;
+  border-bottom: 1.5px double #111;
+  font-weight: 700;
+  background: #e9e9e9;
+  padding: 6px;
+}
+.rap-table .ssort {
+  background: #f0e9ff;
+  font-weight: 700;
+}
+.rap-table .ssort td { border-top: 1px solid #888; }
+
+/* Bandeau "RUPTURE" pour table de suivi */
+.rap-section-title {
+  margin: 14px 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  background: #111;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* ========== Mode IMPRESSION : ressemble à un PDF CEGID ============ */
+@media print {
+  @page { size: A4 landscape; margin: 12mm; }
+  body { background: #fff !important; color: #111 !important; }
+  /* Masquer header global et autres pages */
+  body > header,
+  .month-switcher,
+  .tabs-row,
+  .no-print,
+  .page:not(#page-rapports) { display: none !important; }
+  /* Forcer la page rapports en mode plein */
+  #page-rapports { display: block !important; padding: 0 !important; }
+  main.wrap { padding: 0 !important; max-width: none !important; }
+  .rap-doc {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    color: #111 !important;
+    min-height: 0 !important;
+    font-size: 10.5px !important;
+  }
+  .rap-table thead th,
+  .rap-table tfoot td { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rap-table tbody tr:nth-child(even) td { background: #f6f6f6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rap-table tbody tr:hover td { background: transparent !important; }
+  .rap-section-title { background: #000 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rap-doc-page-num { display: inline; }
+  .rap-page-break { page-break-after: always; }
+}
+
+/* ============================================================ */
 /* PAGES OVERVIEW / RENDEMENT / CHAÎNES / CLIENTS / MODÈLES /     */
 /* EFFECTIFS / DÉTAIL — éléments de contenu                       */
 /* ============================================================ */
@@ -3174,6 +3440,10 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
         VT / P/H / EFF
       </button>
+      <button class="tab" data-page="rapports">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Rapports
+      </button>
       <button class="tab active" data-page="overview">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Vue d'ensemble
@@ -3364,6 +3634,77 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
           </select>
         </div>
         <div class="meth-rules-list" id="meth-rules-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE: RAPPORTS — Tableaux conformes aux rapports CEGID (export PDF via impression) -->
+  <section class="page" id="page-rapports">
+    <div class="page-head no-print">
+      <div class="left">
+        <h2><span id="rap-month">MAI</span> · <span class="accent">Rapports</span></h2>
+        <div class="sub">Tableaux au format CEGID — rendement par chaîne, situation, heures manquantes, suivi. Sélectionnez la période puis exportez en PDF.</div>
+      </div>
+      <div class="pill-meta"><span class="dot"></span><span id="rap-range">—</span></div>
+    </div>
+
+    <div class="rap-toolbar no-print">
+      <div class="rap-tabs" role="tablist">
+        <button type="button" class="rap-tab active" data-rap="rdt-ch">Rendement Chaînes</button>
+        <button type="button" class="rap-tab" data-rap="situation">Situation par chaîne</button>
+        <button type="button" class="rap-tab" data-rap="hmanq">Rendement + Heures manquantes</button>
+        <button type="button" class="rap-tab" data-rap="suivi">Suivi Production / Modèle / Chaîne / Date</button>
+      </div>
+      <div class="rap-filters">
+        <div class="rap-field">
+          <label for="rap-date-debut">Date début</label>
+          <input type="date" id="rap-date-debut">
+        </div>
+        <div class="rap-field">
+          <label for="rap-date-fin">Date fin</label>
+          <input type="date" id="rap-date-fin">
+        </div>
+        <div class="rap-field" id="rap-field-chain">
+          <label for="rap-chain">Chaîne</label>
+          <select id="rap-chain"><option value="">Toutes</option></select>
+        </div>
+        <div class="rap-field" id="rap-field-modele">
+          <label for="rap-modele">Modèle</label>
+          <input type="text" id="rap-modele" list="rap-modele-datalist" placeholder="Tous" autocomplete="off">
+          <datalist id="rap-modele-datalist"></datalist>
+        </div>
+        <div class="rap-field rap-field-actions">
+          <button type="button" class="rap-btn rap-btn-refresh" id="rap-refresh-btn" title="Recalculer le rapport">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Actualiser
+          </button>
+          <button type="button" class="rap-btn rap-btn-print" id="rap-print-btn" title="Imprimer / Exporter en PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Exporter PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Document imprimable (mis en page comme un PDF CEGID) -->
+    <div class="rap-doc" id="rap-doc">
+      <div class="rap-doc-header">
+        <div class="rap-doc-brand">
+          <div class="rap-doc-brand-title">CODERSA</div>
+          <div class="rap-doc-brand-sub">Tableau de bord Production</div>
+        </div>
+        <div class="rap-doc-meta">
+          <div><strong>Rapport :</strong> <span id="rap-doc-title">—</span></div>
+          <div><strong>Période :</strong> <span id="rap-doc-period">—</span></div>
+          <div><strong>Édité le :</strong> <span id="rap-doc-edited">—</span></div>
+        </div>
+      </div>
+      <div class="rap-doc-body" id="rap-doc-body">
+        <div class="rap-empty">Choisissez un rapport et une période, puis cliquez sur « Actualiser ».</div>
+      </div>
+      <div class="rap-doc-footer">
+        <div class="rap-doc-footer-left"><span id="rap-doc-footer-text">Fin du document</span></div>
+        <div class="rap-doc-footer-right">Page <span class="rap-doc-page-num">1</span></div>
       </div>
     </div>
   </section>
@@ -5483,9 +5824,528 @@ function prepareDashboardMetrics(month) {
   syncMonthProductionMetrics(month);
 }
 
+/* ================================================================ */
+/* MODULE RAPPORTS — tables CEGID + export PDF                       */
+/* ================================================================ */
+
+const RAPPORTS_STATE = {
+  type: 'rdt-ch',          // 'rdt-ch' | 'situation' | 'hmanq' | 'suivi'
+  dateDebutIso: null,
+  dateFinIso: null,
+  chain: null,
+  modele: '',
+  _bound: false,
+};
+
+const RAPPORTS_DEFS = {
+  'rdt-ch':    { title: 'Rendement par chaîne',                 needs: { date: true,  chain: false, modele: false } },
+  'situation': { title: 'Situation par chaîne',                  needs: { date: true,  chain: true,  modele: true  } },
+  'hmanq':     { title: 'Rendement + heures manquantes',         needs: { date: true,  chain: true,  modele: false } },
+  'suivi':     { title: 'Suivi production / modèle / chaîne / date', needs: { date: true, chain: true, modele: true } },
+};
+
+function _rapEscapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function _rapFrToTs(fr) {
+  if (!fr) return NaN;
+  const p = String(fr).split('-');
+  if (p.length !== 3) return NaN;
+  return new Date(+p[2], +p[1] - 1, +p[0]).getTime();
+}
+function _rapIsoToFr(iso) {
+  if (!iso) return '';
+  const p = iso.split('-');
+  return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : iso;
+}
+function _rapFrToIsoLocal(fr) {
+  if (!fr) return '';
+  const p = String(fr).split('-');
+  return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : fr;
+}
+
+function rapDatesInRange(month) {
+  const info = PRODUCTION[month];
+  if (!info) return [];
+  const all = info.daily_sheets || [];
+  const t0 = RAPPORTS_STATE.dateDebutIso ? new Date(RAPPORTS_STATE.dateDebutIso).getTime() : -Infinity;
+  const t1 = RAPPORTS_STATE.dateFinIso ? new Date(RAPPORTS_STATE.dateFinIso).getTime() : Infinity;
+  return all.filter(fr => {
+    const t = _rapFrToTs(fr);
+    return !isNaN(t) && t >= t0 && t <= t1;
+  });
+}
+
+function rapInitOnce() {
+  if (RAPPORTS_STATE._bound) return;
+  RAPPORTS_STATE._bound = true;
+  document.querySelectorAll('#page-rapports .rap-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = btn.dataset.rap;
+      if (!t || !RAPPORTS_DEFS[t]) return;
+      RAPPORTS_STATE.type = t;
+      document.querySelectorAll('#page-rapports .rap-tab').forEach(b => b.classList.toggle('active', b === btn));
+      rapApplyVisibleFilters();
+      rapRenderActiveTab();
+    });
+  });
+  document.getElementById('rap-date-debut').addEventListener('change', e => {
+    RAPPORTS_STATE.dateDebutIso = e.target.value || null;
+    rapRenderActiveTab();
+  });
+  document.getElementById('rap-date-fin').addEventListener('change', e => {
+    RAPPORTS_STATE.dateFinIso = e.target.value || null;
+    rapRenderActiveTab();
+  });
+  document.getElementById('rap-chain').addEventListener('change', e => {
+    const v = e.target.value;
+    RAPPORTS_STATE.chain = (v === '' || isNaN(v)) ? null : Number(v);
+    rapRenderActiveTab();
+  });
+  document.getElementById('rap-modele').addEventListener('input', e => {
+    RAPPORTS_STATE.modele = e.target.value || '';
+    rapRenderActiveTab();
+  });
+  document.getElementById('rap-refresh-btn').addEventListener('click', () => {
+    prepareDashboardMetrics(currentMonth);
+    rapRenderActiveTab();
+  });
+  document.getElementById('rap-print-btn').addEventListener('click', () => {
+    rapRenderActiveTab();
+    setTimeout(() => window.print(), 60);
+  });
+}
+
+function rapApplyVisibleFilters() {
+  const def = RAPPORTS_DEFS[RAPPORTS_STATE.type] || RAPPORTS_DEFS['rdt-ch'];
+  document.getElementById('rap-field-chain').hidden  = !def.needs.chain;
+  document.getElementById('rap-field-modele').hidden = !def.needs.modele;
+}
+
+function rapSyncOptions(month) {
+  const info = PRODUCTION[month];
+  if (!info) return;
+  const sheets = info.daily_sheets || [];
+  const firstIso = sheets.length ? _rapFrToIsoLocal(sheets[0]) : '';
+  const lastIso  = sheets.length ? _rapFrToIsoLocal(sheets[sheets.length - 1]) : '';
+  const inD = document.getElementById('rap-date-debut');
+  const inF = document.getElementById('rap-date-fin');
+  if (!RAPPORTS_STATE.dateDebutIso) { RAPPORTS_STATE.dateDebutIso = firstIso || null; }
+  if (!RAPPORTS_STATE.dateFinIso)   { RAPPORTS_STATE.dateFinIso   = lastIso  || null; }
+  inD.value = RAPPORTS_STATE.dateDebutIso || '';
+  inF.value = RAPPORTS_STATE.dateFinIso || '';
+
+  const chains = new Set();
+  const modeles = new Set();
+  for (const d of sheets) {
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line)) continue;
+      if (line.chain != null) chains.add(Number(line.chain));
+      if (line.modele) modeles.add(String(line.modele));
+    }
+  }
+  const chSel = document.getElementById('rap-chain');
+  const prev = String(RAPPORTS_STATE.chain != null ? RAPPORTS_STATE.chain : '');
+  chSel.innerHTML = '<option value="">Toutes</option>' +
+    Array.from(chains).sort((a,b)=>a-b).map(c => `<option value="${c}">Ch${String(c).padStart(2,'0')}</option>`).join('');
+  chSel.value = prev;
+
+  const dl = document.getElementById('rap-modele-datalist');
+  dl.innerHTML = Array.from(modeles).sort().map(m => `<option value="${m}"></option>`).join('');
+  document.getElementById('rap-modele').value = RAPPORTS_STATE.modele || '';
+}
+
+function rapPctClass(pct) {
+  if (pct == null) return '';
+  if (pct >= 0.75) return 'good';
+  if (pct >= 0.55) return 'warn';
+  return 'bad';
+}
+function rapFmtPct(pct) {
+  if (pct == null || !isFinite(pct)) return '—';
+  return Math.round(pct * 100) + ' %';
+}
+function rapFmtPctDec(pct) {
+  if (pct == null || !isFinite(pct)) return '—';
+  return fmtDecFr(pct * 100, 2) + ' %';
+}
+function rapFmtMin(v)   { if (v == null || !isFinite(v)) return '—'; return Math.round(v).toString(); }
+function rapFmtHrs(v)   { if (v == null || !isFinite(v)) return '—'; return fmtDecFr(v, 2); }
+function rapFmtInt(v)   { if (v == null || !isFinite(v)) return '—'; return Math.round(v).toString(); }
+function rapFmtSigned(v){ if (v == null || !isFinite(v)) return '—'; return (v >= 0 ? '+' : '') + fmtDecFr(v, 2); }
+
+function rapRenderActiveTab() {
+  rapApplyVisibleFilters();
+  const def = RAPPORTS_DEFS[RAPPORTS_STATE.type] || RAPPORTS_DEFS['rdt-ch'];
+  const dates = rapDatesInRange(currentMonth);
+  const month = currentMonth;
+  document.getElementById('rap-month').textContent = month;
+  const periodTxt = dates.length
+    ? (dates[0] + ' → ' + dates[dates.length - 1] + ' (' + dates.length + ' j.)')
+    : 'aucune journée';
+  document.getElementById('rap-range').textContent = periodTxt;
+  document.getElementById('rap-doc-title').textContent  = def.title;
+  document.getElementById('rap-doc-period').textContent = periodTxt;
+  document.getElementById('rap-doc-edited').textContent = new Date().toLocaleString('fr-FR');
+  document.getElementById('rap-doc-footer-text').textContent = 'Fin du document · ' + def.title + ' · ' + month;
+
+  const body = document.getElementById('rap-doc-body');
+  if (!dates.length) {
+    body.innerHTML = '<div class="rap-empty">Aucune journée dans la période sélectionnée.</div>';
+    return;
+  }
+  switch (RAPPORTS_STATE.type) {
+    case 'rdt-ch':    body.innerHTML = rapHtmlRdtCh(month, dates); break;
+    case 'situation': body.innerHTML = rapHtmlSituation(month, dates); break;
+    case 'hmanq':     body.innerHTML = rapHtmlHManq(month, dates); break;
+    case 'suivi':     body.innerHTML = rapHtmlSuivi(month, dates); break;
+    default:          body.innerHTML = '<div class="rap-empty">Type de rapport inconnu.</div>';
+  }
+}
+
+/* ---- Rapport 1 : Rendement par chaîne (mois) ---- */
+function rapBuildRdtCh(month, dates) {
+  const info = PRODUCTION[month];
+  const byCh = new Map();
+  for (const d of dates) {
+    const excelArr = getExcelDataForDate(d);
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line)) continue;
+      const ch = Number(line.chain);
+      if (isNaN(ch)) continue;
+      if (!byCh.has(ch)) byCh.set(ch, { ch, prodMin: 0, presMin: 0 });
+      const slot = byCh.get(ch);
+      const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+      const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
+      const r2h = (line.effectifs_hours && line.effectifs_hours.length) ? line.effectifs_hours : ((excel && excel.r2_hours) || []);
+      const r3h = (line.stagiaire_hours && line.stagiaire_hours.length) ? line.stagiaire_hours : ((excel && excel.r3_hours) || []);
+      const vt = (line.methodes != null && !isNaN(line.methodes)) ? Number(line.methodes)
+        : ((excel && excel.r1_meth != null) ? Number(excel.r1_meth) : 0);
+      if (!vt) continue;
+      const abSortie = calcTotalSortieRow(r1h);
+      const abEff = calcTotalEffectifsRow(r2h, d);
+      const abStag = calcTotalStagiaireRow(r3h, d);
+      const ai = calcVersFinalAI(abEff, abStag);
+      slot.prodMin += abSortie * vt;
+      slot.presMin += ai * 60;
+    }
+  }
+  const rows = Array.from(byCh.values()).sort((a, b) => a.ch - b.ch).map(s => ({
+    chain: s.ch,
+    prodMin: s.prodMin,
+    presMin: s.presMin,
+    rendPct: s.presMin ? s.prodMin / s.presMin : null,
+  }));
+  const totalProd = rows.reduce((a, r) => a + r.prodMin, 0);
+  const totalPres = rows.reduce((a, r) => a + r.presMin, 0);
+  return {
+    rows,
+    totals: { rendPct: totalPres ? totalProd / totalPres : null, prodMin: totalProd, presMin: totalPres },
+  };
+}
+function rapHtmlRdtCh(month, dates) {
+  const data = rapBuildRdtCh(month, dates);
+  if (!data.rows.length) return '<div class="rap-empty">Aucune ligne de production dans la période.</div>';
+  let html = '<table class="rap-table"><caption>Rendement par chaîne — ' + month + '</caption>';
+  html += '<thead><tr><th>Chaîne</th><th>Rend %</th><th>Heures Production<br><span style="font-weight:400;font-size:9px;">(min objectif)</span></th><th>Heures Présence<br><span style="font-weight:400;font-size:9px;">(min réels)</span></th></tr></thead><tbody>';
+  for (const r of data.rows) {
+    const cls = rapPctClass(r.rendPct);
+    html += `<tr>`
+      + `<td class="ch center">Ch${String(r.chain).padStart(2,'0')}</td>`
+      + `<td class="pct ${cls}">${rapFmtPct(r.rendPct)}</td>`
+      + `<td class="num">${rapFmtMin(r.prodMin)}</td>`
+      + `<td class="num">${rapFmtMin(r.presMin)}</td>`
+      + `</tr>`;
+  }
+  html += '</tbody><tfoot><tr>'
+    + `<td class="center">Cumul</td>`
+    + `<td class="pct ${rapPctClass(data.totals.rendPct)}">${rapFmtPct(data.totals.rendPct)}</td>`
+    + `<td class="num">${rapFmtMin(data.totals.prodMin)}</td>`
+    + `<td class="num">${rapFmtMin(data.totals.presMin)}</td>`
+    + '</tr></tfoot></table>';
+  return html;
+}
+
+/* ---- Rapport 2 : Situation par chaîne (ENTRE / ENCOURS / SORTIE par modèle) ---- */
+function rapBuildSituation(month, dates) {
+  const info = PRODUCTION[month];
+  const byKey = new Map();
+  const modFilter = (RAPPORTS_STATE.modele || '').trim().toLowerCase();
+  const chFilter = RAPPORTS_STATE.chain != null ? Number(RAPPORTS_STATE.chain) : null;
+  for (const d of dates) {
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line)) continue;
+      if (chFilter != null && Number(line.chain) !== chFilter) continue;
+      const mod = String(line.modele || '').trim();
+      if (modFilter && !mod.toLowerCase().includes(modFilter)) continue;
+      const key = `${mod}|${line.import || ''}|${line.chain || ''}`;
+      if (!byKey.has(key)) byKey.set(key, {
+        modele: mod, import: line.import || '', desig: line.desig || '',
+        client: line.client || '', chain: line.chain,
+        entre: 0, sortie: 0, qte: Number(line.qte_prevu) || 0,
+      });
+      const slot = byKey.get(key);
+      slot.entre  += Number(line.entre_total)  || 0;
+      slot.sortie += Number(line.sortie_total) || 0;
+      if (!slot.client && line.client) slot.client = line.client;
+      if (!slot.desig && line.desig)   slot.desig  = line.desig;
+    }
+  }
+  const rows = Array.from(byKey.values()).map(s => ({ ...s, encours: s.entre - s.sortie }));
+  rows.sort((a, b) => (a.modele || '').localeCompare(b.modele || '') || ((a.chain || 0) - (b.chain || 0)));
+  return rows;
+}
+function rapHtmlSituation(month, dates) {
+  const rows = rapBuildSituation(month, dates);
+  if (!rows.length) return '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
+  let html = '<table class="rap-table"><caption>Situation par chaîne — ' + month + '</caption>';
+  html += '<thead><tr>'
+    + '<th>Modèle</th><th>N°IMP</th><th>Désignation</th>'
+    + '<th>Entrée</th><th>Encours</th><th>Sortie</th>'
+    + '<th>Client</th><th>Chaîne</th>'
+    + '</tr></thead><tbody>';
+  let curMod = null;
+  let subEntre = 0, subSortie = 0, subEncours = 0;
+  const flushSub = () => {
+    if (curMod == null) return '';
+    const s = `<tr class="ssort"><td colspan="3" style="text-align:right">Sous-total ${curMod} :</td>`
+      + `<td class="num">${rapFmtInt(subEntre)}</td>`
+      + `<td class="num">${rapFmtInt(subEncours)}</td>`
+      + `<td class="num">${rapFmtInt(subSortie)}</td>`
+      + `<td colspan="2"></td></tr>`;
+    subEntre = subSortie = subEncours = 0;
+    return s;
+  };
+  let totalEntre = 0, totalSortie = 0, totalEncours = 0;
+  for (const r of rows) {
+    if (r.modele !== curMod) {
+      html += flushSub();
+      curMod = r.modele;
+    }
+    subEntre += r.entre; subSortie += r.sortie; subEncours += r.encours;
+    totalEntre += r.entre; totalSortie += r.sortie; totalEncours += r.encours;
+    html += `<tr>`
+      + `<td>${_rapEscapeHtml(r.modele || '')}</td>`
+      + `<td class="center">${_rapEscapeHtml(r.import || '')}</td>`
+      + `<td>${_rapEscapeHtml(r.desig || '')}</td>`
+      + `<td class="num">${rapFmtInt(r.entre)}</td>`
+      + `<td class="num">${rapFmtInt(r.encours)}</td>`
+      + `<td class="num">${rapFmtInt(r.sortie)}</td>`
+      + `<td>${_rapEscapeHtml(r.client || '')}</td>`
+      + `<td class="ch center">${r.chain != null ? 'Ch' + String(r.chain).padStart(2,'0') : ''}</td>`
+      + `</tr>`;
+  }
+  html += flushSub();
+  html += '</tbody><tfoot><tr>'
+    + `<td colspan="3" style="text-align:right">Total général :</td>`
+    + `<td class="num">${rapFmtInt(totalEntre)}</td>`
+    + `<td class="num">${rapFmtInt(totalEncours)}</td>`
+    + `<td class="num">${rapFmtInt(totalSortie)}</td>`
+    + `<td colspan="2"></td></tr></tfoot></table>`;
+  return html;
+}
+
+/* ---- Rapport 3 : Rendement + Heures manquantes (Ch14 / Groupe0001) ---- */
+function rapBuildHManq(month, dates) {
+  const info = PRODUCTION[month];
+  const chFilter = RAPPORTS_STATE.chain != null ? Number(RAPPORTS_STATE.chain) : null;
+  const rows = [];
+  let dt = 0;
+  let cumHManq = 0;
+  for (const d of dates) {
+    const excelArr = getExcelDataForDate(d);
+    const dayRows = (info.daily[d] || []).filter(line => {
+      if (!isActiveProductionRow(line)) return false;
+      if (chFilter != null && Number(line.chain) !== chFilter) return false;
+      return true;
+    });
+    if (!dayRows.length) continue;
+    dt += 1;
+    for (const line of dayRows) {
+      const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+      const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
+      const r2h = (line.effectifs_hours && line.effectifs_hours.length) ? line.effectifs_hours : ((excel && excel.r2_hours) || []);
+      const r3h = (line.stagiaire_hours && line.stagiaire_hours.length) ? line.stagiaire_hours : ((excel && excel.r3_hours) || []);
+      const vt = (line.methodes != null && !isNaN(line.methodes)) ? Number(line.methodes)
+        : ((excel && excel.r1_meth != null) ? Number(excel.r1_meth) : 0);
+      const ph = (line.ph != null && !isNaN(line.ph)) ? Number(line.ph)
+        : ((excel && excel.r1_ph != null) ? Number(excel.r1_ph) : 0);
+      const abSortie = calcTotalSortieRow(r1h);
+      const abEff = calcTotalEffectifsRow(r2h, d);
+      const abStag = calcTotalStagiaireRow(r3h, d);
+      const ai = calcVersFinalAI(abEff, abStag);
+      const hJour = calcHeuresJourFromSaisie(r1h, d);
+      const prodMin = abSortie * vt;
+      const presMin = ai * 60;
+      const rend = presMin ? prodMin / presMin : null;
+      const prh = hJour ? abSortie / hJour : null;
+      const hManq = (ph && hJour) ? (abSortie / ph) - hJour : null;
+      cumHManq += (hManq || 0);
+      const pctMq = hJour ? (hManq != null ? hManq / hJour : null) : null;
+      rows.push({
+        dt, ch: line.chain, date: d, imp: line.import,
+        prod: ph, modele: line.modele, desig: line.desig,
+        vt, prh, hManq, rend, obHla: cumHManq,
+        sortie: abSortie, hPres: ai, pctMq,
+      });
+    }
+  }
+  const tot = {
+    sortie: rows.reduce((a, r) => a + (r.sortie || 0), 0),
+    hPres:  rows.reduce((a, r) => a + (r.hPres || 0), 0),
+    hManq:  rows.reduce((a, r) => a + (r.hManq || 0), 0),
+  };
+  let prodMinTot = 0, presMinTot = 0;
+  for (const r of rows) { prodMinTot += (r.sortie || 0) * (r.vt || 0); presMinTot += (r.hPres || 0) * 60; }
+  tot.rend = presMinTot ? prodMinTot / presMinTot : null;
+  return { rows, tot };
+}
+function rapHtmlHManq(month, dates) {
+  const data = rapBuildHManq(month, dates);
+  if (!data.rows.length) return '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
+  let html = '<table class="rap-table"><caption>Rendement + heures manquantes — ' + month + '</caption>';
+  html += '<thead><tr>'
+    + '<th>DT</th><th>CH</th><th>Date</th><th>N°IMP</th><th>P/H</th>'
+    + '<th>Modèle / Désignation</th><th>VT</th><th>PR/H réel</th>'
+    + '<th>H.Manq</th><th>Rend %</th><th>OB.H.LA</th>'
+    + '<th>Sortie</th><th>H.Présence</th><th>% MQ</th>'
+    + '</tr></thead><tbody>';
+  for (const r of data.rows) {
+    const rendCls = rapPctClass(r.rend);
+    const hManqCls = r.hManq != null ? (r.hManq < 0 ? 'neg' : 'pos') : '';
+    html += `<tr>`
+      + `<td class="center">${r.dt}</td>`
+      + `<td class="ch center">${r.ch != null ? 'Ch' + String(r.ch).padStart(2,'0') : ''}</td>`
+      + `<td class="center">${_rapEscapeHtml(r.date || '')}</td>`
+      + `<td class="center">${_rapEscapeHtml(r.imp || '')}</td>`
+      + `<td class="num">${rapFmtInt(r.prod)}</td>`
+      + `<td>${_rapEscapeHtml((r.modele || '') + (r.desig ? ' · ' + r.desig : ''))}</td>`
+      + `<td class="num">${fmtDecFr(r.vt, 2)}</td>`
+      + `<td class="num">${rapFmtHrs(r.prh)}</td>`
+      + `<td class="num ${hManqCls}">${rapFmtSigned(r.hManq)}</td>`
+      + `<td class="pct ${rendCls}">${rapFmtPct(r.rend)}</td>`
+      + `<td class="num">${rapFmtSigned(r.obHla)}</td>`
+      + `<td class="num">${rapFmtInt(r.sortie)}</td>`
+      + `<td class="num">${rapFmtHrs(r.hPres)}</td>`
+      + `<td class="pct">${rapFmtPctDec(r.pctMq)}</td>`
+      + `</tr>`;
+  }
+  html += '</tbody><tfoot><tr>'
+    + `<td colspan="11" style="text-align:right">Cumul :</td>`
+    + `<td class="num">${rapFmtInt(data.tot.sortie)}</td>`
+    + `<td class="num">${rapFmtHrs(data.tot.hPres)}</td>`
+    + `<td class="pct ${rapPctClass(data.tot.rend)}">${rapFmtPct(data.tot.rend)}</td>`
+    + `</tr></tfoot></table>`;
+  return html;
+}
+
+/* ---- Rapport 4 : Suivi production / modèle / chaîne / date ---- */
+function rapBuildSuivi(month, dates) {
+  const info = PRODUCTION[month];
+  const chFilter  = RAPPORTS_STATE.chain != null ? Number(RAPPORTS_STATE.chain) : null;
+  const modFilter = (RAPPORTS_STATE.modele || '').trim().toLowerCase();
+  const rows = [];
+  for (const d of dates) {
+    const excelArr = getExcelDataForDate(d);
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line)) continue;
+      if (chFilter != null && Number(line.chain) !== chFilter) continue;
+      const mod = String(line.modele || '');
+      if (modFilter && !mod.toLowerCase().includes(modFilter)) continue;
+      const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+      const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
+      const r2h = (line.effectifs_hours && line.effectifs_hours.length) ? line.effectifs_hours : ((excel && excel.r2_hours) || []);
+      const r3h = (line.stagiaire_hours && line.stagiaire_hours.length) ? line.stagiaire_hours : ((excel && excel.r3_hours) || []);
+      const vt = (line.methodes != null && !isNaN(line.methodes)) ? Number(line.methodes)
+        : ((excel && excel.r1_meth != null) ? Number(excel.r1_meth) : 0);
+      const ph = (line.ph != null && !isNaN(line.ph)) ? Number(line.ph)
+        : ((excel && excel.r1_ph != null) ? Number(excel.r1_ph) : 0);
+      const abSortie = calcTotalSortieRow(r1h);
+      const abEff = calcTotalEffectifsRow(r2h, d);
+      const abStag = calcTotalStagiaireRow(r3h, d);
+      const ai = calcVersFinalAI(abEff, abStag);
+      const hJour = calcHeuresJourFromSaisie(r1h, d);
+      const minProd = abSortie * vt;
+      const minPres = ai * 60;
+      const rend = minPres ? minProd / minPres : null;
+      const sec = vt ? Math.round(vt * 60) : null;
+      const sortieObj = (ph && hJour) ? ph * hJour : null;
+      const ret = (sortieObj != null) ? sortieObj - abSortie : null;
+      const pctRet = (sortieObj && ret != null) ? ret / sortieObj : null;
+      rows.push({
+        date: d, imp: line.import, modele: mod, desig: line.desig,
+        chain: line.chain, hJour, minProd, minPres, sortie: abSortie,
+        rend, sec, vt, ret, pctRet,
+      });
+    }
+  }
+  rows.sort((a, b) => _rapFrToTs(a.date) - _rapFrToTs(b.date) || ((a.chain || 0) - (b.chain || 0)));
+  const tot = {
+    minProd: rows.reduce((a, r) => a + (r.minProd || 0), 0),
+    minPres: rows.reduce((a, r) => a + (r.minPres || 0), 0),
+    sortie:  rows.reduce((a, r) => a + (r.sortie  || 0), 0),
+    ret:     rows.reduce((a, r) => a + (r.ret     || 0), 0),
+  };
+  tot.rend = tot.minPres ? tot.minProd / tot.minPres : null;
+  return { rows, tot };
+}
+function rapHtmlSuivi(month, dates) {
+  const data = rapBuildSuivi(month, dates);
+  if (!data.rows.length) return '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
+  let html = '<table class="rap-table"><caption>Suivi production / modèle / chaîne / date — ' + month + '</caption>';
+  html += '<thead><tr>'
+    + '<th>Date</th><th>N°IMP</th><th>Modèle / Désignation</th><th>Chaîne</th>'
+    + '<th>Hrs/J</th><th>Min Prod</th><th>Min Pres</th><th>Sortie</th>'
+    + '<th>Rend %</th><th>SEC</th><th>VT</th><th>RET</th><th>% RET</th>'
+    + '</tr></thead><tbody>';
+  for (const r of data.rows) {
+    html += `<tr>`
+      + `<td class="center">${_rapEscapeHtml(r.date || '')}</td>`
+      + `<td class="center">${_rapEscapeHtml(r.imp || '')}</td>`
+      + `<td>${_rapEscapeHtml((r.modele || '') + (r.desig ? ' · ' + r.desig : ''))}</td>`
+      + `<td class="ch center">${r.chain != null ? 'Ch' + String(r.chain).padStart(2,'0') : ''}</td>`
+      + `<td class="num">${rapFmtHrs(r.hJour)}</td>`
+      + `<td class="num">${rapFmtMin(r.minProd)}</td>`
+      + `<td class="num">${rapFmtMin(r.minPres)}</td>`
+      + `<td class="num">${rapFmtInt(r.sortie)}</td>`
+      + `<td class="pct ${rapPctClass(r.rend)}">${rapFmtPct(r.rend)}</td>`
+      + `<td class="num">${rapFmtInt(r.sec)}</td>`
+      + `<td class="num">${fmtDecFr(r.vt, 2)}</td>`
+      + `<td class="num ${r.ret != null && r.ret > 0 ? 'neg' : (r.ret != null && r.ret < 0 ? 'pos' : '')}">${rapFmtInt(r.ret)}</td>`
+      + `<td class="pct">${rapFmtPctDec(r.pctRet)}</td>`
+      + `</tr>`;
+  }
+  html += '</tbody><tfoot><tr>'
+    + `<td colspan="5" style="text-align:right">Cumul :</td>`
+    + `<td class="num">${rapFmtMin(data.tot.minProd)}</td>`
+    + `<td class="num">${rapFmtMin(data.tot.minPres)}</td>`
+    + `<td class="num">${rapFmtInt(data.tot.sortie)}</td>`
+    + `<td class="pct ${rapPctClass(data.tot.rend)}">${rapFmtPct(data.tot.rend)}</td>`
+    + `<td colspan="2"></td>`
+    + `<td class="num">${rapFmtInt(data.tot.ret)}</td>`
+    + `<td></td>`
+    + `</tr></tfoot></table>`;
+  return html;
+}
+
+function renderRapports() {
+  prepareDashboardMetrics(currentMonth);
+  rapInitOnce();
+  rapSyncOptions(currentMonth);
+  rapApplyVisibleFilters();
+  rapRenderActiveTab();
+}
+
 function renderPage(page) {
   if (page === 'saisie') { renderSaisie(); return; }
   if (page === 'methodes') { renderMethodesPage(); return; }
+  if (page === 'rapports') { renderRapports(); return; }
   prepareDashboardMetrics(currentMonth);
   if (page === 'overview') renderOverview(currentMonth);
   else if (page === 'anomalies') renderAnomalies(currentMonth);
@@ -7182,7 +8042,7 @@ function excelMW_UTitle(dateStr) {
 }
 
 function excelHLancFormulaTitle(dateStr) {
-  return 'Heures jour − (prod₁/P/H₁ + prod₂/P/H₂) · prod₁ = sortie veille (même modèle, même P/H) · prod₂ = sortie du jour · figé à 0 si = 0';
+  return 'H.Manq (CEGID) = Sortie ÷ P/H − Heures jour · négatif = production sous objectif, positif = surperformance';
 }
 
 function excelMoyColHeaderTitle(dateStr) {
@@ -7352,34 +8212,6 @@ function getHLancManual(line, excel) {
   return null;
 }
 
-/** Sortie (prod) du dernier jour précédent — même chaîne, modèle et P/H. */
-function findPriorDaySortieSamePh(month, dateStr, line) {
-  const info = PRODUCTION[month];
-  if (!info || !dateStr) return { prod1: 0, ph1: null };
-  const sheets = info.daily_sheets || [];
-  const idx = sheets.indexOf(dateStr);
-  if (idx <= 0) return { prod1: 0, ph1: null };
-  const ch = Number(line.chain);
-  const mod = ((line.modele || '') + '').trim().toUpperCase();
-  const phTarget = Number(line.ph);
-  if (!phTarget || isNaN(phTarget)) return { prod1: 0, ph1: null };
-  for (let i = idx - 1; i >= 0; i--) {
-    const d = sheets[i];
-    const excelArr = getExcelDataForDate(d);
-    for (const row of (info.daily[d] || [])) {
-      if (Number(row.chain) !== ch) continue;
-      if (((row.modele || '') + '').trim().toUpperCase() !== mod) continue;
-      if (!isActiveProductionRow(row)) continue;
-      const phRow = Number(row.ph);
-      if (!phRow || phRow !== phTarget) continue;
-      const excel = excelArr ? findExcelBlock(excelArr, row) : null;
-      const r1h = (row.hours_exit && row.hours_exit.length) ? row.hours_exit : ((excel && excel.r1_hours) || []);
-      return { prod1: calcTotalSortieRow(r1h), ph1: phRow };
-    }
-  }
-  return { prod1: 0, ph1: phTarget };
-}
-
 /** H.Lancement déjà figé à 0 sur un jour antérieur (même modèle) — ne plus recalculer. */
 function isHLancZeroLockedForModel(month, dateStr, line) {
   if (line.hlanc_fixe != null && line.hlanc_fixe !== '' && !isNaN(line.hlanc_fixe) && Math.abs(Number(line.hlanc_fixe)) < 0.0001) {
@@ -7405,24 +8237,19 @@ function isHLancZeroLockedForModel(month, dateStr, line) {
 }
 
 /**
- * H.Lancement = heures jour − (prod₁/P/H₁ + prod₂/P/H₂)
- * prod₁ : sortie du dernier jour (même modèle, même P/H) · prod₂ : sortie du jour.
+ * H.Lancement (= H.MANQ rapport CEGID, cf. PDF Ch07/Ch14) :
+ *   H.MANQ = Sortie / P/H_objectif - Heures_jour
+ * - Negatif : la production reelle n'atteint pas le potentiel theorique (heures perdues au lancement)
+ * - Positif : la production depasse le potentiel
+ * Les anciennes valeurs manuelles / figees ne sont pas reprises ici, sinon la grille
+ * diverge des rapports CEGID (ex. Ch07 01/05 : 350 / 60 - 8,25 = -2,42).
  */
 function calcHLancHeures(r1h, totalSortie, ph, line, excel, dateStr, month) {
-  if (isHLancZeroLockedForModel(month, dateStr, line)) return 0;
-  if (isHLancSeedDay(month, dateStr)) {
-    const manual = getHLancManual(line, excel);
-    if (manual != null) return manual;
-  }
   const h = calcHeuresJourFromSaisie(r1h, dateStr);
-  const ph2 = Number(ph) || 0;
-  const prod2 = Number(totalSortie) || 0;
-  if (!h || !ph2) return null;
-  const prior = findPriorDaySortieSamePh(month, dateStr, line);
-  const ph1 = (prior.ph1 != null && prior.ph1 > 0) ? prior.ph1 : ph2;
-  const prod1 = Number(prior.prod1) || 0;
-  const term = prod1 / ph1 + prod2 / ph2;
-  const v = h - term;
+  const phNum = Number(ph) || 0;
+  const sortie = Number(totalSortie) || 0;
+  if (!h || !phNum) return null;
+  const v = (sortie / phNum) - h;
   return isFinite(v) ? v : null;
 }
 
@@ -7540,14 +8367,10 @@ function computeBlock(line, excel, chainTotalSortie, month, date) {
   const moyEff = calcMoyHeures(r2h);
   const qtePrevu = (line.qte_prevu != null && !isNaN(line.qte_prevu)) ? Number(line.qte_prevu) : null;
   const qteReste = (qtePrevu != null) ? qtePrevu - cumulEntre : null;
-  const hlancSeedDay = isHLancSeedDay(month, date);
-  const hlancManual = hlancSeedDay ? getHLancManual(line, excel) : null;
-  const hlancZeroLock = isHLancZeroLockedForModel(month, date, line);
-  let hlancCalc = hlancZeroLock ? 0 : calcHLancHeures(r1h, totalSortie, ph, line, excel, date, month);
-  if (hlancSeedDay && hlancManual != null) hlancCalc = hlancManual;
+  const hlancCalc = calcHLancHeures(r1h, totalSortie, ph, line, excel, date, month);
   const hlancHitsZero = hlancCalc != null && isFinite(hlancCalc) && Math.abs(hlancCalc) < 0.0001;
-  const hlancLocked = hlancZeroLock || hlancHitsZero;
-  const hlancHeures = hlancLocked ? 0 : hlancCalc;
+  const hlancLocked = hlancHitsZero;
+  const hlancHeures = hlancHitsZero ? 0 : hlancCalc;
   const k_obj = (line.objective != null && !isNaN(line.objective)) ? Number(line.objective) : ((excel && excel.r3_K_obj) || 0);
   const stagRatio = (k_obj && ph && vt) ? (vt * ph) / (k_obj * 60) : null;
   const effSaisie = (line.effectifs != null && !isNaN(line.effectifs))
@@ -7574,15 +8397,6 @@ function applyComputeBlockToRow(line, c) {
   line.rendement = c.rend;
   line.total_effectifs = c.totalEff;
   line.total_stagiaire = c.totalStag;
-  if (c.hlancLocked && (line.hlanc_fixe == null || line.hlanc_fixe === '')) {
-    if (c.hlancCalc != null && isFinite(c.hlancCalc) && Math.abs(c.hlancCalc) < 0.0001) {
-      line.hlanc_fixe = 0;
-    }
-  }
-  if (isHLancSeedDay(saisieMonth, saisieDate) && c.hlancHeures != null && isFinite(c.hlancHeures)) {
-    line.hlanc_manual = c.hlancHeures;
-    if (Math.abs(c.hlancHeures) < 0.0001) line.hlanc_fixe = 0;
-  }
 }
 
 /**
@@ -7686,7 +8500,7 @@ function buildSaisieHeader() {
 
   const trailHdr = `
     <th style="min-width:60px" class="trail-moy" title="${excelMoyColHeaderTitle(saisieDate)}">Moy</th>
-    <th style="min-width:80px" title="${excelHLancFormulaTitle(saisieDate)} · vert = figé (0) · rouge = en cours">H.Lancement</th>
+    <th style="min-width:80px" title="${excelHLancFormulaTitle(saisieDate)}">H.Lancement</th>
     <th style="min-width:60px" title="Sortie : somme heures M…W · Bandeau : SUMIF(L;Sortie Chaine;AB)">Total</th>
     <th style="min-width:70px">Cumul</th>
     <th class="hidden-col" style="min-width:60px">AC</th>
@@ -7817,14 +8631,10 @@ function excelHourCells(field, hours) {
   }).join('');
 }
 
-/** H.Lancement — fusion rowspan 5 : vert si figé (0), rouge si calcul en cours */
+/** H.Lancement — fusion rowspan 5, valeur H.MANQ CEGID. */
 function excelHLancFusionCell(c) {
   const rs = EXCEL_ROWS_PER_BLOCK;
-  const title = isHLancSeedDay(saisieMonth, saisieDate)
-    ? '1er jour : valeur Excel (col. AA) — sans formule'
-    : (c.hlancLocked
-      ? 'Heures de lancement figées à 0 — non recalculées les jours suivants'
-      : excelHLancFormulaTitle(saisieDate));
+  const title = excelHLancFormulaTitle(saisieDate);
   return `<td rowspan="${rs}" class="merge-cell trail-merge hlanc-merge">
     <div class="trail-merge-stack">
       <div class="trail-merge-line hlanc-row" data-r="r0_hlanc" title="${title}">${hlancCellInnerHtml(c)}</div>
@@ -8591,9 +9401,7 @@ function refreshExcelRow(line) {
   set('[data-r="qte_reste"]', fmtQteReste(c.qteReste));
   set('[data-r="r0_moy"]',   fmtMoyCell(c.moyEntre));
   tbody.querySelectorAll(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r0_hlanc"]`).forEach(el => {
-    el.title = c.hlancLocked
-      ? 'Heures de lancement figées à 0'
-      : excelHLancFormulaTitle(saisieDate);
+    el.title = excelHLancFormulaTitle(saisieDate);
     el.innerHTML = hlancCellInnerHtml(c);
   });
   set('[data-r="r1_total"]', fmtNumX(c.totalSortie));
