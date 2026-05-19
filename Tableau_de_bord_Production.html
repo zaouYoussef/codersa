@@ -2619,57 +2619,22 @@ header.topbar {
 .rap-btn-print:hover { background: var(--accent); color: #fff; filter: brightness(1.05); }
 .rap-field[hidden] { display: none !important; }
 
-/* Document imprimable */
+/* Document imprimable façon CEGID (sobre, monochrome) */
 .rap-doc {
   background: #fff;
-  color: #111;
+  color: #000;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px 32px;
+  border-radius: 6px;
+  padding: 22px 28px 18px;
   box-shadow: 0 8px 28px rgba(0,0,0,.18);
-  font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
-  font-size: 11.5px;
-  line-height: 1.45;
-  min-height: 600px;
-}
-[data-theme="dark"] .rap-doc {
-  background: #fafafa;
-  color: #111;
-}
-.rap-doc-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 2px solid #111;
-  padding-bottom: 10px;
-  margin-bottom: 12px;
-}
-.rap-doc-brand-title {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: .05em;
-}
-.rap-doc-brand-sub {
-  font-size: 11px;
-  color: #666;
-}
-.rap-doc-meta {
-  text-align: right;
-  font-size: 11px;
-  line-height: 1.6;
-}
-.rap-doc-meta strong { font-weight: 700; }
-.rap-doc-body { margin-top: 6px; overflow-x: auto; }
-@media print { .rap-doc-body { overflow: visible !important; } }
-.rap-doc-footer {
-  margin-top: 14px;
-  padding-top: 8px;
-  border-top: 1px dashed #888;
-  display: flex;
-  justify-content: space-between;
+  font-family: 'Arial', 'Helvetica', sans-serif;
   font-size: 10.5px;
-  color: #555;
+  line-height: 1.35;
+  min-height: 500px;
+  overflow-x: auto;
 }
+[data-theme="dark"] .rap-doc { background: #fafafa; color: #000; }
+@media print { .rap-doc { overflow: visible !important; } }
 
 .rap-empty {
   text-align: center;
@@ -2679,87 +2644,118 @@ header.topbar {
   font-size: 13px;
 }
 
-/* Tableaux CEGID-like */
+/* En-tête CEGID */
+.rap-cegid-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.rap-cegid-header .rap-ce-left,
+.rap-cegid-header .rap-ce-right {
+  font-size: 10px;
+  line-height: 1.3;
+}
+.rap-cegid-header .rap-ce-left { text-align: left; }
+.rap-cegid-header .rap-ce-right { text-align: right; font-weight: 700; letter-spacing: .04em; }
+.rap-cegid-header .rap-ce-title {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.rap-cegid-subtitle {
+  text-align: center;
+  font-size: 10.5px;
+  margin-bottom: 8px;
+  letter-spacing: .04em;
+}
+.rap-cegid-subtitle.left { text-align: left; }
+.rap-cegid-subtitle.right { text-align: right; }
+
+/* Pied CEGID */
+.rap-cegid-footer {
+  margin-top: 14px;
+  padding-top: 6px;
+  border-top: 1px solid #000;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  font-size: 9.5px;
+  color: #222;
+}
+.rap-cegid-footer .rap-cf-left { text-align: left; font-weight: 700; }
+.rap-cegid-footer .rap-cf-center { text-align: center; }
+.rap-cegid-footer .rap-cf-right { text-align: right; }
+.rap-cegid-footer .rap-cf-line { display: block; }
+
+/* Tableaux CEGID */
 .rap-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 8px 0 14px;
-  font-size: 11px;
-}
-.rap-table caption {
-  caption-side: top;
-  text-align: left;
-  font-weight: 700;
-  font-size: 12.5px;
-  padding: 6px 0;
-  letter-spacing: .03em;
+  margin: 2px 0 4px;
+  font-size: 10.5px;
 }
 .rap-table thead th {
-  background: #e9e9e9;
-  border-top: 1.5px solid #111;
-  border-bottom: 1.5px solid #111;
-  padding: 5px 6px;
+  background: transparent;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  padding: 3px 4px;
   text-align: center;
   font-weight: 700;
-  font-size: 10.5px;
-  letter-spacing: .02em;
+  font-size: 10px;
+  letter-spacing: .01em;
   text-transform: uppercase;
   white-space: nowrap;
-}
-.rap-table tbody td {
-  padding: 4px 6px;
-  border-bottom: 1px dotted #bbb;
   vertical-align: middle;
 }
-.rap-table tbody tr:nth-child(even) td { background: #f6f6f6; }
-.rap-table tbody tr:hover td { background: #fff3cd; }
+.rap-table thead tr + tr th { border-top: none; }
+.rap-table thead tr:last-child th { border-bottom: 1px solid #000; }
+.rap-table tbody td {
+  padding: 2px 4px;
+  border: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.rap-table tbody tr:hover td { background: #fff7c2; }
 .rap-table .num { text-align: right; font-variant-numeric: tabular-nums; }
-.rap-table .pct { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
-.rap-table .pct.good { color: #1f7a3a; }
-.rap-table .pct.warn { color: #b86b00; }
-.rap-table .pct.bad  { color: #b3261e; }
+.rap-table .pct { text-align: right; font-variant-numeric: tabular-nums; }
 .rap-table .center { text-align: center; }
-.rap-table .ch { font-weight: 700; }
+.rap-table .left { text-align: left; }
+.rap-table .right { text-align: right; }
+.rap-table .strong { font-weight: 700; }
+.rap-table .ch { font-weight: 600; }
 .rap-table .neg { color: #b3261e; }
 .rap-table .pos { color: #1f7a3a; }
+.rap-table .indent { padding-left: 14px; }
 .rap-table tfoot td {
-  border-top: 1.5px solid #111;
-  border-bottom: 1.5px double #111;
+  border-top: 1px solid #000;
   font-weight: 700;
-  background: #e9e9e9;
-  padding: 6px;
+  background: transparent;
+  padding: 3px 4px;
 }
-.rap-table .ssort {
-  background: #f0e9ff;
+.rap-table tr.subtotal td {
+  border-top: 1px dashed #555;
   font-weight: 700;
+  font-style: italic;
 }
-.rap-table .ssort td { border-top: 1px solid #888; }
-
-/* Bandeau "RUPTURE" pour table de suivi */
-.rap-section-title {
-  margin: 14px 0 4px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  background: #111;
-  color: #fff;
-  padding: 4px 10px;
-  border-radius: 2px;
-  display: inline-block;
+.rap-table tr.totalg td {
+  border-top: 2px solid #000;
+  border-bottom: 1px solid #000;
+  font-weight: 800;
 }
 
 /* ========== Mode IMPRESSION : ressemble à un PDF CEGID ============ */
 @media print {
   @page { size: A4 landscape; margin: 12mm; }
-  body { background: #fff !important; color: #111 !important; }
-  /* Masquer header global et autres pages */
+  body { background: #fff !important; color: #000 !important; }
   body > header,
   .month-switcher,
   .tabs-row,
   .no-print,
   .page:not(#page-rapports) { display: none !important; }
-  /* Forcer la page rapports en mode plein */
   #page-rapports { display: block !important; padding: 0 !important; }
   main.wrap { padding: 0 !important; max-width: none !important; }
   .rap-doc {
@@ -2768,16 +2764,11 @@ header.topbar {
     border-radius: 0 !important;
     padding: 0 !important;
     background: #fff !important;
-    color: #111 !important;
+    color: #000 !important;
     min-height: 0 !important;
-    font-size: 10.5px !important;
+    font-size: 10px !important;
   }
-  .rap-table thead th,
-  .rap-table tfoot td { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .rap-table tbody tr:nth-child(even) td { background: #f6f6f6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .rap-table tbody tr:hover td { background: transparent !important; }
-  .rap-section-title { background: #000 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .rap-doc-page-num { display: inline; }
   .rap-page-break { page-break-after: always; }
 }
 
@@ -3650,10 +3641,10 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
 
     <div class="rap-toolbar no-print">
       <div class="rap-tabs" role="tablist">
-        <button type="button" class="rap-tab active" data-rap="rdt-ch">Rendement Chaînes</button>
-        <button type="button" class="rap-tab" data-rap="situation">Situation par chaîne</button>
-        <button type="button" class="rap-tab" data-rap="hmanq">Rendement + Heures manquantes</button>
-        <button type="button" class="rap-tab" data-rap="suivi">Suivi Production / Modèle / Chaîne / Date</button>
+        <button type="button" class="rap-tab active" data-rap="rdt-ch">RENDEMENT CHAINES</button>
+        <button type="button" class="rap-tab" data-rap="situation">SITUATION PAR CHAINE</button>
+        <button type="button" class="rap-tab" data-rap="hmanq">RENDEMENT + HEURES MANQUANTES</button>
+        <button type="button" class="rap-tab" data-rap="suivi">SUIVI PRODUCTION / MODELE / CHAINE / DATE</button>
       </div>
       <div class="rap-filters">
         <div class="rap-field">
@@ -3688,24 +3679,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
 
     <!-- Document imprimable (mis en page comme un PDF CEGID) -->
     <div class="rap-doc" id="rap-doc">
-      <div class="rap-doc-header">
-        <div class="rap-doc-brand">
-          <div class="rap-doc-brand-title">CODERSA</div>
-          <div class="rap-doc-brand-sub">Tableau de bord Production</div>
-        </div>
-        <div class="rap-doc-meta">
-          <div><strong>Rapport :</strong> <span id="rap-doc-title">—</span></div>
-          <div><strong>Période :</strong> <span id="rap-doc-period">—</span></div>
-          <div><strong>Édité le :</strong> <span id="rap-doc-edited">—</span></div>
-        </div>
-      </div>
-      <div class="rap-doc-body" id="rap-doc-body">
-        <div class="rap-empty">Choisissez un rapport et une période, puis cliquez sur « Actualiser ».</div>
-      </div>
-      <div class="rap-doc-footer">
-        <div class="rap-doc-footer-left"><span id="rap-doc-footer-text">Fin du document</span></div>
-        <div class="rap-doc-footer-right">Page <span class="rap-doc-page-num">1</span></div>
-      </div>
+      <div class="rap-empty">Choisissez un rapport et une période, puis cliquez sur « Actualiser ».</div>
     </div>
   </section>
 
@@ -4719,9 +4693,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     </div>
   </section>
 
-  <footer>
-    Données : EXL009-20 Prod H_Chaine 05-2026 & explication.xlsx — extraction automatique des feuilles journalières
-  </footer>
+  <footer></footer>
 </main>
 
 <script>
@@ -5838,10 +5810,10 @@ const RAPPORTS_STATE = {
 };
 
 const RAPPORTS_DEFS = {
-  'rdt-ch':    { title: 'Rendement par chaîne',                 needs: { date: true,  chain: false, modele: false } },
-  'situation': { title: 'Situation par chaîne',                  needs: { date: true,  chain: true,  modele: true  } },
-  'hmanq':     { title: 'Rendement + heures manquantes',         needs: { date: true,  chain: true,  modele: false } },
-  'suivi':     { title: 'Suivi production / modèle / chaîne / date', needs: { date: true, chain: true, modele: true } },
+  'rdt-ch':    { title: 'RENDEMENT CHAINES',                              needs: { date: true,  chain: false, modele: false } },
+  'situation': { title: 'SITUATION PAR CHAINE',                           needs: { date: true,  chain: true,  modele: true  } },
+  'hmanq':     { title: 'RENDEMENT + HEURES MANQUANTES DE PRODUCTION',    needs: { date: true,  chain: true,  modele: false } },
+  'suivi':     { title: 'SUIVI PRODUCTION / MODELE / CHAINE / DATE',      needs: { date: true,  chain: true,  modele: true  } },
 };
 
 function _rapEscapeHtml(s) {
@@ -5961,24 +5933,65 @@ function rapSyncOptions(month) {
   document.getElementById('rap-modele').value = RAPPORTS_STATE.modele || '';
 }
 
-function rapPctClass(pct) {
-  if (pct == null) return '';
-  if (pct >= 0.75) return 'good';
-  if (pct >= 0.55) return 'warn';
-  return 'bad';
-}
 function rapFmtPct(pct) {
-  if (pct == null || !isFinite(pct)) return '—';
+  if (pct == null || !isFinite(pct)) return '';
   return Math.round(pct * 100) + ' %';
 }
 function rapFmtPctDec(pct) {
-  if (pct == null || !isFinite(pct)) return '—';
+  if (pct == null || !isFinite(pct)) return '';
   return fmtDecFr(pct * 100, 2) + ' %';
 }
-function rapFmtMin(v)   { if (v == null || !isFinite(v)) return '—'; return Math.round(v).toString(); }
-function rapFmtHrs(v)   { if (v == null || !isFinite(v)) return '—'; return fmtDecFr(v, 2); }
-function rapFmtInt(v)   { if (v == null || !isFinite(v)) return '—'; return Math.round(v).toString(); }
-function rapFmtSigned(v){ if (v == null || !isFinite(v)) return '—'; return (v >= 0 ? '+' : '') + fmtDecFr(v, 2); }
+function rapFmtIntSp(v) {
+  if (v == null || !isFinite(v)) return '';
+  const n = Math.round(Number(v));
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+function rapFmtInt(v)   { if (v == null || !isFinite(v)) return ''; return String(Math.round(Number(v))); }
+function rapFmtHrs(v)   { if (v == null || !isFinite(v)) return ''; return fmtDecFr(v, 2); }
+function rapFmtSigned(v){ if (v == null || !isFinite(v)) return ''; return fmtDecFr(v, 2); }
+function rapFmtDate(fr) {
+  if (!fr) return '';
+  const p = String(fr).split('-');
+  if (p.length !== 3) return fr;
+  return `${p[0]}/${p[1]}/${p[2].slice(-2)}`;
+}
+function rapFmtDateFull(fr) {
+  if (!fr) return '';
+  const p = String(fr).split('-');
+  if (p.length !== 3) return fr;
+  return `${p[0]}/${p[1]}/${p[2]}`;
+}
+function rapFmtCh(ch) {
+  if (ch == null) return '';
+  return 'CHAINE' + String(Number(ch)).padStart(2, '0');
+}
+function rapChShort(ch) { return ch == null ? '' : String(Number(ch)).padStart(2, '0'); }
+function rapNowFr() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+function rapNowFrFull() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} à ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/* ----------------------------------------------------------
+ * Templates CEGID — header / footer communs à toutes les pages
+ * ---------------------------------------------------------- */
+function rapCegidHeader({ titleLeft, titleCenter, titleRight, subtitleLeft, subtitleRight, subtitleCenter }) {
+  return ''
+    + '<div class="rap-cegid-header">'
+    +   `<div class="rap-ce-left">${titleLeft || ''}</div>`
+    +   `<div class="rap-ce-title">${_rapEscapeHtml(titleCenter || '')}</div>`
+    +   `<div class="rap-ce-right">${_rapEscapeHtml(titleRight || 'CODERSA')}</div>`
+    + '</div>'
+    + (subtitleLeft   ? `<div class="rap-cegid-subtitle left">${subtitleLeft}</div>`     : '')
+    + (subtitleCenter ? `<div class="rap-cegid-subtitle">${subtitleCenter}</div>`        : '')
+    + (subtitleRight  ? `<div class="rap-cegid-subtitle right">${subtitleRight}</div>`   : '');
+}
+function rapCegidFooter() { return ''; }
 
 function rapRenderActiveTab() {
   rapApplyVisibleFilters();
@@ -5990,26 +6003,29 @@ function rapRenderActiveTab() {
     ? (dates[0] + ' → ' + dates[dates.length - 1] + ' (' + dates.length + ' j.)')
     : 'aucune journée';
   document.getElementById('rap-range').textContent = periodTxt;
-  document.getElementById('rap-doc-title').textContent  = def.title;
-  document.getElementById('rap-doc-period').textContent = periodTxt;
-  document.getElementById('rap-doc-edited').textContent = new Date().toLocaleString('fr-FR');
-  document.getElementById('rap-doc-footer-text').textContent = 'Fin du document · ' + def.title + ' · ' + month;
 
-  const body = document.getElementById('rap-doc-body');
+  const doc = document.getElementById('rap-doc');
   if (!dates.length) {
-    body.innerHTML = '<div class="rap-empty">Aucune journée dans la période sélectionnée.</div>';
+    doc.innerHTML = '<div class="rap-empty">Aucune journée dans la période sélectionnée.</div>';
     return;
   }
   switch (RAPPORTS_STATE.type) {
-    case 'rdt-ch':    body.innerHTML = rapHtmlRdtCh(month, dates); break;
-    case 'situation': body.innerHTML = rapHtmlSituation(month, dates); break;
-    case 'hmanq':     body.innerHTML = rapHtmlHManq(month, dates); break;
-    case 'suivi':     body.innerHTML = rapHtmlSuivi(month, dates); break;
-    default:          body.innerHTML = '<div class="rap-empty">Type de rapport inconnu.</div>';
+    case 'rdt-ch':    doc.innerHTML = rapHtmlRdtCh(month, dates); break;
+    case 'situation': doc.innerHTML = rapHtmlSituation(month, dates); break;
+    case 'hmanq':     doc.innerHTML = rapHtmlHManq(month, dates); break;
+    case 'suivi':     doc.innerHTML = rapHtmlSuivi(month, dates); break;
+    default:          doc.innerHTML = '<div class="rap-empty">Type de rapport inconnu.</div>';
   }
 }
 
-/* ---- Rapport 1 : Rendement par chaîne (mois) ---- */
+/* ===========================================================
+ * RAPPORT 1 — RENDEMENT CHAINES (modèle G.pdf)
+ * En-tête : RENDEMENT CHAINES · CHAINE PRODUCTION
+ *           DU JJ/MM/AAAA AU JJ/MM/AAAA              CODERSA
+ * Colonnes :
+ *   [CHAINEnn]  REND %  HEURES PRODUCTION  HEURES PRESENCE
+ * Cumul : Cumul nn %  TotProd  TotPres
+ * =========================================================== */
 function rapBuildRdtCh(month, dates) {
   const info = PRODUCTION[month];
   const byCh = new Map();
@@ -6051,31 +6067,61 @@ function rapBuildRdtCh(month, dates) {
 }
 function rapHtmlRdtCh(month, dates) {
   const data = rapBuildRdtCh(month, dates);
-  if (!data.rows.length) return '<div class="rap-empty">Aucune ligne de production dans la période.</div>';
-  let html = '<table class="rap-table"><caption>Rendement par chaîne — ' + month + '</caption>';
-  html += '<thead><tr><th>Chaîne</th><th>Rend %</th><th>Heures Production<br><span style="font-weight:400;font-size:9px;">(min objectif)</span></th><th>Heures Présence<br><span style="font-weight:400;font-size:9px;">(min réels)</span></th></tr></thead><tbody>';
+  const dDeb = dates[0] || '';
+  const dFin = dates[dates.length - 1] || '';
+  let html = rapCegidHeader({
+    titleCenter: 'RENDEMENT CHAINES',
+    titleRight:  'CODERSA',
+  });
+  html += '<div class="rap-cegid-subtitle"><strong>CHAINE PRODUCTION</strong></div>';
+  html += `<div class="rap-cegid-subtitle">DU ${rapFmtDateFull(dDeb)} AU ${rapFmtDateFull(dFin)}</div>`;
+
+  if (!data.rows.length) {
+    html += '<div class="rap-empty">Aucune ligne de production dans la période.</div>';
+    html += rapCegidFooter(1);
+    return html;
+  }
+  html += '<table class="rap-table">';
+  html += '<thead>'
+    + '<tr>'
+    +   '<th>&nbsp;</th>'
+    +   '<th>REND %</th>'
+    +   '<th>HEURES PRODUCTION</th>'
+    +   '<th>HEURES PRESENCE</th>'
+    + '</tr>'
+    + '</thead><tbody>';
   for (const r of data.rows) {
-    const cls = rapPctClass(r.rendPct);
-    html += `<tr>`
-      + `<td class="ch center">Ch${String(r.chain).padStart(2,'0')}</td>`
-      + `<td class="pct ${cls}">${rapFmtPct(r.rendPct)}</td>`
-      + `<td class="num">${rapFmtMin(r.prodMin)}</td>`
-      + `<td class="num">${rapFmtMin(r.presMin)}</td>`
-      + `</tr>`;
+    html += '<tr>'
+      + `<td class="left strong">${rapFmtCh(r.chain)}</td>`
+      + `<td class="pct">${rapFmtPct(r.rendPct)}</td>`
+      + `<td class="num">${rapFmtIntSp(r.prodMin)}</td>`
+      + `<td class="num">${rapFmtIntSp(r.presMin)}</td>`
+      + '</tr>';
   }
   html += '</tbody><tfoot><tr>'
-    + `<td class="center">Cumul</td>`
-    + `<td class="pct ${rapPctClass(data.totals.rendPct)}">${rapFmtPct(data.totals.rendPct)}</td>`
-    + `<td class="num">${rapFmtMin(data.totals.prodMin)}</td>`
-    + `<td class="num">${rapFmtMin(data.totals.presMin)}</td>`
+    + '<td class="left">Cumul</td>'
+    + `<td class="pct">${rapFmtPct(data.totals.rendPct)}</td>`
+    + `<td class="num">${rapFmtIntSp(data.totals.prodMin)}</td>`
+    + `<td class="num">${rapFmtIntSp(data.totals.presMin)}</td>`
     + '</tr></tfoot></table>';
+  html += rapCegidFooter(1);
   return html;
 }
 
-/* ---- Rapport 2 : Situation par chaîne (ENTRE / ENCOURS / SORTIE par modèle) ---- */
+/* ===========================================================
+ * RAPPORT 2 — SITUATION PAR CHAINE (modèle ech1.pdf)
+ * En-tête : QGT - E88 - ech1     SITUATION PAR CHAINE     CODERSA
+ *           Date : JJ/MM/AAAA
+ * Colonnes :
+ *   Modele | N° Import | Designation | ENTRE | Encours | SORTIE | Client | Chaine
+ * Sous-total par couple (Modele, N° Import) :
+ *   ........... [Encours]   TOTAL   [ENTRE]   [SORTIE]
+ * Total général :
+ *   ........... [Encours total]   TOTAL   [ENTRE total]   [SORTIE total]
+ * =========================================================== */
 function rapBuildSituation(month, dates) {
   const info = PRODUCTION[month];
-  const byKey = new Map();
+  const byMod = new Map();
   const modFilter = (RAPPORTS_STATE.modele || '').trim().toLowerCase();
   const chFilter = RAPPORTS_STATE.chain != null ? Number(RAPPORTS_STATE.chain) : null;
   for (const d of dates) {
@@ -6084,80 +6130,114 @@ function rapBuildSituation(month, dates) {
       if (chFilter != null && Number(line.chain) !== chFilter) continue;
       const mod = String(line.modele || '').trim();
       if (modFilter && !mod.toLowerCase().includes(modFilter)) continue;
-      const key = `${mod}|${line.import || ''}|${line.chain || ''}`;
-      if (!byKey.has(key)) byKey.set(key, {
-        modele: mod, import: line.import || '', desig: line.desig || '',
-        client: line.client || '', chain: line.chain,
-        entre: 0, sortie: 0, qte: Number(line.qte_prevu) || 0,
+      const modKey = `${line.import || ''}|${mod}`;
+      if (!byMod.has(modKey)) byMod.set(modKey, {
+        import: line.import || '', modele: mod, desig: line.desig || '', byChain: new Map(),
       });
-      const slot = byKey.get(key);
-      slot.entre  += Number(line.entre_total)  || 0;
-      slot.sortie += Number(line.sortie_total) || 0;
-      if (!slot.client && line.client) slot.client = line.client;
-      if (!slot.desig && line.desig)   slot.desig  = line.desig;
+      const modSlot = byMod.get(modKey);
+      const chKey = String(line.chain);
+      if (!modSlot.byChain.has(chKey)) modSlot.byChain.set(chKey, {
+        chain: line.chain, client: line.client || '',
+        entre: 0, sortie: 0,
+      });
+      const chSlot = modSlot.byChain.get(chKey);
+      chSlot.entre  += Number(line.entre_total)  || 0;
+      chSlot.sortie += Number(line.sortie_total) || 0;
+      if (!chSlot.client && line.client) chSlot.client = line.client;
+      if (!modSlot.desig && line.desig) modSlot.desig = line.desig;
     }
   }
-  const rows = Array.from(byKey.values()).map(s => ({ ...s, encours: s.entre - s.sortie }));
-  rows.sort((a, b) => (a.modele || '').localeCompare(b.modele || '') || ((a.chain || 0) - (b.chain || 0)));
-  return rows;
+  const groups = Array.from(byMod.values()).map(m => ({
+    import: m.import, modele: m.modele, desig: m.desig,
+    rows: Array.from(m.byChain.values())
+      .map(c => ({ ...c, encours: c.entre - c.sortie }))
+      .sort((a, b) => (a.chain || 0) - (b.chain || 0)),
+  }));
+  groups.sort((a, b) => (a.import || '').localeCompare(b.import || '') || a.modele.localeCompare(b.modele));
+  const totals = { entre: 0, sortie: 0, encours: 0 };
+  for (const g of groups) for (const r of g.rows) { totals.entre += r.entre; totals.sortie += r.sortie; totals.encours += r.encours; }
+  return { groups, totals };
 }
 function rapHtmlSituation(month, dates) {
-  const rows = rapBuildSituation(month, dates);
-  if (!rows.length) return '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
-  let html = '<table class="rap-table"><caption>Situation par chaîne — ' + month + '</caption>';
+  const data = rapBuildSituation(month, dates);
+  const dFin = dates[dates.length - 1] || '';
+  let html = rapCegidHeader({
+    titleLeft:   'QGT - E88 - ech1',
+    titleCenter: 'SITUATION PAR CHAINE',
+    titleRight:  'CODERSA',
+  });
+  html += `<div class="rap-cegid-subtitle right">Date :&nbsp;&nbsp;${rapFmtDateFull(dFin)}</div>`;
+  if (!data.groups.length) {
+    html += '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
+    html += rapCegidFooter(1);
+    return html;
+  }
+  html += '<table class="rap-table">';
   html += '<thead><tr>'
-    + '<th>Modèle</th><th>N°IMP</th><th>Désignation</th>'
-    + '<th>Entrée</th><th>Encours</th><th>Sortie</th>'
-    + '<th>Client</th><th>Chaîne</th>'
+    + '<th class="left">Modele</th>'
+    + '<th class="center">N° Import</th>'
+    + '<th class="left">Designation</th>'
+    + '<th class="right">ENTRE</th>'
+    + '<th class="right">Encours</th>'
+    + '<th class="right">SORTIE</th>'
+    + '<th class="left">Client</th>'
+    + '<th class="center">Chaine</th>'
     + '</tr></thead><tbody>';
-  let curMod = null;
-  let subEntre = 0, subSortie = 0, subEncours = 0;
-  const flushSub = () => {
-    if (curMod == null) return '';
-    const s = `<tr class="ssort"><td colspan="3" style="text-align:right">Sous-total ${curMod} :</td>`
+  for (const g of data.groups) {
+    let subEntre = 0, subSortie = 0, subEncours = 0;
+    for (let i = 0; i < g.rows.length; i++) {
+      const r = g.rows[i];
+      subEntre += r.entre; subSortie += r.sortie; subEncours += r.encours;
+      html += '<tr>'
+        + `<td class="left">${i === 0 ? _rapEscapeHtml(g.modele) : ''}</td>`
+        + `<td class="center">${i === 0 ? _rapEscapeHtml(g.import) : ''}</td>`
+        + `<td class="left">${i === 0 ? _rapEscapeHtml(g.desig) : ''}</td>`
+        + `<td class="num">${rapFmtInt(r.entre)}</td>`
+        + `<td class="num">${rapFmtInt(r.encours)}</td>`
+        + `<td class="num">${rapFmtInt(r.sortie)}</td>`
+        + `<td class="left">${_rapEscapeHtml(r.client)}</td>`
+        + `<td class="center">${rapChShort(r.chain)}</td>`
+        + '</tr>';
+    }
+    html += '<tr class="subtotal">'
+      + '<td colspan="3" class="right">&nbsp;</td>'
       + `<td class="num">${rapFmtInt(subEntre)}</td>`
       + `<td class="num">${rapFmtInt(subEncours)}</td>`
       + `<td class="num">${rapFmtInt(subSortie)}</td>`
-      + `<td colspan="2"></td></tr>`;
-    subEntre = subSortie = subEncours = 0;
-    return s;
-  };
-  let totalEntre = 0, totalSortie = 0, totalEncours = 0;
-  for (const r of rows) {
-    if (r.modele !== curMod) {
-      html += flushSub();
-      curMod = r.modele;
-    }
-    subEntre += r.entre; subSortie += r.sortie; subEncours += r.encours;
-    totalEntre += r.entre; totalSortie += r.sortie; totalEncours += r.encours;
-    html += `<tr>`
-      + `<td>${_rapEscapeHtml(r.modele || '')}</td>`
-      + `<td class="center">${_rapEscapeHtml(r.import || '')}</td>`
-      + `<td>${_rapEscapeHtml(r.desig || '')}</td>`
-      + `<td class="num">${rapFmtInt(r.entre)}</td>`
-      + `<td class="num">${rapFmtInt(r.encours)}</td>`
-      + `<td class="num">${rapFmtInt(r.sortie)}</td>`
-      + `<td>${_rapEscapeHtml(r.client || '')}</td>`
-      + `<td class="ch center">${r.chain != null ? 'Ch' + String(r.chain).padStart(2,'0') : ''}</td>`
-      + `</tr>`;
+      + '<td class="left strong">TOTAL</td>'
+      + '<td></td>'
+      + '</tr>';
   }
-  html += flushSub();
-  html += '</tbody><tfoot><tr>'
-    + `<td colspan="3" style="text-align:right">Total général :</td>`
-    + `<td class="num">${rapFmtInt(totalEntre)}</td>`
-    + `<td class="num">${rapFmtInt(totalEncours)}</td>`
-    + `<td class="num">${rapFmtInt(totalSortie)}</td>`
-    + `<td colspan="2"></td></tr></tfoot></table>`;
+  html += '</tbody><tfoot><tr class="totalg">'
+    + '<td colspan="3" class="right">&nbsp;</td>'
+    + `<td class="num">${rapFmtInt(data.totals.entre)}</td>`
+    + `<td class="num">${rapFmtInt(data.totals.encours)}</td>`
+    + `<td class="num">${rapFmtInt(data.totals.sortie)}</td>`
+    + '<td class="left strong">TOTAL</td>'
+    + '<td></td>'
+    + '</tr></tfoot></table>';
+  html += rapCegidFooter(1);
   return html;
 }
 
-/* ---- Rapport 3 : Rendement + Heures manquantes (Ch14 / Groupe0001) ---- */
+/* ===========================================================
+ * RAPPORT 3 — RENDEMENT + HEURES MANQUANTES DE PRODUCTION
+ *             (modèles Ch14.pdf / Groupe0001.pdf)
+ * En-tête : RENDEMENT + HEURES MANQUANTES DE PRODUCTION   CODERSA
+ *                                                          MES027-20
+ * Colonnes (15) :
+ *   DT | CH | DATE | N°IMP | PROD. | HRS/J | MODELE | DESIG |
+ *   VT | PR/H | H.MANQ | H PRES | Rend % | OB.H.LA | % MQ
+ * Cumul :
+ *   Cumul [VT moyen]  [Rend % cumul]  [% MQ cumul]  Σ(HRS/J)  Σ(SORTIE)
+ *         Σ(H PRES)  Σ(H.MANQ)  Σ(OB.H.LA)
+ * =========================================================== */
 function rapBuildHManq(month, dates) {
   const info = PRODUCTION[month];
   const chFilter = RAPPORTS_STATE.chain != null ? Number(RAPPORTS_STATE.chain) : null;
   const rows = [];
   let dt = 0;
-  let cumHManq = 0;
+  let cumHManqAbs = 0;
   for (const d of dates) {
     const excelArr = getExcelDataForDate(d);
     const dayRows = (info.daily[d] || []).filter(line => {
@@ -6184,73 +6264,129 @@ function rapBuildHManq(month, dates) {
       const prodMin = abSortie * vt;
       const presMin = ai * 60;
       const rend = presMin ? prodMin / presMin : null;
-      const prh = hJour ? abSortie / hJour : null;
+      const prh = hJour ? Math.round(abSortie / hJour) : null;
       const hManq = (ph && hJour) ? (abSortie / ph) - hJour : null;
-      cumHManq += (hManq || 0);
+      const obHla = (ph && abSortie) ? abSortie / ph : null; // heures de lancement « objectif » réalisées
+      if (hManq != null) cumHManqAbs += Math.abs(hManq);
       const pctMq = hJour ? (hManq != null ? hManq / hJour : null) : null;
       rows.push({
         dt, ch: line.chain, date: d, imp: line.import,
-        prod: ph, modele: line.modele, desig: line.desig,
-        vt, prh, hManq, rend, obHla: cumHManq,
-        sortie: abSortie, hPres: ai, pctMq,
+        prod: ph, hJour, modele: line.modele, desig: line.desig,
+        vt, prh, hManq, hPres: ai, rend, obHla, pctMq,
+        sortie: abSortie,
       });
     }
   }
   const tot = {
-    sortie: rows.reduce((a, r) => a + (r.sortie || 0), 0),
-    hPres:  rows.reduce((a, r) => a + (r.hPres || 0), 0),
-    hManq:  rows.reduce((a, r) => a + (r.hManq || 0), 0),
+    sortie:  rows.reduce((a, r) => a + (r.sortie || 0), 0),
+    hPres:   rows.reduce((a, r) => a + (r.hPres  || 0), 0),
+    hManq:   rows.reduce((a, r) => a + (r.hManq  || 0), 0),
+    obHla:   rows.reduce((a, r) => a + (r.obHla  || 0), 0),
+    hrsJ:    rows.reduce((a, r) => a + (r.hJour  || 0), 0),
+    hManqAbs: cumHManqAbs,
   };
-  let prodMinTot = 0, presMinTot = 0;
-  for (const r of rows) { prodMinTot += (r.sortie || 0) * (r.vt || 0); presMinTot += (r.hPres || 0) * 60; }
+  let prodMinTot = 0, presMinTot = 0, vtSum = 0, vtN = 0;
+  for (const r of rows) {
+    prodMinTot += (r.sortie || 0) * (r.vt || 0);
+    presMinTot += (r.hPres || 0) * 60;
+    if (r.vt) { vtSum += r.vt; vtN++; }
+  }
   tot.rend = presMinTot ? prodMinTot / presMinTot : null;
+  tot.vt   = vtN ? vtSum / vtN : null;
+  tot.pctMq = tot.hrsJ ? tot.hManq / tot.hrsJ : null;
   return { rows, tot };
 }
 function rapHtmlHManq(month, dates) {
   const data = rapBuildHManq(month, dates);
-  if (!data.rows.length) return '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
-  let html = '<table class="rap-table"><caption>Rendement + heures manquantes — ' + month + '</caption>';
+  let html = rapCegidHeader({
+    titleCenter: 'RENDEMENT + HEURES MANQUANTES DE PRODUCTION',
+    titleRight:  'CODERSA',
+  });
+  html += '<div class="rap-cegid-subtitle right">MES027-20</div>';
+  if (!data.rows.length) {
+    html += '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
+    html += rapCegidFooter(1);
+    return html;
+  }
+  html += '<table class="rap-table">';
   html += '<thead><tr>'
-    + '<th>DT</th><th>CH</th><th>Date</th><th>N°IMP</th><th>P/H</th>'
-    + '<th>Modèle / Désignation</th><th>VT</th><th>PR/H réel</th>'
-    + '<th>H.Manq</th><th>Rend %</th><th>OB.H.LA</th>'
-    + '<th>Sortie</th><th>H.Présence</th><th>% MQ</th>'
+    + '<th class="center">DT</th>'
+    + '<th class="center">CH</th>'
+    + '<th class="center">DATE</th>'
+    + '<th class="center">N°IMP</th>'
+    + '<th class="right">PROD.</th>'
+    + '<th class="right">HRS/J</th>'
+    + '<th class="left">MODELE</th>'
+    + '<th class="left">DESIG</th>'
+    + '<th class="right">VT</th>'
+    + '<th class="right">PR/H</th>'
+    + '<th class="right">H . MANQ</th>'
+    + '<th class="right">H PRES</th>'
+    + '<th class="right">Rend %</th>'
+    + '<th class="right">OB.H.LA</th>'
+    + '<th class="right">% MQ</th>'
     + '</tr></thead><tbody>';
   for (const r of data.rows) {
-    const rendCls = rapPctClass(r.rend);
     const hManqCls = r.hManq != null ? (r.hManq < 0 ? 'neg' : 'pos') : '';
-    html += `<tr>`
+    html += '<tr>'
       + `<td class="center">${r.dt}</td>`
-      + `<td class="ch center">${r.ch != null ? 'Ch' + String(r.ch).padStart(2,'0') : ''}</td>`
-      + `<td class="center">${_rapEscapeHtml(r.date || '')}</td>`
+      + `<td class="center">${rapChShort(r.ch)}</td>`
+      + `<td class="center">${rapFmtDate(r.date)}</td>`
       + `<td class="center">${_rapEscapeHtml(r.imp || '')}</td>`
       + `<td class="num">${rapFmtInt(r.prod)}</td>`
-      + `<td>${_rapEscapeHtml((r.modele || '') + (r.desig ? ' · ' + r.desig : ''))}</td>`
+      + `<td class="num">${rapFmtHrs(r.hJour)}</td>`
+      + `<td class="left">${_rapEscapeHtml(r.modele || '')}</td>`
+      + `<td class="left">${_rapEscapeHtml(r.desig || '')}</td>`
       + `<td class="num">${fmtDecFr(r.vt, 2)}</td>`
-      + `<td class="num">${rapFmtHrs(r.prh)}</td>`
+      + `<td class="num">${rapFmtInt(r.prh)}</td>`
       + `<td class="num ${hManqCls}">${rapFmtSigned(r.hManq)}</td>`
-      + `<td class="pct ${rendCls}">${rapFmtPct(r.rend)}</td>`
-      + `<td class="num">${rapFmtSigned(r.obHla)}</td>`
-      + `<td class="num">${rapFmtInt(r.sortie)}</td>`
       + `<td class="num">${rapFmtHrs(r.hPres)}</td>`
+      + `<td class="pct">${rapFmtPct(r.rend)}</td>`
+      + `<td class="num">${rapFmtHrs(r.obHla)}</td>`
       + `<td class="pct">${rapFmtPctDec(r.pctMq)}</td>`
-      + `</tr>`;
+      + '</tr>';
   }
-  html += '</tbody><tfoot><tr>'
-    + `<td colspan="11" style="text-align:right">Cumul :</td>`
-    + `<td class="num">${rapFmtInt(data.tot.sortie)}</td>`
-    + `<td class="num">${rapFmtHrs(data.tot.hPres)}</td>`
-    + `<td class="pct ${rapPctClass(data.tot.rend)}">${rapFmtPct(data.tot.rend)}</td>`
-    + `</tr></tfoot></table>`;
+  html += '</tbody><tfoot>'
+    + '<tr>'
+    +   '<td colspan="3" class="left">Cumul</td>'
+    +   '<td class="center"></td>'
+    +   '<td class="num"></td>'
+    +   `<td class="num">${rapFmtHrs(data.tot.hrsJ)}</td>`
+    +   '<td colspan="3" class="left"></td>'
+    +   `<td class="num">${data.tot.vt != null ? fmtDecFr(data.tot.vt, 2) : ''}</td>`
+    +   `<td class="num"></td>`
+    +   `<td class="num">${rapFmtSigned(data.tot.hManq)}</td>`
+    +   `<td class="num">${rapFmtHrs(data.tot.hPres)}</td>`
+    +   `<td class="pct">${rapFmtPctDec(data.tot.rend)}</td>`
+    +   `<td class="num">${rapFmtHrs(data.tot.obHla)}</td>`
+    +   `<td class="pct">${rapFmtPctDec(data.tot.pctMq)}</td>`
+    + '</tr>'
+    + '<tr>'
+    +   '<td colspan="6" class="right strong">Heures manquantes Net :</td>'
+    +   `<td colspan="9" class="num strong">${rapFmtSigned(data.tot.hManq)} h  (Σ |H.MANQ| = ${rapFmtSigned(data.tot.hManqAbs)} h)</td>`
+    + '</tr>'
+    + '</tfoot></table>';
+  html += rapCegidFooter(1);
   return html;
 }
 
-/* ---- Rapport 4 : Suivi production / modèle / chaîne / date ---- */
+/* ===========================================================
+ * RAPPORT 4 — SUIVI PRODUCTION / MODELE / CHAINE / DATE
+ *             (modèle gestion production 3.pdf)
+ * En-tête : SUIVI PRODUCTION / MODELE / CHAINE / DATE      CODERSA
+ * Colonnes (14) :
+ *   DATE | N°IMP | ENTRE | Min Prod | MODELE | DESIG | SORTIE |
+ *   Rend % | SEC | VT | Min Pres | Hrs/J | RET | % RET
+ * Sous-total par chaîne :
+ *   CHAINEnn  Σ(Min Prod)  Σ(Min Pres)  Rend cumul  % RET cumul
+ *             Σ(ENTRE)     Σ(SORTIE)    Σ(Hrs/J)
+ * Cumul général : idem
+ * =========================================================== */
 function rapBuildSuivi(month, dates) {
   const info = PRODUCTION[month];
   const chFilter  = RAPPORTS_STATE.chain != null ? Number(RAPPORTS_STATE.chain) : null;
   const modFilter = (RAPPORTS_STATE.modele || '').trim().toLowerCase();
-  const rows = [];
+  const byCh = new Map();
   for (const d of dates) {
     const excelArr = getExcelDataForDate(d);
     for (const line of info.daily[d] || []) {
@@ -6259,6 +6395,7 @@ function rapBuildSuivi(month, dates) {
       const mod = String(line.modele || '');
       if (modFilter && !mod.toLowerCase().includes(modFilter)) continue;
       const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+      const r0h = (line.hours_entry && line.hours_entry.length) ? line.hours_entry : ((excel && excel.r0_hours) || []);
       const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
       const r2h = (line.effectifs_hours && line.effectifs_hours.length) ? line.effectifs_hours : ((excel && excel.r2_hours) || []);
       const r3h = (line.stagiaire_hours && line.stagiaire_hours.length) ? line.stagiaire_hours : ((excel && excel.r3_hours) || []);
@@ -6267,6 +6404,7 @@ function rapBuildSuivi(month, dates) {
       const ph = (line.ph != null && !isNaN(line.ph)) ? Number(line.ph)
         : ((excel && excel.r1_ph != null) ? Number(excel.r1_ph) : 0);
       const abSortie = calcTotalSortieRow(r1h);
+      const abEntre  = _sumArr(r0h);
       const abEff = calcTotalEffectifsRow(r2h, d);
       const abStag = calcTotalStagiaireRow(r3h, d);
       const ai = calcVersFinalAI(abEff, abStag);
@@ -6274,63 +6412,125 @@ function rapBuildSuivi(month, dates) {
       const minProd = abSortie * vt;
       const minPres = ai * 60;
       const rend = minPres ? minProd / minPres : null;
-      const sec = vt ? Math.round(vt * 60) : null;
+      const sec = vt ? vt * 60 : null;
       const sortieObj = (ph && hJour) ? ph * hJour : null;
       const ret = (sortieObj != null) ? sortieObj - abSortie : null;
       const pctRet = (sortieObj && ret != null) ? ret / sortieObj : null;
-      rows.push({
-        date: d, imp: line.import, modele: mod, desig: line.desig,
-        chain: line.chain, hJour, minProd, minPres, sortie: abSortie,
-        rend, sec, vt, ret, pctRet,
+      const chKey = String(line.chain);
+      if (!byCh.has(chKey)) byCh.set(chKey, { chain: line.chain, rows: [] });
+      byCh.get(chKey).rows.push({
+        date: d, imp: line.import, entre: abEntre, minProd,
+        modele: mod, desig: line.desig, sortie: abSortie, rend,
+        sec, vt, minPres, hJour, ret, pctRet,
       });
     }
   }
-  rows.sort((a, b) => _rapFrToTs(a.date) - _rapFrToTs(b.date) || ((a.chain || 0) - (b.chain || 0)));
-  const tot = {
-    minProd: rows.reduce((a, r) => a + (r.minProd || 0), 0),
-    minPres: rows.reduce((a, r) => a + (r.minPres || 0), 0),
-    sortie:  rows.reduce((a, r) => a + (r.sortie  || 0), 0),
-    ret:     rows.reduce((a, r) => a + (r.ret     || 0), 0),
+  const groups = Array.from(byCh.values()).sort((a, b) => (a.chain || 0) - (b.chain || 0));
+  for (const g of groups) g.rows.sort((a, b) => _rapFrToTs(a.date) - _rapFrToTs(b.date));
+  const totGroup = g => ({
+    entre:   g.rows.reduce((a, r) => a + (r.entre   || 0), 0),
+    sortie:  g.rows.reduce((a, r) => a + (r.sortie  || 0), 0),
+    minProd: g.rows.reduce((a, r) => a + (r.minProd || 0), 0),
+    minPres: g.rows.reduce((a, r) => a + (r.minPres || 0), 0),
+    hrsJ:    g.rows.reduce((a, r) => a + (r.hJour   || 0), 0),
+    ret:     g.rows.reduce((a, r) => a + (r.ret     || 0), 0),
+    rend: 0, pctRet: 0,
+  });
+  for (const g of groups) {
+    g.totals = totGroup(g);
+    g.totals.rend  = g.totals.minPres ? g.totals.minProd / g.totals.minPres : null;
+    const sortieObj = g.totals.sortie + g.totals.ret;
+    g.totals.pctRet = sortieObj ? g.totals.ret / sortieObj : null;
+  }
+  const cumul = {
+    entre:   groups.reduce((a, g) => a + g.totals.entre,   0),
+    sortie:  groups.reduce((a, g) => a + g.totals.sortie,  0),
+    minProd: groups.reduce((a, g) => a + g.totals.minProd, 0),
+    minPres: groups.reduce((a, g) => a + g.totals.minPres, 0),
+    hrsJ:    groups.reduce((a, g) => a + g.totals.hrsJ,    0),
+    ret:     groups.reduce((a, g) => a + g.totals.ret,     0),
   };
-  tot.rend = tot.minPres ? tot.minProd / tot.minPres : null;
-  return { rows, tot };
+  cumul.rend   = cumul.minPres ? cumul.minProd / cumul.minPres : null;
+  const cumObj = cumul.sortie + cumul.ret;
+  cumul.pctRet = cumObj ? cumul.ret / cumObj : null;
+  return { groups, cumul };
 }
 function rapHtmlSuivi(month, dates) {
   const data = rapBuildSuivi(month, dates);
-  if (!data.rows.length) return '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
-  let html = '<table class="rap-table"><caption>Suivi production / modèle / chaîne / date — ' + month + '</caption>';
-  html += '<thead><tr>'
-    + '<th>Date</th><th>N°IMP</th><th>Modèle / Désignation</th><th>Chaîne</th>'
-    + '<th>Hrs/J</th><th>Min Prod</th><th>Min Pres</th><th>Sortie</th>'
-    + '<th>Rend %</th><th>SEC</th><th>VT</th><th>RET</th><th>% RET</th>'
-    + '</tr></thead><tbody>';
-  for (const r of data.rows) {
-    html += `<tr>`
-      + `<td class="center">${_rapEscapeHtml(r.date || '')}</td>`
-      + `<td class="center">${_rapEscapeHtml(r.imp || '')}</td>`
-      + `<td>${_rapEscapeHtml((r.modele || '') + (r.desig ? ' · ' + r.desig : ''))}</td>`
-      + `<td class="ch center">${r.chain != null ? 'Ch' + String(r.chain).padStart(2,'0') : ''}</td>`
-      + `<td class="num">${rapFmtHrs(r.hJour)}</td>`
-      + `<td class="num">${rapFmtMin(r.minProd)}</td>`
-      + `<td class="num">${rapFmtMin(r.minPres)}</td>`
-      + `<td class="num">${rapFmtInt(r.sortie)}</td>`
-      + `<td class="pct ${rapPctClass(r.rend)}">${rapFmtPct(r.rend)}</td>`
-      + `<td class="num">${rapFmtInt(r.sec)}</td>`
-      + `<td class="num">${fmtDecFr(r.vt, 2)}</td>`
-      + `<td class="num ${r.ret != null && r.ret > 0 ? 'neg' : (r.ret != null && r.ret < 0 ? 'pos' : '')}">${rapFmtInt(r.ret)}</td>`
-      + `<td class="pct">${rapFmtPctDec(r.pctRet)}</td>`
-      + `</tr>`;
+  let html = rapCegidHeader({
+    titleCenter: 'SUIVI PRODUCTION / MODELE / CHAINE / DATE',
+    titleRight:  'CODERSA',
+  });
+  if (!data.groups.length) {
+    html += '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
+    html += rapCegidFooter(1);
+    return html;
   }
-  html += '</tbody><tfoot><tr>'
-    + `<td colspan="5" style="text-align:right">Cumul :</td>`
-    + `<td class="num">${rapFmtMin(data.tot.minProd)}</td>`
-    + `<td class="num">${rapFmtMin(data.tot.minPres)}</td>`
-    + `<td class="num">${rapFmtInt(data.tot.sortie)}</td>`
-    + `<td class="pct ${rapPctClass(data.tot.rend)}">${rapFmtPct(data.tot.rend)}</td>`
-    + `<td colspan="2"></td>`
-    + `<td class="num">${rapFmtInt(data.tot.ret)}</td>`
-    + `<td></td>`
-    + `</tr></tfoot></table>`;
+  html += '<table class="rap-table">';
+  html += '<thead><tr>'
+    + '<th class="center">DATE</th>'
+    + '<th class="center">N°IMP</th>'
+    + '<th class="right">ENTRE</th>'
+    + '<th class="right">Min Prod</th>'
+    + '<th class="left">MODELE</th>'
+    + '<th class="left">DESIG</th>'
+    + '<th class="right">SORTIE</th>'
+    + '<th class="right">Rend %</th>'
+    + '<th class="right">SEC</th>'
+    + '<th class="right">VT</th>'
+    + '<th class="right">Min Pres</th>'
+    + '<th class="right">Hrs/J</th>'
+    + '<th class="right">RET</th>'
+    + '<th class="right">% RET</th>'
+    + '</tr></thead><tbody>';
+  for (const g of data.groups) {
+    for (const r of g.rows) {
+      const retCls = r.ret != null && r.ret > 0 ? 'neg' : (r.ret != null && r.ret < 0 ? 'pos' : '');
+      html += '<tr>'
+        + `<td class="center">${rapFmtDateFull(r.date)}</td>`
+        + `<td class="center">${_rapEscapeHtml(r.imp || '')}</td>`
+        + `<td class="num">${rapFmtInt(r.entre)}</td>`
+        + `<td class="num">${rapFmtIntSp(r.minProd)}</td>`
+        + `<td class="left">${_rapEscapeHtml(r.modele || '')}</td>`
+        + `<td class="left">${_rapEscapeHtml(r.desig || '')}</td>`
+        + `<td class="num">${rapFmtInt(r.sortie)}</td>`
+        + `<td class="pct">${rapFmtPctDec(r.rend)}</td>`
+        + `<td class="num">${r.sec != null ? fmtDecFr(r.sec, 2) : ''}</td>`
+        + `<td class="num">${fmtDecFr(r.vt, 2)}</td>`
+        + `<td class="num">${rapFmtIntSp(r.minPres)}</td>`
+        + `<td class="num">${rapFmtHrs(r.hJour)}</td>`
+        + `<td class="num ${retCls}">${rapFmtInt(r.ret)}</td>`
+        + `<td class="pct">${rapFmtPctDec(r.pctRet)}</td>`
+        + '</tr>';
+    }
+    html += '<tr class="subtotal">'
+      + `<td colspan="2" class="left strong">${rapFmtCh(g.chain)}</td>`
+      + `<td class="num">${rapFmtInt(g.totals.entre)}</td>`
+      + `<td class="num">${rapFmtIntSp(g.totals.minProd)}</td>`
+      + '<td colspan="2"></td>'
+      + `<td class="num">${rapFmtInt(g.totals.sortie)}</td>`
+      + `<td class="pct">${rapFmtPctDec(g.totals.rend)}</td>`
+      + '<td></td><td></td>'
+      + `<td class="num">${rapFmtIntSp(g.totals.minPres)}</td>`
+      + `<td class="num">${rapFmtHrs(g.totals.hrsJ)}</td>`
+      + `<td class="num">${rapFmtInt(g.totals.ret)}</td>`
+      + `<td class="pct">${rapFmtPctDec(g.totals.pctRet)}</td>`
+      + '</tr>';
+  }
+  html += '</tbody><tfoot><tr class="totalg">'
+    + '<td colspan="2" class="left strong">Cumul</td>'
+    + `<td class="num">${rapFmtInt(data.cumul.entre)}</td>`
+    + `<td class="num">${rapFmtIntSp(data.cumul.minProd)}</td>`
+    + '<td colspan="2"></td>'
+    + `<td class="num">${rapFmtInt(data.cumul.sortie)}</td>`
+    + `<td class="pct">${rapFmtPctDec(data.cumul.rend)}</td>`
+    + '<td></td><td></td>'
+    + `<td class="num">${rapFmtIntSp(data.cumul.minPres)}</td>`
+    + `<td class="num">${rapFmtHrs(data.cumul.hrsJ)}</td>`
+    + `<td class="num">${rapFmtInt(data.cumul.ret)}</td>`
+    + `<td class="pct">${rapFmtPctDec(data.cumul.pctRet)}</td>`
+    + '</tr></tfoot></table>';
+  html += rapCegidFooter(1);
   return html;
 }
 
