@@ -6334,19 +6334,23 @@ function rapHtmlHManq(month, dates) {
     return html;
   }
   html += '<table class="rap-table">';
+  /* Ordre exact des 15 colonnes (cf. en-tête CEGID demandé) :
+     CH | DATE | N°IMP | MODELE | DT | HRS/J | PROD. |
+     DESIG | VT | H PRES | PR/H | H . MANQ |
+     Rend % | OB.H.LA | % MQ                                       */
   html += '<thead><tr>'
-    + '<th class="center">DT</th>'
     + '<th class="center">CH</th>'
     + '<th class="center">DATE</th>'
     + '<th class="center">N°IMP</th>'
-    + '<th class="right">PROD.</th>'
-    + '<th class="right">HRS/J</th>'
     + '<th class="left">MODELE</th>'
+    + '<th class="center">DT</th>'
+    + '<th class="right">HRS/J</th>'
+    + '<th class="right">PROD.</th>'
     + '<th class="left">DESIG</th>'
     + '<th class="right">VT</th>'
+    + '<th class="right">H PRES</th>'
     + '<th class="right">PR/H</th>'
     + '<th class="right">H . MANQ</th>'
-    + '<th class="right">H PRES</th>'
     + '<th class="right">Rend %</th>'
     + '<th class="right">OB.H.LA</th>'
     + '<th class="right">% MQ</th>'
@@ -6354,18 +6358,18 @@ function rapHtmlHManq(month, dates) {
   for (const r of data.rows) {
     const hManqCls = r.hManq != null ? (r.hManq < 0 ? 'neg' : 'pos') : '';
     html += '<tr>'
-      + `<td class="center">${r.dt}</td>`
       + `<td class="center">${rapChShort(r.ch)}</td>`
       + `<td class="center">${rapFmtDate(r.date)}</td>`
       + `<td class="center">${_rapEscapeHtml(r.imp || '')}</td>`
-      + `<td class="num">${rapFmtInt(r.prod)}</td>`
-      + `<td class="num">${rapFmtHrs(r.hJour)}</td>`
       + `<td class="left">${_rapEscapeHtml(r.modele || '')}</td>`
+      + `<td class="center">${r.dt}</td>`
+      + `<td class="num">${rapFmtHrs(r.hJour)}</td>`
+      + `<td class="num">${rapFmtInt(r.prod)}</td>`
       + `<td class="left">${_rapEscapeHtml(r.desig || '')}</td>`
       + `<td class="num">${fmtDecFr(r.vt, 2)}</td>`
+      + `<td class="num">${rapFmtHrs(r.hPres)}</td>`
       + `<td class="num">${rapFmtInt(r.prh)}</td>`
       + `<td class="num ${hManqCls}">${rapFmtSigned(r.hManq)}</td>`
-      + `<td class="num">${rapFmtHrs(r.hPres)}</td>`
       + `<td class="pct">${rapFmtPct(r.rend)}</td>`
       + `<td class="num">${rapFmtHrs(r.obHla)}</td>`
       + `<td class="pct">${rapFmtPctDec(r.pctMq)}</td>`
@@ -6374,14 +6378,15 @@ function rapHtmlHManq(month, dates) {
   html += '</tbody><tfoot>'
     + '<tr>'
     +   '<td colspan="3" class="left">Cumul</td>'
+    +   '<td class="left"></td>'
     +   '<td class="center"></td>'
-    +   '<td class="num"></td>'
     +   `<td class="num">${rapFmtHrs(data.tot.hrsJ)}</td>`
-    +   '<td colspan="3" class="left"></td>'
+    +   '<td class="num"></td>'
+    +   '<td class="left"></td>'
     +   `<td class="num">${data.tot.vt != null ? fmtDecFr(data.tot.vt, 2) : ''}</td>`
-    +   `<td class="num"></td>`
-    +   `<td class="num">${rapFmtSigned(data.tot.hManq)}</td>`
     +   `<td class="num">${rapFmtHrs(data.tot.hPres)}</td>`
+    +   '<td class="num"></td>'
+    +   `<td class="num">${rapFmtSigned(data.tot.hManq)}</td>`
     +   `<td class="pct">${rapFmtPctDec(data.tot.rend)}</td>`
     +   `<td class="num">${rapFmtHrs(data.tot.obHla)}</td>`
     +   `<td class="pct">${rapFmtPctDec(data.tot.pctMq)}</td>`
