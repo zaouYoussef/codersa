@@ -2190,6 +2190,98 @@ table.data tbody tr:hover td {
     color-mix(in srgb, var(--surface) 92%, transparent) 0%,
     color-mix(in srgb, var(--surface-2) 80%, transparent) 100%);
 }
+.prep-plan-table td.num { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; }
+.prep-plan-table td.prep-col-obj { min-width: 108px; }
+.prep-plan-table input.prep-obj-inp {
+  width: 72px;
+  max-width: 100%;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  text-align: center;
+}
+.prep-plan-table input.prep-obj-inp:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
+}
+.prep-qte-wrap { max-height: min(320px, 40vh); }
+.prep-qte-table input.prep-qte-inp {
+  width: 100%;
+  max-width: 120px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  text-align: right;
+}
+.prep-qte-table input.prep-qte-inp:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
+}
+.excel-saisie .qte-prevu-read {
+  display: block;
+  padding: 4px 6px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-dim);
+}
+.excel-saisie .qte-prevu-cell.qte-prevu-locked input { display: none; }
+.prep-plan-table tr.prep-row-active td { background: rgba(56,189,248,0.08); }
+.prep-page-head {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 14px 20px;
+}
+.prep-head-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  margin-left: auto;
+}
+.prep-day-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 168px;
+}
+.prep-day-filter label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.45px;
+  color: var(--text-dim);
+}
+.prep-day-filter select {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  min-width: 168px;
+}
+.prep-day-filter select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+}
 #page-prep .kpi-value {
   font-feature-settings: 'tnum';
 }
@@ -3031,7 +3123,376 @@ header.topbar {
 /* Détail · KPI strip plus compacte */
 #detail-kpi-strip { margin-bottom: 14px; }
 
-/* === VT / P/H / EFF par chaîne (onglet Méthodes) === */
+/* === Méthodes — vue tableau unique === */
+#page-methodes .page-head { margin-bottom: 18px; }
+.meth-page { max-width: 100%; }
+.meth-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 20px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  background: linear-gradient(135deg, rgba(56,189,248,0.07) 0%, var(--surface) 42%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+.meth-toolbar-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  flex: 1;
+  min-width: 220px;
+}
+.meth-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.meth-field-modele { min-width: 240px; flex: 0 1 280px; }
+.meth-field-modele label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.45px;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+.meth-field-modele select {
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color .15s, box-shadow .15s;
+}
+.meth-field-modele select:hover { border-color: rgba(56,189,248,0.45); }
+.meth-field-modele select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.18);
+}
+.meth-count-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(56,189,248,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(56,189,248,0.28);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  box-sizing: border-box;
+  height: 40px;
+}
+.meth-count-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  flex-shrink: 0;
+}
+.meth-toolbar-actions .btn {
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: transform .12s, box-shadow .15s, background .15s, border-color .15s;
+}
+.meth-toolbar-actions .btn:not(:disabled):hover { transform: translateY(-1px); }
+.meth-toolbar-actions .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+.meth-toolbar-actions .btn.primary {
+  background: var(--grad-a);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(56,189,248,0.28);
+}
+.meth-toolbar-actions .btn.primary:hover { filter: brightness(1.06); box-shadow: 0 6px 18px rgba(56,189,248,0.38); }
+.meth-toolbar-actions .btn.danger {
+  background: transparent;
+  color: var(--red);
+  border-color: rgba(244,63,94,0.35);
+}
+.meth-toolbar-actions .btn.danger:not(:disabled):hover {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
+.meth-body { min-height: 200px; }
+.meth-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.meth-empty::before {
+  content: "◇";
+  font-size: 28px;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.55;
+}
+.meth-empty strong { color: var(--text); font-weight: 800; }
+.meth-table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.meth-table-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-2);
+  background: var(--surface-2);
+}
+.meth-table-title {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.meth-table-title .meth-model-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  background: rgba(56,189,248,0.14);
+  color: var(--accent);
+  border: 1px solid rgba(56,189,248,0.25);
+  vertical-align: middle;
+}
+.meth-table-hint {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+.meth-main-table-wrap {
+  max-height: min(calc(100vh - 280px), 680px);
+  border: none;
+  border-radius: 0;
+}
+.meth-legacy-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+table.meth-rules-flat {
+  font-size: 13px;
+}
+table.meth-rules-flat.hide-col-modele .col-modele { display: none; }
+table.meth-rules-flat thead th {
+  padding: 10px 12px;
+  font-size: 10px;
+  letter-spacing: 0.55px;
+  background: var(--surface-3);
+  border-bottom: 2px solid var(--border);
+}
+table.meth-rules-flat thead th.col-ch { width: 56px; }
+table.meth-rules-flat thead th.col-val { width: 88px; }
+table.meth-rules-flat thead th.col-date { width: 108px; }
+table.meth-rules-flat tbody td {
+  padding: 9px 12px;
+  border-color: var(--border-2);
+  transition: background .12s;
+}
+table.meth-rules-flat tbody tr { cursor: pointer; }
+table.meth-rules-flat tbody tr:hover td { background: rgba(56,189,248,0.06); }
+table.meth-rules-flat tbody tr.meth-flat-period-a td { background: rgba(255,255,255,0.02); }
+:root[data-theme="light"] table.meth-rules-flat tbody tr.meth-flat-period-a td { background: rgba(2,132,199,0.04); }
+table.meth-rules-flat tbody tr.meth-flat-period-b td { background: transparent; }
+table.meth-rules-flat tbody tr.meth-flat-period-start td {
+  border-top: 2px solid rgba(56,189,248,0.35);
+  padding-top: 11px;
+}
+table.meth-rules-flat tbody tr.meth-flat-period-start:first-child td { border-top: none; padding-top: 9px; }
+table.meth-rules-flat tbody tr.meth-flat-period-start td.col-date-du::before {
+  content: "";
+  display: block;
+  height: 0;
+}
+table.meth-rules-flat tbody tr.meth-flat-active td {
+  background: rgba(56, 189, 248, 0.14) !important;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+table.meth-rules-flat td.col-ch {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--accent);
+  text-align: center;
+  background: rgba(56,189,248,0.05);
+}
+table.meth-rules-flat td.col-val {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+  text-align: right;
+  padding-right: 14px;
+}
+table.meth-rules-flat td.col-val.is-empty { color: var(--text-faint); font-weight: 500; }
+table.meth-rules-flat td.col-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+table.meth-rules-flat td.col-date-au { color: var(--accent); }
+table.meth-rules-flat td.col-date .meth-au-today {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.35px;
+  background: rgba(56,189,248,0.18);
+  color: var(--accent);
+  border: 1px solid rgba(56,189,248,0.3);
+}
+#meth-edit-modal .pin-modal.meth-edit-modal {
+  width: min(540px, 94vw);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.45);
+}
+.meth-modal-head {
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid var(--border-2);
+  background: linear-gradient(180deg, rgba(56,189,248,0.1) 0%, transparent 100%);
+}
+.meth-modal-head h3 {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0 0 4px;
+  letter-spacing: -0.03em;
+}
+.meth-modal-head p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.meth-edit-modal .meth-edit-body { padding: 16px 22px 8px; }
+.meth-edit-section { margin-bottom: 16px; }
+.meth-section-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+.meth-edit-dates {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 12px;
+}
+.meth-edit-dates .field label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+.meth-edit-dates .field input,
+.meth-edit-dates .field input[type="date"] {
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.meth-edit-dates .field input:focus,
+.meth-edit-dates .field input[type="date"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+}
+.meth-edit-dates input[type="date"] { color-scheme: dark; }
+:root[data-theme="light"] .meth-edit-dates input[type="date"] { color-scheme: light; }
+.meth-chains-modal-wrap {
+  max-height: min(380px, 52vh);
+  margin: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+table.meth-chains-compact { font-size: 12px; }
+table.meth-chains-compact thead th { padding: 8px 10px; }
+table.meth-chains-compact tbody td { padding: 5px 8px; }
+table.meth-chains-compact td.chain-lab {
+  width: 48px;
+  font-size: 11px;
+  text-align: center;
+  padding-left: 8px;
+}
+table.meth-chains-compact input { width: 100%; min-width: 64px; }
+#meth-edit-modal .pin-actions {
+  margin: 0;
+  padding: 14px 22px 18px;
+  border-top: 1px solid var(--border-2);
+  background: var(--surface-2);
+}
+#meth-edit-modal .pin-actions .btn { padding: 10px 16px; border-radius: 10px; font-weight: 700; }
+#meth-edit-modal .pin-actions .btn.primary {
+  background: var(--grad-a);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(56,189,248,0.3);
+}
+@media (max-width: 600px) {
+  .meth-edit-dates { grid-template-columns: 1fr; }
+  .meth-toolbar-actions { width: 100%; }
+  .meth-toolbar-actions .btn { flex: 1; min-width: 0; }
+  .meth-table-card-head { flex-direction: column; align-items: flex-start; }
+}
 .meth-rules-layout {
   display: grid;
   grid-template-columns: 1fr minmax(280px, 360px);
@@ -3343,12 +3804,16 @@ table.meth-rules-grid input:focus {
   color: var(--text-dim);
 }
 table.meth-rules-grid tr.meth-chain-hidden { display: none; }
-.meth-rules-list-empty {
-  font-size: 12px;
+.meth-chains-edit-title {
+  margin: 14px 0 8px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   color: var(--text-dim);
-  padding: 12px 8px;
-  text-align: center;
 }
+#meth-rules-chains-panel { display: none; }
+.meth-rules-list-empty { display: none; }
 .meth-rules-list {
   display: flex;
   flex-direction: column;
@@ -3487,7 +3952,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       </button>
       <button class="tab" data-page="methodes">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-        VT / P/H / EFF
+        Méthodes
       </button>
       <button class="tab" data-page="rapports">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -3527,7 +3992,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       </button>
       <button class="tab" data-page="prep">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-        Préparation
+        Plan de préparation
       </button>
       <button class="tab" data-page="detail">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
@@ -3591,8 +4056,8 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       <div class="info-tile"><div class="info-lab">Total Entrée</div><div class="info-val" id="saisie-tot-entre">0<span class="unit">pcs</span></div></div>
       <div class="info-tile"><div class="info-lab">Total Sortie</div><div class="info-val" id="saisie-tot-sortie">0<span class="unit">pcs</span></div></div>
       <div class="info-tile" title="Somme des totaux ligne Effectifs (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Effectifs</div><div class="info-val" id="saisie-tot-eff">0</div></div>
-      <div class="info-tile" title="Somme des totaux ligne Formation (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Formation</div><div class="info-val" id="saisie-tot-form">0</div></div>
       <div class="info-tile" title="Somme des totaux ligne Stagiaire (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Stagiaires</div><div class="info-val" id="saisie-tot-stag">0</div></div>
+      <div class="info-tile" title="Somme des totaux ligne Formation (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Formation</div><div class="info-val" id="saisie-tot-form">0</div></div>
       <div class="info-tile info-tile-vers"><div class="info-lab">Rendement</div><div class="info-val" id="saisie-tot-vers" title="SUBTOTAL(AL)/SUBTOTAL(AK) — AI=AB_eff+AB_stag/2, AK=AI×60, AL=AB_sortie×VT">—</div></div>
       <div class="info-tile" title="Nombre de chaînes distinctes (Ch01, Ch02…) avec au moins un modèle saisi"><div class="info-lab">Chaînes actives</div><div class="info-val" id="saisie-tot-ch">0</div></div>
     </div>
@@ -3610,86 +4075,110 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
   <section class="page" id="page-methodes">
     <div class="page-head">
       <div class="left">
-        <h2>VT / P/H / <span class="accent">EFF</span></h2>
-        <div class="sub">Saisissez VT, P/H et EFF par chaîne (Ch01–Ch20) pour un modèle et une période. La grille de saisie reprend ces valeurs automatiquement.</div>
+        <h2><span class="accent">Méthodes</span></h2>
+        <div class="sub">VT, EFF et P/H par chaîne et par période — une ligne par chaîne. Double-clic ou « Modifier » pour éditer une période.</div>
       </div>
       <div class="pill-meta"><span class="dot"></span><span id="meth-rules-month-pill">—</span></div>
     </div>
-    <div class="meth-rules-layout">
-      <div class="meth-rules-card">
-        <h3>Paramètres par chaîne</h3>
-        <div class="meth-rules-filters">
-          <div class="field">
-            <label for="meth-rule-modele">Modèle</label>
-            <input type="text" id="meth-rule-modele" list="meth-rule-modele-datalist" placeholder="Saisir un modèle (nouveau ou existant)" autocomplete="off">
-            <datalist id="meth-rule-modele-datalist"></datalist>
+
+    <div class="meth-page">
+      <div class="meth-toolbar">
+        <div class="meth-toolbar-left">
+          <div class="field meth-field-modele">
+            <label for="meth-filter-modele">Modèle</label>
+            <select id="meth-filter-modele" title="Choisir un modèle"><option value="">— Choisir un modèle —</option></select>
           </div>
-          <div class="field">
-            <label for="meth-rule-debut">Date début</label>
-            <input type="date" id="meth-rule-debut" class="meth-rule-date">
-          </div>
-          <div class="field">
-            <label for="meth-rule-fin">Date fin</label>
-            <input type="date" id="meth-rule-fin" class="meth-rule-date">
-          </div>
+          <span class="meth-count-pill" id="meth-toolbar-count">—</span>
         </div>
-        <datalist id="meth-datalist-vt"></datalist>
-        <datalist id="meth-datalist-ph"></datalist>
-        <datalist id="meth-datalist-eff"></datalist>
-        <div class="meth-chains-toolbar" id="meth-chains-toolbar">
-          <label for="meth-chains-show">Afficher</label>
-          <select id="meth-chains-show" title="Réduire le tableau des chaînes">
-            <option value="all">Toutes (Ch01–Ch20)</option>
-            <option value="range">Plage personnalisée</option>
-          </select>
-          <label for="meth-chains-from" class="meth-chains-range-lbl" style="display:none">De</label>
-          <select id="meth-chains-from" class="meth-chains-range-sel" style="display:none"></select>
-          <label for="meth-chains-to" class="meth-chains-range-lbl" style="display:none">à</label>
-          <select id="meth-chains-to" class="meth-chains-range-sel" style="display:none"></select>
-          <span class="meth-chains-count" id="meth-chains-count">—</span>
-        </div>
-        <div class="meth-rules-table-wrap">
-          <table class="meth-rules-grid">
-            <thead>
-              <tr>
-                <th>Chaîne</th>
-                <th>VT</th>
-                <th>P/H</th>
-                <th>EFF</th>
-              </tr>
-            </thead>
-            <tbody id="meth-rules-chains-body"></tbody>
-          </table>
-        </div>
-        <div class="meth-rules-actions">
-          <button type="button" class="meth-btn meth-btn-save" id="meth-rule-save-btn">
-            <span class="meth-btn-icon" aria-hidden="true">✓</span>
-            <span class="meth-btn-label">Enregistrer la période</span>
-          </button>
-          <button type="button" class="meth-btn meth-btn-new" id="meth-rule-new-btn">
-            <span class="meth-btn-icon" aria-hidden="true">+</span>
-            <span class="meth-btn-label">Nouvelle fiche</span>
-          </button>
+        <div class="meth-toolbar-actions">
+          <button type="button" class="btn" id="meth-row-edit-btn" disabled title="Modifier la période sélectionnée">Modifier</button>
+          <button type="button" class="btn danger" id="meth-row-del-btn" disabled title="Supprimer la période">Supprimer</button>
+          <button type="button" class="btn primary" id="meth-rule-new-btn">+ Période</button>
         </div>
       </div>
-      <div class="meth-rules-card meth-rules-card-list">
-        <div class="meth-list-header">
-          <h3>Périodes enregistrées</h3>
-          <span class="meth-list-count-pill" id="meth-toolbar-count">—</span>
-        </div>
-        <div class="meth-list-filters">
-          <div class="meth-search-wrap">
-            <input type="text" id="meth-list-search" placeholder="Rechercher modèle ou dates…" autocomplete="off">
+
+      <div class="meth-body">
+        <div class="meth-empty" id="meth-rules-flat-empty">Choisissez un <strong>modèle</strong> pour afficher les périodes et les chaînes.</div>
+        <div class="meth-table-card" id="meth-rules-flat-wrap" style="display:none">
+          <div class="meth-table-card-head">
+            <span class="meth-table-title" id="meth-table-title">Périodes</span>
+            <span class="meth-table-hint">Clic = sélectionner · Double-clic = modifier</span>
           </div>
-          <select id="meth-filter-modele" title="Filtrer par modèle"><option value="">Tous les modèles</option></select>
-          <select id="meth-list-sort" title="Ordre d'affichage">
-            <option value="date-desc">Plus récentes</option>
-            <option value="date-asc">Plus anciennes</option>
-            <option value="modele">Modèle A→Z</option>
-          </select>
+          <div class="meth-rules-table-wrap meth-main-table-wrap">
+            <table class="meth-rules-grid meth-rules-flat" id="meth-rules-flat-table">
+              <thead>
+                <tr id="meth-flat-head-row">
+                  <th class="col-modele">Modèle</th>
+                  <th class="col-ch">Ch</th>
+                  <th class="col-val">VT</th>
+                  <th class="col-val">EFF</th>
+                  <th class="col-val">P/H</th>
+                  <th class="col-date">Du</th>
+                  <th class="col-date">Au</th>
+                </tr>
+              </thead>
+              <tbody id="meth-rules-flat-body"></tbody>
+            </table>
+          </div>
         </div>
-        <div class="meth-rules-list" id="meth-rules-list"></div>
       </div>
+    </div>
+
+    <!-- Édition période (modale) -->
+    <div class="pin-modal-backdrop" id="meth-edit-modal">
+      <div class="pin-modal meth-edit-modal wide" role="dialog" aria-labelledby="meth-edit-modal-title">
+        <div class="meth-modal-head">
+          <h3 id="meth-edit-modal-title">Période</h3>
+          <p id="meth-edit-modal-sub">Chaînes et valeurs pour la période sélectionnée.</p>
+        </div>
+        <div class="meth-edit-body">
+          <div class="meth-edit-section">
+            <span class="meth-section-label">Dates &amp; modèle</span>
+            <div class="meth-edit-dates">
+              <div class="field">
+                <label for="meth-rule-modele">Modèle</label>
+                <input type="text" id="meth-rule-modele" list="meth-rule-modele-datalist" autocomplete="off" placeholder="Ex. 034-26">
+                <datalist id="meth-rule-modele-datalist"></datalist>
+              </div>
+              <div class="field">
+                <label for="meth-rule-debut">Du</label>
+                <input type="date" id="meth-rule-debut" class="meth-rule-date">
+              </div>
+              <div class="field">
+                <label for="meth-rule-fin">Au</label>
+                <input type="date" id="meth-rule-fin" class="meth-rule-date">
+              </div>
+            </div>
+          </div>
+          <datalist id="meth-datalist-vt"></datalist>
+          <datalist id="meth-datalist-ph"></datalist>
+          <datalist id="meth-datalist-eff"></datalist>
+          <div class="meth-edit-section">
+            <span class="meth-section-label">Chaînes · VT · EFF · P/H</span>
+            <div class="meth-rules-table-wrap meth-chains-modal-wrap">
+              <table class="meth-rules-grid meth-chains-compact">
+                <thead>
+                  <tr><th>Ch</th><th>VT</th><th>EFF</th><th>P/H</th></tr>
+                </thead>
+                <tbody id="meth-rules-chains-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="pin-actions">
+          <button type="button" class="btn" id="meth-edit-cancel">Annuler</button>
+          <button type="button" class="btn primary" id="meth-rule-save-btn">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compatibilité (liste latérale retirée) -->
+    <div class="meth-legacy-hidden" aria-hidden="true">
+      <input type="text" id="meth-list-search" tabindex="-1">
+      <select id="meth-list-sort"><option value="date-desc">Plus récentes</option></select>
+      <div id="meth-rules-list"></div>
+      <div id="meth-chains-toolbar"></div>
+      <span id="meth-chains-count"></span>
     </div>
   </section>
 
@@ -4649,26 +5138,53 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
 
   <!-- PAGE: PREP -->
   <section class="page" id="page-prep">
-    <div class="page-head">
+    <div class="page-head prep-page-head">
       <div class="left">
-        <h2>Encours <span class="accent">Préparation</span></h2>
-        <div class="sub">Matière (tissu) et doublure — état à la dernière observation du mois</div>
+        <h2><span class="accent">Plan de préparation</span></h2>
+        <div class="sub">Données par journée — Entrée/j et encours selon le jour choisi</div>
       </div>
-      <div class="pill-meta"><span class="dot"></span><span id="pr-count">—</span></div>
+      <div class="prep-head-right">
+        <div class="prep-day-filter">
+          <label for="prep-filter-date">Journée</label>
+          <select id="prep-filter-date" class="minimal" title="Jour de production"></select>
+        </div>
+        <div class="pill-meta"><span class="dot"></span><span id="pr-count">—</span></div>
+      </div>
     </div>
 
     <div class="kpi-strip">
-      <div class="kpi"><div class="kpi-top"><div class="kpi-label">Plan entrée total</div><div class="kpi-ic c2"></div></div><div class="kpi-value" id="pr-plan">0</div><div class="kpi-foot">Pièces planifiées</div></div>
-      <div class="kpi"><div class="kpi-top"><div class="kpi-label">Tissu encours</div><div class="kpi-ic c3"></div></div><div class="kpi-value" id="pr-tissu">0</div><div class="kpi-foot">Prép. + Coupe</div></div>
-      <div class="kpi"><div class="kpi-top"><div class="kpi-label">Doublure encours</div><div class="kpi-ic c4"></div></div><div class="kpi-value" id="pr-doub">0</div><div class="kpi-foot">Prép. + Coupe</div></div>
-      <div class="kpi"><div class="kpi-top"><div class="kpi-label">Manque total</div><div class="kpi-ic c5"></div></div><div class="kpi-value" id="pr-manque">0</div><div class="kpi-foot">Pièces manquantes</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-label">Σ plan entrée</div><div class="kpi-ic c2"></div></div><div class="kpi-value" id="pr-plan">0</div><div class="kpi-foot">Somme colonne plan</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-label">Σ EnC par pcs</div><div class="kpi-ic c3"></div></div><div class="kpi-value" id="pr-tissu">0</div><div class="kpi-foot">Encours pièces</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-label">Lignes actives</div><div class="kpi-ic c4"></div></div><div class="kpi-value" id="pr-doub">0</div><div class="kpi-foot">Chaînes · modèles</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-label">Σ Reste</div><div class="kpi-ic c5"></div></div><div class="kpi-value" id="pr-manque">0</div><div class="kpi-foot">Entrée/j − plan</div></div>
+    </div>
+
+    <div class="card row-gap">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Quantités prévues</div>
+          <div class="card-sub">Saisie par chaîne et modèle — reportées en lecture seule dans la grille Saisie</div>
+        </div>
+      </div>
+      <div class="table-wrap prep-qte-wrap">
+        <table class="data prep-qte-table" id="prep-qte-table">
+          <thead>
+            <tr>
+              <th class="num">Ch</th>
+              <th>Modèle</th>
+              <th class="num">Qté prévue</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="g-wide row-gap">
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-title">Détail Préparation par modèle</div>
+            <div class="card-title">Détail plan de préparation par modèle</div>
             <div class="card-sub">Tissu vs Doublure · Encours prep · Manque coupe</div>
           </div>
         </div>
@@ -4679,22 +5195,22 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     <div class="card row-gap">
       <div class="card-head">
         <div>
-          <div class="card-title">Tableau encours préparation</div>
-          <div class="card-sub">Données issues de la feuille 'Encours au Prép'</div>
+          <div class="card-title">Tableau plan de préparation</div>
+          <div class="card-sub">Entrée/j = total « Entre Chaine » du jour sélectionné (grille Saisie)</div>
         </div>
       </div>
       <div class="table-wrap">
-        <table class="data" id="prep-table">
+        <table class="data prep-plan-table" id="prep-table">
           <thead>
             <tr>
+              <th class="num">Ch</th>
               <th>Modèle</th>
-              <th class="num">Plan entré</th>
-              <th class="num">Tissu prép</th>
-              <th class="num">Tissu fab.</th>
-              <th class="num">Manque coupe</th>
-              <th class="num">Manque prép</th>
-              <th class="num">Doublure prép</th>
-              <th class="num">Doublure fab.</th>
+              <th class="num">P/H</th>
+              <th class="num">EnC par pcs</th>
+              <th class="num">EnC/j</th>
+              <th class="num prep-col-obj">obj EnCours plan/j</th>
+              <th class="num">plan Entré Chaine / pcs</th>
+              <th class="num">Entrée/j</th>
               <th class="num">Reste</th>
             </tr>
           </thead>
@@ -5769,46 +6285,479 @@ function renderEffectifs(month) {
   });
 }
 
-// === PREP ===
+// === PREP — Plan de préparation ===
+function prepPlanObjStore() {
+  try { return JSON.parse(localStorage.getItem(PREP_PLAN_OBJ_STORAGE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function savePrepPlanObjStore(all) {
+  try { localStorage.setItem(PREP_PLAN_OBJ_STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
+}
+function prepPlanRowKey(chain, modele) {
+  return String(chain) + '|' + ((modele || '') + '').trim();
+}
+function getPrepPlanObjEnc(month, chain, modele) {
+  const all = prepPlanObjStore();
+  const v = all[month] && all[month][prepPlanRowKey(chain, modele)];
+  return v != null && v !== '' && !isNaN(v) ? Number(v) : null;
+}
+function setPrepPlanObjEnc(month, chain, modele, val) {
+  const all = prepPlanObjStore();
+  if (!all[month]) all[month] = {};
+  const k = prepPlanRowKey(chain, modele);
+  if (val == null || val === '' || isNaN(val)) delete all[month][k];
+  else all[month][k] = Number(val);
+  savePrepPlanObjStore(all);
+}
+function prepQtePrevuStore() {
+  try { return JSON.parse(localStorage.getItem(PREP_QTE_PREVU_STORAGE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function savePrepQtePrevuStore(all) {
+  try { localStorage.setItem(PREP_QTE_PREVU_STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
+}
+function getPrepQtePrevu(month, chain, modele) {
+  const all = prepQtePrevuStore();
+  const k = prepPlanRowKey({ chain, modele });
+  const v = all[month]?.[k];
+  if (v != null && v !== '' && !isNaN(v)) return Number(v);
+  return null;
+}
+function setPrepQtePrevu(month, chain, modele, val) {
+  const all = prepQtePrevuStore();
+  if (!all[month]) all[month] = {};
+  const k = prepPlanRowKey({ chain, modele });
+  if (val == null || val === '' || isNaN(val)) delete all[month][k];
+  else all[month][k] = Number(val);
+  savePrepQtePrevuStore(all);
+}
+function findProductionQtePrevuSeed(month, chain, modele) {
+  const info = PRODUCTION[month];
+  if (!info) return null;
+  const mod = ((modele || '') + '').trim();
+  for (const d of info.daily_sheets || []) {
+    for (const line of info.daily[d] || []) {
+      if (Number(line.chain) !== Number(chain)) continue;
+      if (((line.modele || '') + '').trim() !== mod) continue;
+      if (line.qte_prevu != null && !isNaN(line.qte_prevu)) return Number(line.qte_prevu);
+    }
+  }
+  return null;
+}
+/** Applique les qtés prévues du plan sur toutes les lignes du mois (grille Saisie). */
+function applyPrepQtePrevuToMonth(month) {
+  const info = PRODUCTION[month];
+  if (!info) return;
+  for (const d of info.daily_sheets || []) {
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line) || !line.modele) continue;
+      const qp = getPrepQtePrevu(month, line.chain, line.modele);
+      if (qp != null) line.qte_prevu = qp;
+      else {
+        const seed = findProductionQtePrevuSeed(month, line.chain, line.modele);
+        if (seed != null) line.qte_prevu = seed;
+      }
+    }
+  }
+}
+function collectPrepQtePrevuRows(month) {
+  const info = PRODUCTION[month];
+  if (!info) return [];
+  const map = new Map();
+  for (const d of info.daily_sheets || []) {
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line) || !line.modele) continue;
+      const k = prepPlanRowKey(line);
+      if (!map.has(k)) map.set(k, { chain: Number(line.chain), modele: line.modele });
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => {
+    if (a.chain !== b.chain) return a.chain - b.chain;
+    return String(a.modele).localeCompare(String(b.modele), 'fr');
+  });
+}
+function renderPrepQtePrevuTable(month) {
+  const tbody = document.querySelector('#prep-qte-table tbody');
+  if (!tbody) return;
+  const rows = collectPrepQtePrevuRows(month);
+  tbody.innerHTML = '';
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-dim);padding:16px">Aucune chaîne / modèle pour ce mois.</td></tr>';
+    return;
+  }
+  const esc = (s) => String(s ?? '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  for (const r of rows) {
+    const stored = getPrepQtePrevu(month, r.chain, r.modele);
+    const seed = stored != null ? stored : findProductionQtePrevuSeed(month, r.chain, r.modele);
+    const val = seed != null ? fmtInt(seed) : '';
+    const tr = document.createElement('tr');
+    tr.dataset.chain = String(r.chain);
+    tr.dataset.modele = r.modele || '';
+    tr.innerHTML = `
+      <td class="num"><b>Ch${String(r.chain).padStart(2, '0')}</b></td>
+      <td>${esc(r.modele)}</td>
+      <td class="num">
+        <input type="text" class="prep-qte-inp" inputmode="numeric" data-prep-qte="1"
+          value="${val}" placeholder="—" autocomplete="off">
+      </td>`;
+    tbody.appendChild(tr);
+  }
+}
+function onPrepQtePrevuInput(e) {
+  const inp = e.target;
+  if (!inp?.dataset?.prepQte) return;
+  const tr = inp.closest('tr');
+  if (!tr) return;
+  const month = currentMonth;
+  const chain = Number(tr.dataset.chain);
+  const modele = tr.dataset.modele || '';
+  const val = parseNumFr(inp.value);
+  setPrepQtePrevu(month, chain, modele, val);
+  applyPrepQtePrevuToMonth(month);
+  if (currentPage === 'prep') renderPrep(currentMonth);
+  if (saisieMonth === month) {
+    syncMonthProductionMetrics(month);
+    if (saisieDate) {
+      buildSaisieBody();
+      refreshSummaryStrip();
+    }
+  }
+}
+function getPrepPlanHoursJour(dateStr) {
+  if (dateStr) return getJourHeuresConfig(dateStr).h;
+  return 8.75;
+}
+/** EnC/j = (EnC par pcs ÷ P/H) × h jour */
+function calcPrepEncJ(encParPcs, ph, hJour) {
+  const enc = Number(encParPcs), p = Number(ph), h = Number(hJour);
+  if (!enc || !p || !h || isNaN(enc) || isNaN(p)) return null;
+  const r = (enc / p) * h;
+  return isFinite(r) ? r : null;
+}
+/** plan Entré Chaine/pcs = P/H×h + P/H×h×obj − EnC */
+function calcPrepPlanEntre(ph, objEnc, encParPcs, hJour) {
+  const p = Number(ph), h = Number(hJour);
+  if (!p || !h || isNaN(p)) return null;
+  const obj = objEnc != null && !isNaN(objEnc) ? Number(objEnc) : 0;
+  const enc = Number(encParPcs) || 0;
+  const r = p * h + p * h * obj - enc;
+  return isFinite(r) ? r : null;
+}
+/** Reste = total entré/j − plan */
+function calcPrepReste(entreJ, planEntre) {
+  if (entreJ == null || planEntre == null || isNaN(entreJ) || isNaN(planEntre)) return null;
+  return Number(entreJ) - Number(planEntre);
+}
+function fmtPrepNum(v) {
+  if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '—';
+  return fmtNumFr(v);
+}
+/** Jour sélectionné dans le filtre Plan de préparation. */
+function getPrepPlanSelectedDate(month) {
+  const info = PRODUCTION[month];
+  const sheets = info?.daily_sheets || [];
+  if (!sheets.length) return '';
+  let d = prepPlanDates[month];
+  if (d && sheets.includes(d)) return d;
+  const today = todayFrString();
+  if (saisieMonth === month && saisieDate && sheets.includes(saisieDate)) d = saisieDate;
+  else if (sheets.includes(today)) d = today;
+  else d = sheets[sheets.length - 1];
+  prepPlanDates[month] = d;
+  return d;
+}
+function setPrepPlanSelectedDate(month, dateStr) {
+  if (dateStr) prepPlanDates[month] = dateStr;
+}
+function populatePrepPlanDateSelect(month) {
+  const sel = document.getElementById('prep-filter-date');
+  if (!sel) return;
+  const info = PRODUCTION[month];
+  const sheets = info?.daily_sheets || [];
+  const today = todayFrString();
+  const prev = getPrepPlanSelectedDate(month);
+  sel.innerHTML = '';
+  for (const d of sheets) {
+    const o = document.createElement('option');
+    o.value = d;
+    let label = d;
+    if (d === today) label += " (aujourd'hui)";
+    else if (isPastDate(d)) label += ' (passé)';
+    else if (isFutureDate(d)) label += ' (futur)';
+    o.textContent = label;
+    sel.appendChild(o);
+  }
+  const pick = sheets.includes(prev) ? prev : (sheets[sheets.length - 1] || '');
+  prepPlanDates[month] = pick;
+  sel.value = pick;
+}
+function onPrepPlanDateChange() {
+  const sel = document.getElementById('prep-filter-date');
+  if (!sel?.value) return;
+  setPrepPlanSelectedDate(currentMonth, sel.value);
+  renderPrep(currentMonth);
+}
+function prepPlanRowKey(line) {
+  return String(line.chain) + '|' + ((line.modele || '') + '').trim();
+}
+/** Prépare la ligne comme buildSaisieBody (overrides + feuille Excel). */
+function prepHydrateLine(month, dateStr, line) {
+  const L = {
+    ...line,
+    hours_entry: (line.hours_entry || []).slice(),
+    hours_exit: (line.hours_exit || []).slice(),
+    effectifs_hours: (line.effectifs_hours || []).slice(),
+    stagiaire_hours: (line.stagiaire_hours || []).slice(),
+    formation_hours: (line.formation_hours || []).slice(),
+  };
+  const rk = prepPlanRowKey(line);
+  const ov = saisieOverrides()[month]?.[dateStr]?.[rk];
+  if (ov) applyOverrideToRow(L, ov, month, dateStr);
+  const excelArr = getExcelDataForDate(dateStr);
+  const excel = (!line._added && excelArr) ? findExcelBlock(excelArr, line) : null;
+  if (excel) {
+    if (!_hasHours(L.hours_entry)) L.hours_entry = (excel.r0_hours || []).slice();
+    if (!_hasHours(L.hours_exit)) L.hours_exit = (excel.r1_hours || []).slice();
+    if (!_hasHours(L.effectifs_hours)) L.effectifs_hours = (excel.r2_hours || []).slice();
+    if (!_hasHours(L.stagiaire_hours)) L.stagiaire_hours = (excel.r3_hours || []).slice();
+    if (L.ph == null && excel.r1_ph != null) L.ph = Number(excel.r1_ph);
+  }
+  applyMethRulesToLine(month, dateStr, L);
+  return { line: L, excel, excelArr };
+}
+/** Total Entrée/j — colonne Total, ligne « Entre Chaine » (grille saisie). */
+function getPrepEntreJ(month, dateStr, line) {
+  if (!dateStr || !line) return 0;
+  const rk = prepPlanRowKey(line);
+  if (saisieMonth === month && saisieDate === dateStr) {
+    const tr = document.querySelector(`#excel-grid-body tr.r-entre[data-rk="${CSS.escape(rk)}"]`);
+    const cell = tr?.querySelector('[data-r="r0_total"]');
+    if (cell) {
+      const fromDom = parseNumFr(String(cell.textContent || '').replace(/\s/g, ''));
+      if (fromDom != null && !isNaN(fromDom)) return fromDom;
+    }
+  }
+  const ov = saisieOverrides()[month]?.[dateStr]?.[rk];
+  if (ov?.entre_total != null && !isNaN(ov.entre_total)) return Number(ov.entre_total);
+  if (ov?.hours_entry && _hasHours(ov.hours_entry)) return _sumArr(ov.hours_entry);
+  const { line: L, excel, excelArr } = prepHydrateLine(month, dateStr, line);
+  if (_hasHours(L.hours_entry)) return _sumArr(L.hours_entry);
+  if (L.entre_total != null && !isNaN(L.entre_total)) return Number(L.entre_total);
+  const info = PRODUCTION[month];
+  const dayArr = info?.daily[dateStr] || [];
+  const chain = Number(line.chain);
+  const chainLines = dayArr
+    .filter(l => Number(l.chain) === chain && isActiveProductionRow(l))
+    .map(l => prepHydrateLine(month, dateStr, l).line);
+  const chainTotalSortie = calcSumifSortieChain(chainLines, excelArr);
+  const c = computeBlock(L, excel, chainTotalSortie, month, dateStr);
+  return c?.totalEntre != null && !isNaN(c.totalEntre) ? Number(c.totalEntre) : 0;
+}
+/** Mêmes calculs que la grille saisie (encours, P/H, etc.). */
+function getPrepMetricsFromSaisieGrid(month, dateStr, line) {
+  const info = PRODUCTION[month];
+  if (!info || !dateStr || !line) return null;
+  const { line: L, excel, excelArr } = prepHydrateLine(month, dateStr, line);
+  const chain = Number(line.chain);
+  const dayArr = info.daily[dateStr] || [];
+  const chainLines = dayArr
+    .filter(l => Number(l.chain) === chain && isActiveProductionRow(l))
+    .map(l => prepHydrateLine(month, dateStr, l).line);
+  const chainTotalSortie = calcSumifSortieChain(chainLines, excelArr);
+  return computeBlock(L, excel, chainTotalSortie, month, dateStr);
+}
+function collectPrepPlanRows(month, options) {
+  const skipHeavySync = options && options.skipHeavySync;
+  const info = PRODUCTION[month];
+  if (!info) return { rows: [], lastDate: '', hJour: 8.75 };
+  applyAllOverrides();
+  applyPrepQtePrevuToMonth(month);
+  applyMethRulesToMonth(month);
+  if (!skipHeavySync) syncMonthProductionMetrics(month);
+  const refDate = getPrepPlanSelectedDate(month);
+  if (!refDate) return { rows: [], lastDate: '', hJour: 8.75 };
+  const hJour = getPrepPlanHoursJour(refDate);
+  const rows = [];
+  for (const line of info.daily[refDate] || []) {
+    if (!isActiveProductionRow(line) || !line.modele) continue;
+    const chain = Number(line.chain);
+    const c = getPrepMetricsFromSaisieGrid(month, refDate, line);
+    if (!c) continue;
+    const ph = c.ph != null && !isNaN(c.ph) ? Number(c.ph) : null;
+    const encParPcs = c.encours != null && !isNaN(c.encours) ? Number(c.encours) : 0;
+    const entreJ = getPrepEntreJ(month, refDate, line);
+    const objEnc = getPrepPlanObjEnc(month, chain, line.modele);
+    const encJ = calcPrepEncJ(encParPcs, ph, hJour);
+    const planEntre = calcPrepPlanEntre(ph, objEnc, encParPcs, hJour);
+    const reste = calcPrepReste(entreJ, planEntre);
+    rows.push({
+      chain, modele: line.modele, ph, encParPcs, encJ, objEnc, planEntre, entreJ, reste, hJour, lastDate: refDate,
+    });
+  }
+  rows.sort((a, b) => a.chain - b.chain || String(a.modele).localeCompare(String(b.modele), 'fr'));
+  return { rows, lastDate: refDate, hJour };
+}
+function refreshPrepPlanIfVisible() {
+  if (currentPage === 'prep') renderPrep(currentMonth);
+}
+/** Après recalcul grille saisie : mettre à jour Entrée/j si l’onglet plan est ouvert. */
+function refreshPrepPlanAfterSaisieRecalc() {
+  if (currentPage !== 'prep' || !currentMonth) return;
+  renderPrep(currentMonth);
+}
+function renderPrepPlanTable(month) {
+  const tbody = document.querySelector('#prep-table tbody');
+  if (!tbody) return;
+  const { rows, lastDate, hJour } = collectPrepPlanRows(month);
+  tbody.innerHTML = '';
+  if (!rows.length) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="9" style="text-align:center;color:var(--text-dim);padding:20px">Aucune ligne active sur la journée (${lastDate || '—'}).</td>`;
+    tbody.appendChild(tr);
+    return;
+  }
+  const esc = (s) => String(s ?? '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  for (const r of rows) {
+    const tr = document.createElement('tr');
+    tr.dataset.chain = String(r.chain);
+    tr.dataset.modele = r.modele || '';
+    const objVal = r.objEnc != null ? fmtNumFr(r.objEnc) : '';
+    tr.innerHTML = `
+      <td class="num"><b>Ch${String(r.chain).padStart(2, '0')}</b></td>
+      <td>${esc(r.modele)}</td>
+      <td class="num">${r.ph != null ? fmtPh(r.ph) : '—'}</td>
+      <td class="num" data-prep-enc>${fmtInt(r.encParPcs)}</td>
+      <td class="num">${fmtPrepNum(r.encJ)}</td>
+      <td class="num prep-col-obj">
+        <input type="text" class="prep-obj-inp" inputmode="decimal" data-prep-obj="1"
+          value="${objVal}" placeholder="—" title="Saisie manuelle · h=${fmtDecFr(hJour, 2)}"
+          autocomplete="off">
+      </td>
+      <td class="num" data-prep-plan>${fmtPrepNum(r.planEntre)}</td>
+      <td class="num" data-prep-entre title="Total Entre Chaine (grille saisie)">${fmtPrepNum(r.entreJ)}</td>
+      <td class="num" data-prep-reste>${fmtPrepNum(r.reste)}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+function findPrepPlanLine(month, refDate, chain, modele) {
+  const mod = (modele || '').trim();
+  return (PRODUCTION[month]?.daily[refDate] || []).find(l =>
+    Number(l.chain) === Number(chain) && ((l.modele || '') + '').trim() === mod
+  ) || null;
+}
+/** Recalcule plan / reste pour une seule ligne (sans resynchroniser tout le mois). */
+function updatePrepPlanRowCalcs(tr, month) {
+  if (!tr) return null;
+  const refDate = getPrepPlanSelectedDate(month);
+  if (!refDate) return null;
+  const chain = Number(tr.dataset.chain);
+  const modele = tr.dataset.modele || '';
+  const line = findPrepPlanLine(month, refDate, chain, modele);
+  if (!line) return null;
+  const c = getPrepMetricsFromSaisieGrid(month, refDate, line);
+  if (!c) return null;
+  const hJour = getPrepPlanHoursJour(refDate);
+  const ph = c.ph != null && !isNaN(c.ph) ? Number(c.ph) : null;
+  const encParPcs = c.encours != null && !isNaN(c.encours) ? Number(c.encours) : 0;
+  const entreJ = getPrepEntreJ(month, refDate, line);
+  const inp = tr.querySelector('.prep-obj-inp');
+  const objRaw = inp ? parseNumFr(inp.value) : null;
+  const objEnc = objRaw != null && !isNaN(objRaw) ? objRaw : getPrepPlanObjEnc(month, chain, modele);
+  const planEntre = calcPrepPlanEntre(ph, objEnc, encParPcs, hJour);
+  const reste = calcPrepReste(entreJ, planEntre);
+  const planTd = tr.querySelector('[data-prep-plan]');
+  const resteTd = tr.querySelector('[data-prep-reste]');
+  if (planTd) planTd.textContent = fmtPrepNum(planEntre);
+  if (resteTd) resteTd.textContent = fmtPrepNum(reste);
+  return { planEntre, reste, encParPcs };
+}
+function updatePrepPlanKpisFromTable() {
+  const tbody = document.querySelector('#prep-table tbody');
+  if (!tbody) return;
+  let sumPlan = 0, sumEnc = 0, sumReste = 0, n = 0;
+  const cellNum = (tr, sel) => {
+    const t = tr.querySelector(sel)?.textContent;
+    if (!t || t === '—') return null;
+    return parseNumFr(String(t).replace(/\s/g, ''));
+  };
+  tbody.querySelectorAll('tr[data-chain]').forEach(tr => {
+    n++;
+    const p = cellNum(tr, '[data-prep-plan]');
+    const r = cellNum(tr, '[data-prep-reste]');
+    const enc = cellNum(tr, '[data-prep-enc]');
+    if (p != null && !isNaN(p)) sumPlan += p;
+    if (r != null && !isNaN(r)) sumReste += r;
+    if (enc != null && !isNaN(enc)) sumEnc += enc;
+  });
+  const elPlan = document.getElementById('pr-plan');
+  const elEnc = document.getElementById('pr-tissu');
+  const elReste = document.getElementById('pr-manque');
+  const elDoub = document.getElementById('pr-doub');
+  if (elPlan) elPlan.textContent = n ? fmtPrepNum(sumPlan) : '0';
+  if (elEnc) elEnc.textContent = n ? fmtInt(sumEnc) : '0';
+  if (elReste) elReste.textContent = n ? fmtPrepNum(sumReste) : '0';
+  if (elDoub) elDoub.textContent = String(n);
+}
+function commitPrepPlanObjInput(inp) {
+  if (!inp?.dataset?.prepObj) return;
+  const tr = inp.closest('tr');
+  if (!tr) return;
+  const month = currentMonth;
+  const chain = Number(tr.dataset.chain);
+  const modele = tr.dataset.modele || '';
+  const val = parseNumFr(inp.value);
+  setPrepPlanObjEnc(month, chain, modele, val);
+  if (val != null && !isNaN(val)) inp.value = fmtNumFr(val);
+  updatePrepPlanRowCalcs(tr, month);
+  updatePrepPlanKpisFromTable();
+}
+function onPrepPlanObjInput(e) {
+  if (e.target?.dataset?.prepObj) commitPrepPlanObjInput(e.target);
+}
 function renderPrep(month) {
+  populatePrepPlanDateSelect(month);
+  applyPrepQtePrevuToMonth(month);
+  renderPrepQtePrevuTable(month);
   const enc = PRODUCTION[month].encours || [];
-  let plan=0, tissu=0, doub=0, manque=0;
+  const { rows: planRows, lastDate, hJour } = collectPrepPlanRows(month);
+  let plan = 0, tissu = 0, doub = 0, manque = 0;
   for (const e of enc) {
     plan += e.plan_entre || 0;
     tissu += (e.tissu_encours_prep || 0) + (e.tissu_fabrique_prep || 0);
     doub += (e.doublure_encours_prep || 0) + (e.doublure_fabrique_prep || 0);
     manque += (e.tissu_manque_coupe || 0) + (e.tissu_manque_prep || 0);
   }
-  document.getElementById('pr-plan').textContent = fmtInt(plan);
-  document.getElementById('pr-tissu').textContent = fmtInt(tissu);
-  document.getElementById('pr-doub').textContent = fmtInt(doub);
-  document.getElementById('pr-manque').textContent = fmtInt(manque);
-  document.getElementById('pr-count').textContent = `${enc.length} modèles`;
+  let sumPlanEntre = 0, sumEnc = 0, sumReste = 0;
+  for (const r of planRows) {
+    if (r.planEntre != null) sumPlanEntre += r.planEntre;
+    sumEnc += r.encParPcs || 0;
+    if (r.reste != null) sumReste += r.reste;
+  }
+  document.getElementById('pr-plan').textContent = planRows.length ? fmtPrepNum(sumPlanEntre) : fmtInt(plan);
+  document.getElementById('pr-tissu').textContent = planRows.length ? fmtInt(sumEnc) : fmtInt(tissu);
+  document.getElementById('pr-doub').textContent = String(planRows.length);
+  document.getElementById('pr-manque').textContent = planRows.length ? fmtPrepNum(sumReste) : fmtInt(manque);
+  const pill = lastDate ? `${planRows.length} ligne(s) · ${lastDate} · h=${fmtDecFr(hJour, 2)}` : `${planRows.length} ligne(s)`;
+  document.getElementById('pr-count').textContent = pill;
 
   destroy('prep');
-  const ctx = document.getElementById('chart-prep').getContext('2d');
-  charts.prep = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: enc.map(e=>e.modele || '—'),
-      datasets: [
-        { label: 'Plan entré', data: enc.map(e=>e.plan_entre||0), backgroundColor: alpha(css('--accent'),0.85), borderRadius: 4 },
-        { label: 'Tissu prép.', data: enc.map(e=>e.tissu_encours_prep||0), backgroundColor: alpha(css('--accent-2'),0.85), borderRadius: 4 },
-        { label: 'Doublure prép.', data: enc.map(e=>e.doublure_encours_prep||0), backgroundColor: alpha(css('--accent-3'),0.85), borderRadius: 4 },
-        { label: 'Manque coupe', data: enc.map(e=>(e.tissu_manque_coupe||0)+(e.doublure_manque_coupe||0)), backgroundColor: alpha(css('--red'),0.85), borderRadius: 4 }
-      ]
-    },
-    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 10, font: { size: 11 } } } }, scales: { x: { grid: { display: false }, ticks: { color: css('--text-dim'), font: { size: 9 }, maxRotation: 60, minRotation: 30 } }, y: { grid: { color: css('--grid') }, ticks: { color: css('--text-dim'), callback: v=>fmtInt(v) } } } }
-  });
-
-  // Table
-  const tbody = document.querySelector('#prep-table tbody');
-  tbody.innerHTML = '';
-  for (const e of enc) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><b>${e.modele || '—'}</b></td><td class="num">${fmtInt(e.plan_entre)}</td><td class="num">${fmtInt(e.tissu_encours_prep)}</td><td class="num">${fmtInt(e.tissu_fabrique_prep)}</td><td class="num">${fmtInt(e.tissu_manque_coupe)}</td><td class="num">${fmtInt(e.tissu_manque_prep)}</td><td class="num">${fmtInt(e.doublure_encours_prep)}</td><td class="num">${fmtInt(e.doublure_fabrique_prep)}</td><td class="num">${fmtInt(e.reste)}</td>`;
-    tbody.appendChild(tr);
+  const ctx = document.getElementById('chart-prep');
+  if (ctx && planRows.length) {
+    charts.prep = new Chart(ctx.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: planRows.map(r => (r.modele || '—') + ' Ch' + r.chain),
+        datasets: [
+          { label: 'EnC par pcs', data: planRows.map(r => r.encParPcs || 0), backgroundColor: alpha(css('--orange'), 0.85), borderRadius: 4 },
+          { label: 'Plan entrée', data: planRows.map(r => r.planEntre != null ? r.planEntre : 0), backgroundColor: alpha(css('--accent'), 0.85), borderRadius: 4 },
+          { label: 'Reste', data: planRows.map(r => r.reste != null ? r.reste : 0), backgroundColor: alpha(css('--accent-2'), 0.85), borderRadius: 4 },
+        ],
+      },
+      options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 10, font: { size: 11 } } } }, scales: { x: { grid: { display: false }, ticks: { color: css('--text-dim'), font: { size: 9 }, maxRotation: 60, minRotation: 30 } }, y: { grid: { color: css('--grid') }, ticks: { color: css('--text-dim'), callback: v => fmtPrepNum(v) } } } },
+    });
   }
+
+  renderPrepPlanTable(month);
 }
 
 // === DETAIL ===
@@ -7034,8 +7983,12 @@ document.getElementById('detail-search').addEventListener('input', (e) => {
 // ============================================================
 const SAISIE_STORAGE_KEY = 'prodH-saisie-overrides-v1';
 const METH_RULES_STORAGE_KEY = 'prodH-meth-rules-v1';
+const PREP_PLAN_OBJ_STORAGE_KEY = 'prodH-prep-plan-obj-v1';
+const PREP_QTE_PREVU_STORAGE_KEY = 'prodH-prep-qte-prevu-v1';
 const METH_CHAIN_COUNT = 20;
 let methRuleEditId = null;
+/** Jour affiché sur Plan de préparation (par mois). */
+const prepPlanDates = {};
 const PIN_CODE = '1234';
 const HOUR_LABELS = ['8:45','9:45','10:45','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
 let saisieMonth = null;
@@ -7101,7 +8054,185 @@ function collectMethModeleSuggestions(month) {
   return Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'fr'));
 }
 function getMethRuleModeleValue() {
-  return (document.getElementById('meth-rule-modele')?.value || '').trim();
+  const inp = (document.getElementById('meth-rule-modele')?.value || '').trim();
+  if (inp) return inp;
+  return (document.getElementById('meth-filter-modele')?.value || '').trim();
+}
+function getMethRulesDisplayModele() {
+  return (document.getElementById('meth-filter-modele')?.value || '').trim();
+}
+function formatMethDisplayDate(fr) {
+  if (!fr) return '—';
+  const m = String(fr).match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+  if (!m) return fr;
+  return String(m[1]).padStart(2, '0') + '-' + String(m[2]).padStart(2, '0') + '-' + m[3];
+}
+function openMethEditModal() {
+  document.getElementById('meth-edit-modal')?.classList.add('open');
+  updateMethEditModalTitle();
+}
+function closeMethEditModal() {
+  document.getElementById('meth-edit-modal')?.classList.remove('open');
+}
+function updateMethEditModalTitle() {
+  const t = document.getElementById('meth-edit-modal-title');
+  const sub = document.getElementById('meth-edit-modal-sub');
+  const mod = getMethRuleModeleValue();
+  if (t) t.textContent = methRuleEditId ? 'Modifier la période' : 'Nouvelle période';
+  if (sub) {
+    sub.textContent = methRuleEditId
+      ? (mod ? mod + ' — dates et valeurs par chaîne.' : 'Dates et valeurs par chaîne.')
+      : (mod ? 'Nouvelle fiche pour « ' + mod + ' ».' : 'Choisissez les dates et les chaînes.');
+  }
+}
+function updateMethToolbarActions() {
+  const editBtn = document.getElementById('meth-row-edit-btn');
+  const delBtn = document.getElementById('meth-row-del-btn');
+  const on = !!methRuleEditId;
+  if (editBtn) editBtn.disabled = !on;
+  if (delBtn) delBtn.disabled = !on;
+}
+function updateMethToolbarCountForModele(month, modele) {
+  const el = document.getElementById('meth-toolbar-count');
+  if (!el) return;
+  if (!modele) { el.textContent = '—'; return; }
+  const mk = normalizeModeleKey(modele);
+  const nPer = methRulesForMonth(month).filter(r => normalizeModeleKey(r.modele) === mk).length;
+  const nRows = buildMethRulesFlatRows(month, modele).length;
+  if (!nPer) el.textContent = 'Aucune période';
+  else if (!nRows) el.textContent = nPer + ' période(s)';
+  else el.textContent = nPer + ' période(s) · ' + nRows + ' ligne(s)';
+}
+function methRuleAuLabel(month, dateFin) {
+  if (!dateFin) return '—';
+  const info = PRODUCTION[month];
+  const sheets = info?.daily_sheets || [];
+  const last = sheets.length ? sheets[sheets.length - 1] : '';
+  const today = todayFrString();
+  if (dateFin === last || dateFin === today) return 'Aujourd\'hui';
+  return dateFin;
+}
+function buildMethRulesFlatRows(month, modele) {
+  const mk = normalizeModeleKey(modele);
+  if (!mk) return [];
+  const rows = [];
+  const rules = methRulesForMonth(month).filter(r => normalizeModeleKey(r.modele) === mk);
+  for (const rule of rules) {
+    const chains = rule.chains || {};
+    const chKeys = Object.keys(chains).map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b);
+    for (const ch of chKeys) {
+      const ce = chains[String(ch)];
+      if (!ce) continue;
+      if (ce.vt == null && ce.ph == null && ce.eff == null) continue;
+      rows.push({
+        ruleId: rule.id,
+        modele: rule.modele,
+        chain: ch,
+        vt: ce.vt,
+        eff: ce.eff,
+        ph: ce.ph,
+        dateDebut: rule.dateDebut,
+        dateFin: rule.dateFin,
+      });
+    }
+  }
+  rows.sort((a, b) => {
+    const d = compareFrDate(a.dateDebut, b.dateDebut);
+    if (d !== 0) return d;
+    return a.chain - b.chain;
+  });
+  return rows;
+}
+function methEscHtml(s) {
+  return String(s ?? '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+function methFmtValCell(v, ph) {
+  const has = v != null && v !== '' && !isNaN(v);
+  const txt = has ? (ph ? fmtPh(v) : fmtNumFr(v)) : '—';
+  return `<td class="col-val${has ? '' : ' is-empty'}">${methEscHtml(txt)}</td>`;
+}
+function updateMethTableTitle(modele) {
+  const el = document.getElementById('meth-table-title');
+  if (!el) return;
+  if (!modele) {
+    el.textContent = 'Périodes';
+    return;
+  }
+  el.innerHTML = 'Périodes <span class="meth-model-tag">' + methEscHtml(modele) + '</span>';
+}
+function setMethEmptyState(html) {
+  const empty = document.getElementById('meth-rules-flat-empty');
+  if (!empty) return;
+  empty.style.display = 'flex';
+  empty.innerHTML = html;
+}
+function renderMethRulesFlatTable(month) {
+  const tbody = document.getElementById('meth-rules-flat-body');
+  const wrap = document.getElementById('meth-rules-flat-wrap');
+  const empty = document.getElementById('meth-rules-flat-empty');
+  const table = document.getElementById('meth-rules-flat-table');
+  if (!tbody || !wrap || !empty) return;
+  const modele = getMethRulesDisplayModele();
+  updateMethTableTitle(modele);
+  if (!modele) {
+    wrap.style.display = 'none';
+    setMethEmptyState('Choisissez un <strong>modèle</strong> pour afficher les périodes et les chaînes.');
+    tbody.innerHTML = '';
+    if (table) table.classList.remove('hide-col-modele');
+    return;
+  }
+  const rows = buildMethRulesFlatRows(month, modele);
+  if (!rows.length) {
+    wrap.style.display = 'none';
+    setMethEmptyState('Aucune période pour <strong>' + methEscHtml(modele) + '</strong>.<br>Cliquez <strong>+ Période</strong> pour en créer une.');
+    tbody.innerHTML = '';
+    return;
+  }
+  wrap.style.display = '';
+  empty.style.display = 'none';
+  if (table) table.classList.add('hide-col-modele');
+  let prevRuleId = null;
+  let periodIdx = -1;
+  tbody.innerHTML = rows.map(r => {
+    const periodStart = r.ruleId !== prevRuleId;
+    if (periodStart) { periodIdx++; prevRuleId = r.ruleId; }
+    const active = r.ruleId === methRuleEditId ? ' meth-flat-active' : '';
+    const band = periodIdx % 2 === 0 ? ' meth-flat-period-a' : ' meth-flat-period-b';
+    const pCls = periodStart ? ' meth-flat-period-start' : '';
+    const auLbl = methRuleAuLabel(month, r.dateFin);
+    const auHtml = periodStart
+      ? (auLbl === 'Aujourd\'hui'
+        ? '<span class="meth-au-today">Aujourd\'hui</span>'
+        : methEscHtml(formatMethDisplayDate(auLbl)))
+      : '';
+    const duHtml = periodStart ? methEscHtml(formatMethDisplayDate(r.dateDebut)) : '';
+    return `<tr class="meth-flat-row${active}${band}${pCls}" data-rule-id="${methEscHtml(r.ruleId)}" data-chain="${r.chain}">
+      <td class="col-modele">${methEscHtml(r.modele)}</td>
+      <td class="col-ch">${r.chain}</td>
+      ${methFmtValCell(r.vt, false)}
+      ${methFmtValCell(r.eff, false)}
+      ${methFmtValCell(r.ph, true)}
+      <td class="col-date col-date-du">${duHtml}</td>
+      <td class="col-date col-date-au">${auHtml}</td>
+    </tr>`;
+  }).join('');
+  tbody.querySelectorAll('.meth-flat-row').forEach(tr => {
+    tr.addEventListener('click', () => {
+      methRuleEditId = tr.dataset.ruleId;
+      renderMethRulesFlatTable(month);
+      updateMethToolbarActions();
+    });
+    tr.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      loadMethRuleIntoForm(month, tr.dataset.ruleId);
+    });
+  });
+  updateMethToolbarActions();
+}
+function toggleMethRulesViews(month) {
+  const modele = getMethRulesDisplayModele();
+  updateMethToolbarCountForModele(month, modele);
+  renderMethRulesFlatTable(month);
 }
 function rowMatchesMethModele(row, modele) {
   const q = (modele || '').trim();
@@ -7259,9 +8390,8 @@ function populateMethValueDatalists(month, modele) {
   fill('meth-datalist-eff', 'eff');
 }
 function updateMethRuleSaveBtnLabel() {
-  const lbl = document.querySelector('#meth-rule-save-btn .meth-btn-label');
-  if (!lbl) return;
-  lbl.textContent = methRuleEditId ? 'Enregistrer les modifications' : 'Enregistrer la période';
+  const btn = document.getElementById('meth-rule-save-btn');
+  if (btn) btn.textContent = 'Enregistrer';
 }
 function populateMethChainsRangeSelects() {
   const from = document.getElementById('meth-chains-from');
@@ -7280,6 +8410,10 @@ function applyMethChainsTableFilter() {
   const tbody = document.getElementById('meth-rules-chains-body');
   if (!tbody) return;
   const showSel = document.getElementById('meth-chains-show');
+  if (!showSel) {
+    tbody.querySelectorAll('tr[data-chain]').forEach(tr => tr.classList.remove('meth-chain-hidden'));
+    return;
+  }
   const mode = showSel?.value || 'all';
   const rangeLbls = document.querySelectorAll('.meth-chains-range-lbl');
   const rangeSels = document.querySelectorAll('.meth-chains-range-sel');
@@ -7337,31 +8471,16 @@ function populateMethFilterModeleSelect(month) {
     if (m) map.set(normalizeModeleKey(m), m);
   }
   const modeles = Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'fr'));
-  sel.innerHTML = '<option value="">Tous les modèles</option>'
+  sel.innerHTML = '<option value="">— Choisir un modèle —</option>'
     + modeles.map(m => `<option value="${m.replace(/"/g, '&quot;')}">${m.replace(/</g, '&lt;')}</option>`).join('');
   if (prev && modeles.includes(prev)) sel.value = prev;
 }
-function updateMethToolbarCount(month, shown, total) {
-  const el = document.getElementById('meth-toolbar-count');
-  if (!el) return;
-  if (total === 0) el.textContent = 'Aucune période';
-  else if (shown === total) el.textContent = total + ' période(s)';
-  else el.textContent = shown + ' / ' + total + ' période(s)';
-}
 function onMethFiltersChanged() {
   const month = currentMonth;
-  renderMethRulesList(month);
-  applyMethChainsTableFilter();
+  methRuleEditId = null;
+  toggleMethRulesViews(month);
 }
 function onMethFilterModeleSelect() {
-  const sel = document.getElementById('meth-filter-modele');
-  const modInp = document.getElementById('meth-rule-modele');
-  const month = currentMonth;
-  if (sel?.value && modInp) {
-    modInp.value = sel.value;
-    fillMethRuleFormFromProductionForModele(month, sel.value);
-    populateMethValueDatalists(month, sel.value);
-  }
   onMethFiltersChanged();
 }
 function initMethFilterControls(month) {
@@ -7512,69 +8631,14 @@ function buildMethRulesChainsTable() {
     tr.innerHTML = `
       <td class="chain-lab">Ch${String(ch).padStart(2, '0')}</td>
       <td><input type="text" inputmode="decimal" data-meth="vt" list="meth-datalist-vt" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>
-      <td><input type="text" inputmode="decimal" data-meth="ph" list="meth-datalist-ph" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>
-      <td><input type="text" inputmode="decimal" data-meth="eff" list="meth-datalist-eff" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>`;
+      <td><input type="text" inputmode="decimal" data-meth="eff" list="meth-datalist-eff" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>
+      <td><input type="text" inputmode="decimal" data-meth="ph" list="meth-datalist-ph" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>`;
     tbody.appendChild(tr);
   }
   applyMethChainsTableFilter();
 }
 function renderMethRulesList(month) {
-  const list = document.getElementById('meth-rules-list');
-  if (!list) return;
-  const allRules = methRulesForMonth(month);
-  const rules = filterMethRulesForDisplay(month, allRules);
-  updateMethToolbarCount(month, rules.length, allRules.length);
-  if (!allRules.length) {
-    list.innerHTML = '<p class="meth-rules-list-empty">Aucune période enregistrée pour ce mois.</p>';
-    return;
-  }
-  if (!rules.length) {
-    list.innerHTML = '<p class="meth-rules-list-empty">Aucune période ne correspond aux filtres.</p>';
-    return;
-  }
-  const countByMod = {};
-  for (const r of allRules) {
-    const k = normalizeModeleKey(r.modele);
-    if (k) countByMod[k] = (countByMod[k] || 0) + 1;
-  }
-  list.innerHTML = '';
-  for (const rule of rules) {
-    const el = document.createElement('div');
-    el.className = 'meth-rule-item' + (rule.id === methRuleEditId ? ' active' : '');
-    el.dataset.ruleId = rule.id;
-    const nCh = rule.chains ? Object.keys(rule.chains).filter(k => {
-      const c = rule.chains[k];
-      return c && (c.vt != null || c.ph != null || c.eff != null);
-    }).length : 0;
-    const modKey = normalizeModeleKey(rule.modele);
-    const nSameMod = modKey ? (countByMod[modKey] || 1) : 1;
-    const multiBadge = nSameMod > 1
-      ? `<span class="mri-multi" title="${nSameMod} périodes pour ce modèle">${nSameMod} pér.</span>`
-      : '';
-    el.innerHTML = `
-      <div class="mri-title">${(rule.modele || '—').replace(/</g, '&lt;')}${multiBadge}</div>
-      <div class="mri-sub">
-        <span class="mri-dates">${rule.dateDebut} → ${rule.dateFin}</span>
-        <span class="mri-chains">${nCh} ch.</span>
-      </div>
-      <div class="mri-actions">
-        <button type="button" class="btn" data-edit-rule="${rule.id}">Modifier</button>
-        <button type="button" class="btn danger" data-del-rule="${rule.id}">Supprimer</button>
-      </div>`;
-    el.querySelector('[data-edit-rule]')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      loadMethRuleIntoForm(month, rule.id);
-    });
-    el.addEventListener('click', (e) => {
-      if (e.target.closest('[data-del-rule]') || e.target.closest('[data-edit-rule]')) return;
-      loadMethRuleIntoForm(month, rule.id);
-    });
-    el.querySelector('[data-del-rule]')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      deleteMethRule(month, rule.id);
-    });
-    list.appendChild(el);
-  }
+  updateMethToolbarCountForModele(month, getMethRulesDisplayModele());
 }
 function loadMethRuleIntoForm(month, ruleId) {
   const rule = methRulesForMonth(month).find(r => r.id === ruleId);
@@ -7582,21 +8646,24 @@ function loadMethRuleIntoForm(month, ruleId) {
   methRuleEditId = rule.id;
   const modInp = document.getElementById('meth-rule-modele');
   if (modInp) modInp.value = rule.modele || '';
+  const fsel = document.getElementById('meth-filter-modele');
+  if (fsel && rule.modele && Array.from(fsel.options).some(o => o.value === rule.modele)) fsel.value = rule.modele;
   setMethRuleDateFr('debut', rule.dateDebut || '');
   setMethRuleDateFr('fin', rule.dateFin || '');
   fillMethRuleChainsForm(rule.chains || {});
   populateMethValueDatalists(month, rule.modele);
-  syncMethListFilterToModele(rule.modele || '');
   updateMethRuleSaveBtnLabel();
+  updateMethEditModalTitle();
   applyMethChainsTableFilter();
-  renderMethRulesList(month);
+  openMethEditModal();
+  renderMethRulesFlatTable(month);
 }
-function resetMethRuleForm(month) {
+function resetMethRuleForm(month, openModal) {
   methRuleEditId = null;
   const info = PRODUCTION[month];
   const sheets = info?.daily_sheets || [];
   const modInp = document.getElementById('meth-rule-modele');
-  const keepMod = modInp?.value || '';
+  const keepMod = (document.getElementById('meth-filter-modele')?.value || '').trim();
   if (modInp) modInp.value = keepMod;
   if (sheets.length) {
     setMethRuleDateFr('debut', sheets[0]);
@@ -7605,17 +8672,15 @@ function resetMethRuleForm(month) {
     setMethRuleDateFr('debut', '');
     setMethRuleDateFr('fin', '');
   }
-  fillMethRuleChainsForm({});
-  if (keepMod) syncMethListFilterToModele(keepMod);
-  else {
-    const ls = document.getElementById('meth-list-search');
-    const fs = document.getElementById('meth-filter-modele');
-    if (ls) ls.value = '';
-    if (fs) fs.value = '';
-  }
+  if (keepMod) fillMethRuleFormFromProductionForModele(month, keepMod);
+  else fillMethRuleChainsForm({});
+  populateMethValueDatalists(month, keepMod || null);
   updateMethRuleSaveBtnLabel();
+  updateMethEditModalTitle();
   applyMethChainsTableFilter();
-  renderMethRulesList(month);
+  if (openModal !== false) openMethEditModal();
+  renderMethRulesFlatTable(month);
+  updateMethToolbarActions();
 }
 function methRuleDatesOverlap(aDebut, aFin, bDebut, bFin) {
   return compareFrDate(aDebut, bFin) <= 0 && compareFrDate(bDebut, aFin) <= 0;
@@ -7685,9 +8750,12 @@ function saveMethRuleFromForm(month) {
     refreshSummaryStrip();
   }
   populateMethFilterModeleSelect(month);
-  syncMethListFilterToModele(modele);
+  const fsel = document.getElementById('meth-filter-modele');
+  if (fsel && modele && Array.from(fsel.options).some(o => o.value === modele)) fsel.value = modele;
+  methRuleEditId = null;
+  closeMethEditModal();
   updateMethRuleSaveBtnLabel();
-  renderMethRulesList(month);
+  toggleMethRulesViews(month);
   const nSame = countMethRulesForModele(rules, modele);
   if (wasEdit) {
     toast('Période mise à jour — ' + modele + ' (' + dateDebut + ' → ' + dateFin + ').');
@@ -7698,10 +8766,13 @@ function saveMethRuleFromForm(month) {
   }
 }
 function deleteMethRule(month, ruleId) {
-  if (!confirm('Supprimer cette période VT / P/H / EFF ?')) return;
+  if (!confirm('Supprimer cette période Méthodes ?')) return;
   const rules = methRulesForMonth(month).filter(r => r.id !== ruleId);
   saveMethRulesForMonth(month, rules);
-  if (methRuleEditId === ruleId) resetMethRuleForm(month);
+  if (methRuleEditId === ruleId) {
+    methRuleEditId = null;
+    closeMethEditModal();
+  }
   /* Restauration propre : on repart des données originales puis on ré-applique
      les overrides de saisie et les règles méthodes restantes. Sans cela, les
      valeurs déjà injectées par la règle supprimée resteraient en mémoire. */
@@ -7712,7 +8783,8 @@ function deleteMethRule(month, ruleId) {
     syncMonthProductionMetrics(month);
   }
   if (saisieMonth === month) { buildSaisieBody(); refreshSummaryStrip(); }
-  renderMethRulesList(month);
+  toggleMethRulesViews(month);
+  updateMethToolbarActions();
   toast('Période supprimée.');
 }
 function renderMethodesPage() {
@@ -7722,35 +8794,20 @@ function renderMethodesPage() {
   ensureMethRulesImportedFromData(month);
   const pill = document.getElementById('meth-rules-month-pill');
   if (pill) pill.textContent = info.label || month;
-  const modInp = document.getElementById('meth-rule-modele');
-  const sheets = info.daily_sheets || [];
   populateMethRuleModeleDatalist(month);
   syncMethRuleDatePickerBounds(month);
-  const prevMod = modInp?.value || '';
-  const prevDebut = getMethRuleDateFr('debut');
-  const prevFin = getMethRuleDateFr('fin');
   if (!document.getElementById('meth-rules-chains-body')?.children.length) buildMethRulesChainsTable();
-  populateMethValueDatalists(month, prevMod || null);
-  if (!methRuleEditId) {
-    resetMethRuleForm(month);
-    if (modInp && prevMod) modInp.value = prevMod;
-    if (prevDebut) setMethRuleDateFr('debut', prevDebut);
-    if (prevFin) setMethRuleDateFr('fin', prevFin);
-  } else {
-    loadMethRuleIntoForm(month, methRuleEditId);
-  }
-  populateMethValueDatalists(month, getMethRuleModeleValue() || null);
   initMethFilterControls(month);
-  renderMethRulesList(month);
+  closeMethEditModal();
+  methRuleEditId = null;
+  updateMethToolbarActions();
+  toggleMethRulesViews(month);
 }
 function onMethRuleModeleInput() {
   const month = currentMonth;
-  const modele = getMethRuleModeleValue();
+  const modele = (document.getElementById('meth-rule-modele')?.value || '').trim();
   populateMethValueDatalists(month, modele || null);
-  if (modele && modele.length >= 2) {
-    syncMethListFilterToModele(modele);
-    renderMethRulesList(month);
-  }
+  updateMethEditModalTitle();
   applyMethChainsTableFilter();
   if (methRuleEditId) return;
   if (modele) fillMethRuleFormFromProductionForModele(month, modele);
@@ -7788,7 +8845,7 @@ function applyOverrideToRow(row, ov, month, date) {
   const skipVt  = month && date ? methRuleBlocksField(month, date, row, 'methodes') : false;
   const skipEff = month && date ? methRuleBlocksField(month, date, row, 'effectifs') : false;
   // Plain field overrides
-  ['import','client','modele','desig','chef','ph','methodes','qte_prevu','effectifs','entre_total','sortie_total','stagiaire',
+  ['import','client','modele','desig','chef','ph','methodes','effectifs','entre_total','sortie_total','stagiaire',
    'deuxieme','hlanc_z','deuxieme_stag','hlanc_fixe','hlanc_manual','objective','r2_size','formation_topic'].forEach(f => {
     if (ov[f] === undefined) return;
     if (f === 'ph' && skipPh) return;
@@ -9107,7 +10164,7 @@ function buildSaisieHeader() {
     <th style="min-width:90px">CHEF DE CHAÎNE</th>
     <th style="min-width:80px">QTE PRÉVU</th>
     <th style="min-width:90px">DESIGN</th>
-    <th colspan="2" class="meth-group-h" style="min-width:128px">METHODES</th>
+    <th colspan="2" class="meth-group-h" style="min-width:128px">Méthodes</th>
     <th style="min-width:90px"></th>
     ${hourHdr}
     ${trailHdr}
@@ -9149,12 +10206,13 @@ function excelModelMetaCells(line, nHeuresSortie) {
 
 function excelQtePrevuCell(line, c) {
   const rs = EXCEL_ROWS_PER_BLOCK;
-  const qp = line.qte_prevu != null ? line.qte_prevu : '';
+  const qp = getPrepQtePrevu(saisieMonth, line.chain, line.modele);
+  const qpDisp = qp != null ? fmtInt(qp) : (line.qte_prevu != null && !isNaN(line.qte_prevu) ? fmtInt(line.qte_prevu) : '—');
   return `
-    <td rowspan="${rs}" class="merge-cell qte-prevu-cell">
+    <td rowspan="${rs}" class="merge-cell qte-prevu-cell qte-prevu-locked" title="Qté prévue : Plan de préparation">
       <div class="qte-prevu-stack">
         <div class="qte-prevu-half">
-          <input class="xs-inp" type="number" data-f="qte_prevu" value="${qp}" placeholder="Prévu" title="Quantité prévue (saisie manuelle)">
+          <span class="qte-prevu-read" data-r="qte_prevu_ro">${qpDisp}</span>
         </div>
         <div class="qte-prevu-half">
           <div class="qte-prevu-reste" data-r="qte_reste" title="Prévu − cumul entrée chaîne">${fmtQteReste(c.qteReste)}</div>
@@ -9177,7 +10235,7 @@ function excelMethodesBlockCell(line, c) {
   const vtVal = (line.methodes != null && line.methodes !== '' && !isNaN(line.methodes)) ? fmtNumFr(line.methodes) : '—';
   const phVal = (line.ph != null && line.ph !== '' && !isNaN(line.ph)) ? fmtPh(line.ph) : '—';
   const effVal = (line.effectifs != null && line.effectifs !== '' && !isNaN(line.effectifs)) ? fmtNumFr(line.effectifs) : '—';
-  const hint = 'Onglet VT / P/H / EFF';
+  const hint = 'Onglet Méthodes';
   const pct = c.objRend != null ? fmtRendEquil(c.objRend) : '—';
   return `
     <td colspan="2" rowspan="${rs}" class="merge-cell meth-block-cell meth-from-rules">
@@ -9272,7 +10330,10 @@ function buildSaisieBody() {
   const tbody = document.getElementById('excel-grid-body');
   if (!tbody) return;
   tbody.innerHTML = '';
-  if (saisieMonth) applyMethRulesToMonth(saisieMonth);
+  if (saisieMonth) {
+    applyPrepQtePrevuToMonth(saisieMonth);
+    applyMethRulesToMonth(saisieMonth);
+  }
   const editable = isEditable();
   const chains = PRODUCTION[saisieMonth].daily[saisieDate] || [];
   const excelArr = getExcelDataForDate(saisieDate);
@@ -10417,7 +11478,7 @@ function onExcelInput(e, line) {
   const idx = inp.dataset.i != null ? Number(inp.dataset.i) : null;
   let v;
   const isTxt = ['modele','import','client','desig','chef','form_topic'].includes(f);
-  const isNumFr = ['obj_k','qte_prevu','deuxieme','deuxieme_stag'].includes(f);
+  const isNumFr = ['obj_k','deuxieme','deuxieme_stag'].includes(f);
   if (isTxt) v = inp.value;
   else if (isNumFr) v = parseNumFr(inp.value);
   else { v = inp.value === '' ? null : Number(inp.value); if (v != null && isNaN(v)) v = null; }
@@ -10432,7 +11493,6 @@ function onExcelInput(e, line) {
   }
   else if (f === 'form_topic') line.formation_topic = v;
   else if (f === 'obj_k') line.objective = v;
-  else if (f === 'qte_prevu') line.qte_prevu = v;
   else if (f === 'deuxieme') line.deuxieme = v;
   else if (f === 'deuxieme_stag') line.deuxieme_stag = v;
   else if (f === 'cumul_2em_ae') line.cumul_2em_ae = v;
@@ -10473,6 +11533,8 @@ function refreshModeleHeuresBadge(line) {
 }
 
 function refreshExcelRow(line) {
+  const qp = getPrepQtePrevu(saisieMonth, line.chain, line.modele);
+  if (qp != null) line.qte_prevu = qp;
   const excelArr = getExcelDataForDate(saisieDate);
   const excel = excelArr ? findExcelBlock(excelArr, line) : null;
   const chainLines = (PRODUCTION[saisieMonth].daily[saisieDate] || []).filter(
@@ -10492,6 +11554,8 @@ function refreshExcelRow(line) {
   set('[data-r="enc_val"]', fmtNumX(c.encours));
   set('[data-r="enc_j"]', (c.encours != null && !isNaN(c.cumulJours) && isFinite(c.cumulJours))
     ? fmtNumFr(c.cumulJours) : '');
+  const qpRo = getPrepQtePrevu(saisieMonth, line.chain, line.modele);
+  set('[data-r="qte_prevu_ro"]', qpRo != null ? fmtInt(qpRo) : (line.qte_prevu != null ? fmtInt(line.qte_prevu) : '—'));
   set('[data-r="qte_reste"]', fmtQteReste(c.qteReste));
   set('[data-r="r0_moy"]',   fmtMoyCell(c.moyEntre));
   set('[data-r="r1_total"]', fmtNumX(c.totalSortie));
@@ -10598,6 +11662,7 @@ function refreshSummaryStrip() {
   const versEl = document.getElementById('saisie-tot-vers');
   if (versEl) versEl.textContent = versPct != null ? fmtPctX(versPct) : '—';
   document.getElementById('saisie-tot-ch').textContent   = String(chainIds.size);
+  refreshPrepPlanAfterSaisieRecalc();
 }
 
 function renderSaisie() {
@@ -10608,7 +11673,10 @@ function renderSaisie() {
     saisieMonth = def.month;
     saisieDate = def.date;
   }
-  if (saisieMonth) syncMonthProductionMetrics(saisieMonth);
+  if (saisieMonth) {
+    applyPrepQtePrevuToMonth(saisieMonth);
+    syncMonthProductionMetrics(saisieMonth);
+  }
   populateSaisieMonth();
   populateSaisieDate();
   syncSaisiePartialHeureSelect();
@@ -10670,7 +11738,7 @@ function saveSaisie() {
     const rk = c.chain + '|' + (c.modele || '');
     dayOv[rk] = {
       import: c.import, client: c.client, modele: c.modele, desig: c.desig, chef: c.chef,
-      qte_prevu: c.qte_prevu, ph: c.ph, methodes: c.methodes, effectifs: c.effectifs,
+      ph: c.ph, methodes: c.methodes, effectifs: c.effectifs,
       deuxieme: c.deuxieme, deuxieme_stag: c.deuxieme_stag, hlanc_fixe: c.hlanc_fixe, hlanc_manual: c.hlanc_manual, objective: c.objective,
       r2_size: c.r2_size, formation_topic: c.formation_topic,
       hours_entry:     (c.hours_entry || []).slice(),
@@ -10688,6 +11756,7 @@ function saveSaisie() {
   document.querySelectorAll('#excel-grid-body .dirty').forEach(i => i.classList.remove('dirty'));
   toast('Saisie enregistrée.');
   buildSaisieBody(); refreshSummaryStrip();
+  refreshPrepPlanIfVisible();
 }
 
 function recomputeMonthlyCumuls(month) {
@@ -10820,12 +11889,32 @@ document.getElementById('saisie-add-confirm').addEventListener('click', confirmS
 document.getElementById('saisie-add-modal').addEventListener('click', (e) => { if (e.target.id === 'saisie-add-modal') closeSaisieAddModal(); });
 document.getElementById('add-line-modele').addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmSaisieAddLine(); });
 document.getElementById('meth-rule-save-btn')?.addEventListener('click', () => saveMethRuleFromForm(currentMonth));
-document.getElementById('meth-rule-new-btn')?.addEventListener('click', () => resetMethRuleForm(currentMonth));
+document.getElementById('meth-rule-new-btn')?.addEventListener('click', () => {
+  if (!getMethRulesDisplayModele()) { toast('Choisissez un modèle dans la liste.', true); return; }
+  resetMethRuleForm(currentMonth, true);
+});
+document.getElementById('meth-edit-cancel')?.addEventListener('click', closeMethEditModal);
+document.getElementById('meth-edit-modal')?.addEventListener('click', (e) => { if (e.target.id === 'meth-edit-modal') closeMethEditModal(); });
+document.getElementById('meth-row-edit-btn')?.addEventListener('click', () => {
+  if (methRuleEditId) loadMethRuleIntoForm(currentMonth, methRuleEditId);
+});
+document.getElementById('meth-row-del-btn')?.addEventListener('click', () => {
+  if (methRuleEditId) deleteMethRule(currentMonth, methRuleEditId);
+});
 document.getElementById('meth-rule-modele')?.addEventListener('input', onMethRuleModeleInput);
 document.getElementById('meth-rule-modele')?.addEventListener('change', onMethRuleModeleInput);
-document.getElementById('meth-list-search')?.addEventListener('input', onMethFiltersChanged);
 document.getElementById('meth-filter-modele')?.addEventListener('change', onMethFilterModeleSelect);
-document.getElementById('meth-list-sort')?.addEventListener('change', onMethFiltersChanged);
+document.getElementById('prep-table')?.addEventListener('change', onPrepPlanObjInput);
+document.getElementById('prep-table')?.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const inp = e.target.closest?.('.prep-obj-inp');
+  if (!inp) return;
+  e.preventDefault();
+  commitPrepPlanObjInput(inp);
+  inp.blur();
+});
+document.getElementById('prep-filter-date')?.addEventListener('change', onPrepPlanDateChange);
+document.getElementById('prep-qte-table')?.addEventListener('change', onPrepQtePrevuInput);
 document.getElementById('meth-chains-show')?.addEventListener('change', applyMethChainsTableFilter);
 document.getElementById('meth-chains-from')?.addEventListener('change', applyMethChainsTableFilter);
 document.getElementById('meth-chains-to')?.addEventListener('change', applyMethChainsTableFilter);
@@ -10853,11 +11942,15 @@ function restoreProductionFromSnapshot() {
 function reapplyAllOverridesAndMethRules() {
   restoreProductionFromSnapshot();
   applyAllOverrides();
-  for (const m of Object.keys(PRODUCTION)) applyMethRulesToMonth(m);
+  for (const m of Object.keys(PRODUCTION)) {
+    applyPrepQtePrevuToMonth(m);
+    applyMethRulesToMonth(m);
+  }
   syncAllProductionMetrics();
 }
 applyAllOverrides();
 for (const m of Object.keys(PRODUCTION)) {
+  applyPrepQtePrevuToMonth(m);
   ensureMethRulesImportedFromData(m);
   applyMethRulesToMonth(m);
 }
