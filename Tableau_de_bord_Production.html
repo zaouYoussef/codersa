@@ -938,7 +938,7 @@ footer {
 }
 .excel-saisie {
   width: 100%; min-width: 1800px;
-  border-collapse: collapse; font-size: 11px;
+  border-collapse: collapse; font-size: 15px;
   font-family: 'Inter', sans-serif;
 }
 .excel-saisie th, .excel-saisie td {
@@ -1024,7 +1024,7 @@ footer {
 .excel-saisie .meta-top td.acc {
   color: var(--accent);
   font-weight: 800;
-  font-size: 12px;
+  font-size: 16px;
   padding: 8px 10px;
   vertical-align: middle;
 }
@@ -1064,7 +1064,7 @@ footer {
   border-right: 1px solid var(--border);
 }
 .excel-saisie td.merge-cell.ch-cell { color: var(--accent); }
-.excel-saisie td.ch-cell .ch-num { display: block; font-size: 12px; }
+.excel-saisie td.ch-cell .ch-num { display: block; font-size: 16px; }
 .excel-saisie td.modele-cell .modele-heures-badge {
   display: block;
   margin-top: 4px;
@@ -1077,7 +1077,7 @@ footer {
 .excel-saisie td.modele-cell .modele-heures-badge.supp {
   color: var(--orange);
 }
-.excel-saisie td.merge-cell input.xs-inp.txt { text-align: center; }
+.excel-saisie td.merge-cell input.xs-inp.txt { text-align: center; font-size: 15px; }
 .excel-saisie td.merge-cell.desig-cell input.xs-inp.txt {
   text-align: center;
   font-weight: 600;
@@ -1092,6 +1092,7 @@ footer {
   padding: 0 !important;
   vertical-align: middle;
   background: rgba(56, 189, 248, 0.08);
+  font-size: 15px;
 }
 .excel-saisie table.meth-inner {
   width: 100%;
@@ -1108,9 +1109,10 @@ footer {
   box-sizing: border-box;
   background: rgba(56, 189, 248, 0.08);
   width: 50%;
+  min-width: 64px;
 }
 .excel-saisie table.meth-inner td.meth-lab {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.4px;
   text-transform: uppercase;
@@ -1138,18 +1140,18 @@ footer {
 }
 .excel-saisie table.meth-inner .meth-c .xs-inp.meth-num {
   width: auto !important;
-  min-width: 48px;
+  min-width: 52px;
   max-width: 100%;
   margin: 0;
-  padding: 2px 4px;
+  padding: 4px 3px;
   text-align: center !important;
-  font-weight: 700;
+  font-weight: 800;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 15px !important;
   box-sizing: border-box;
 }
 .excel-saisie table.meth-inner td.meth-ph-val .meth-c .xs-inp.meth-num {
-  font-size: 14px;
+  font-size: 15px !important;
   font-weight: 800;
 }
 .excel-saisie table.meth-inner .meth-c .meth-vt-pct {
@@ -1157,10 +1159,13 @@ footer {
   width: 100%;
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 800;
   color: var(--accent);
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .excel-saisie tr.block-sep-chain td {
   border-top: 3px solid var(--accent);
@@ -1223,7 +1228,7 @@ footer {
   justify-content: center;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
-  font-size: 11px;
+  font-size: 15px;
   line-height: 1.2;
   text-align: center;
   color: var(--accent-3);
@@ -1235,7 +1240,7 @@ footer {
   width: 100%; min-width: 40px; max-width: 100%;
   border: 1px solid transparent; background: transparent;
   color: var(--text); font-family: 'JetBrains Mono', monospace;
-  font-weight: 600; font-size: 11px; text-align: center;
+  font-weight: 600; font-size: 15px; text-align: center;
   padding: 4px 3px; border-radius: 4px; box-sizing: border-box;
 }
 .excel-saisie td.h-cell {
@@ -1258,6 +1263,37 @@ footer {
   -webkit-appearance: none;
   margin: 0;
 }
+.excel-saisie td.h-cell.sel-cell {
+  background: rgba(56, 189, 248, 0.14) !important;
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.55);
+}
+.excel-saisie td.h-cell.sel-cell-focus {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.excel-saisie td.h-cell.sel-fill-preview {
+  background: rgba(74, 222, 128, 0.12) !important;
+  box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.45);
+}
+.excel-fill-handle {
+  position: fixed;
+  width: 9px;
+  height: 9px;
+  margin: -1px 0 0 -1px;
+  background: var(--accent);
+  border: 1px solid #fff;
+  border-radius: 1px;
+  cursor: crosshair;
+  z-index: 200;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  display: none;
+}
+.excel-fill-handle.visible { display: block; }
+.excel-saisie-hint {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
 .excel-saisie input.xs-inp.txt { text-align: left; font-family: 'Inter', sans-serif; }
 .excel-saisie input.xs-inp:hover { background: var(--surface-2); }
 .excel-saisie input.xs-inp:focus {
@@ -1277,10 +1313,12 @@ footer {
 }
 .excel-saisie td.calc {
   font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 15px;
   background: rgba(56,189,248,0.04); color: var(--text);
 }
 .excel-saisie td.calc-2 {
   font-family: 'JetBrains Mono', monospace; font-weight: 800;
+  font-size: 15px;
   background: rgba(129,140,248,0.06); color: var(--text);
   text-align: center;
 }
@@ -1288,6 +1326,7 @@ footer {
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
+  font-size: 15px;
 }
 .excel-saisie td.calc-moy-neg {
   color: #c62828;
@@ -1329,12 +1368,12 @@ footer {
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 15px;
   line-height: 1.2;
 }
 .excel-saisie .trail-merge-line.encours-l2 {
   color: var(--accent);
-  font-size: 10px;
+  font-size: 12px;
 }
 .excel-saisie .trail-merge-line.hlanc-row {
   display: flex;
@@ -1345,7 +1384,7 @@ footer {
 .excel-saisie .hlanc-val {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
-  font-size: 11px;
+  font-size: 15px;
 }
 .excel-saisie .hlanc-val.red { color: #c62828; }
 .excel-saisie .hlanc-val.green { color: #16a34a; }
@@ -1363,7 +1402,7 @@ footer {
   vertical-align: middle;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
-  font-size: 12px;
+  font-size: 15px;
 }
 .excel-saisie td.trail-merge.calc-rend .trail-merge-line {
   justify-content: center;
@@ -1540,7 +1579,7 @@ footer {
 
 .saisie-info-strip {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 10px;
   margin: 14px 0 16px;
 }
@@ -1565,9 +1604,10 @@ footer {
 .saisie-info-strip .info-tile:nth-child(1)::before { background: var(--accent); }
 .saisie-info-strip .info-tile:nth-child(2)::before { background: var(--green); }
 .saisie-info-strip .info-tile:nth-child(3)::before { background: var(--orange); }
-.saisie-info-strip .info-tile:nth-child(4)::before { background: var(--accent-3); }
-.saisie-info-strip .info-tile:nth-child(5)::before { background: var(--accent-2); }
-.saisie-info-strip .info-tile:nth-child(6)::before { background: var(--yellow); }
+.saisie-info-strip .info-tile:nth-child(4)::before { background: var(--yellow); }
+.saisie-info-strip .info-tile:nth-child(5)::before { background: var(--accent-3); }
+.saisie-info-strip .info-tile:nth-child(6)::before { background: var(--accent-2); }
+.saisie-info-strip .info-tile:nth-child(7)::before { background: var(--accent); }
 .saisie-info-strip .info-tile:hover {
   transform: translateY(-2px);
   border-color: var(--border-2);
@@ -2617,6 +2657,23 @@ header.topbar {
 .rap-btn-print:hover { background: var(--accent); color: #fff; filter: brightness(1.05); }
 .rap-field[hidden] { display: none !important; }
 
+.hlanc-doc-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+}
+.hlanc-doc .hlanc-formula-note {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  background: var(--surface-2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
 /* Document imprimable façon CEGID (sobre, monochrome) */
 .rap-doc {
   background: #fff;
@@ -2756,8 +2813,8 @@ header.topbar {
   .month-switcher,
   .tabs-row,
   .no-print,
-  .page:not(#page-rapports) { display: none !important; }
-  #page-rapports { display: block !important; padding: 0 !important; }
+  .page:not(.active) { display: none !important; }
+  .page.active { display: block !important; padding: 0 !important; }
   main.wrap { padding: 0 !important; max-width: none !important; }
   .rap-doc {
     border: none !important;
@@ -3374,12 +3431,12 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
 }
 .excel-saisie .meth-readonly {
   display: inline-block;
-  min-width: 2.5em;
+  min-width: 2.8em;
   font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  font-size: 11px;
+  font-weight: 800;
+  font-size: 15px;
   color: var(--text);
-  padding: 2px 4px;
+  padding: 4px 3px;
 }
 .excel-saisie .meth-block-cell.meth-from-rules {
   background: rgba(56,189,248,0.04);
@@ -3435,6 +3492,10 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       <button class="tab" data-page="rapports">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         Rapports
+      </button>
+      <button class="tab" data-page="hlanc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        H. Lancement
       </button>
       <button class="tab active" data-page="overview">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -3530,12 +3591,14 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       <div class="info-tile"><div class="info-lab">Total Entrée</div><div class="info-val" id="saisie-tot-entre">0<span class="unit">pcs</span></div></div>
       <div class="info-tile"><div class="info-lab">Total Sortie</div><div class="info-val" id="saisie-tot-sortie">0<span class="unit">pcs</span></div></div>
       <div class="info-tile" title="Somme des totaux ligne Effectifs (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Effectifs</div><div class="info-val" id="saisie-tot-eff">0</div></div>
+      <div class="info-tile" title="Somme des totaux ligne Formation (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Formation</div><div class="info-val" id="saisie-tot-form">0</div></div>
       <div class="info-tile" title="Somme des totaux ligne Stagiaire (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Stagiaires</div><div class="info-val" id="saisie-tot-stag">0</div></div>
-      <div class="info-tile info-tile-vers"><div class="info-lab">Vers Final</div><div class="info-val" id="saisie-tot-vers" title="SUBTOTAL(AL)/SUBTOTAL(AK) — AI=AB_eff+AB_stag/2, AK=AI×60, AL=AB_sortie×VT">—</div></div>
+      <div class="info-tile info-tile-vers"><div class="info-lab">Rendement</div><div class="info-val" id="saisie-tot-vers" title="SUBTOTAL(AL)/SUBTOTAL(AK) — AI=AB_eff+AB_stag/2, AK=AI×60, AL=AB_sortie×VT">—</div></div>
       <div class="info-tile" title="Nombre de chaînes distinctes (Ch01, Ch02…) avec au moins un modèle saisi"><div class="info-lab">Chaînes actives</div><div class="info-val" id="saisie-tot-ch">0</div></div>
     </div>
 
-    <!-- Excel-style replica grid (4 rows per modele: Entre / Sortie / Effectifs / Stagiaire) -->
+    <!-- Excel-style replica grid (5 lignes / modèle : Entre · Sortie · Effectifs · Stagiaire · Formation) -->
+    <p class="excel-saisie-hint no-print">Entrée / Sortie / Effectifs / Stagiaires / Formation : sélection (clic, Maj+clic, glisser), copier-coller <kbd>Ctrl+C</kbd> <kbd>Ctrl+V</kbd>, poignée en bas à droite pour remplir.</p>
     <div class="excel-saisie-wrap">
       <table class="excel-saisie" id="excel-grid">
         <thead id="excel-grid-head"></thead>
@@ -3681,6 +3744,53 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     <!-- Document imprimable (mis en page comme un PDF CEGID) -->
     <div class="rap-doc" id="rap-doc">
       <div class="rap-empty">Choisissez un rapport et une période, puis cliquez sur « Actualiser ».</div>
+    </div>
+  </section>
+
+  <!-- PAGE: HEURES DE LANCEMENT (= H.MANQ CEGID, même formule que l’ancienne colonne saisie) -->
+  <section class="page" id="page-hlanc">
+    <div class="page-head no-print">
+      <div class="left">
+        <h2><span id="hlanc-month">MAI</span> · <span class="accent">Heures de lancement</span></h2>
+        <div class="sub">H.Manq CEGID = Sortie ÷ P/H − Heures jour. Sélectionnez la période, filtrez par chaîne ou modèle, puis exportez en PDF.</div>
+      </div>
+      <div class="pill-meta"><span class="dot"></span><span id="hlanc-range">—</span></div>
+    </div>
+    <div class="rap-toolbar no-print hlanc-toolbar">
+      <div class="rap-filters">
+        <div class="rap-field">
+          <label for="hlanc-date-debut">Date début</label>
+          <input type="date" id="hlanc-date-debut">
+        </div>
+        <div class="rap-field">
+          <label for="hlanc-date-fin">Date fin</label>
+          <input type="date" id="hlanc-date-fin">
+        </div>
+        <div class="rap-field">
+          <label for="hlanc-chain">Chaîne</label>
+          <select id="hlanc-chain"><option value="">Toutes</option></select>
+        </div>
+        <div class="rap-field">
+          <label for="hlanc-modele">Modèle</label>
+          <input type="text" id="hlanc-modele" list="hlanc-modele-datalist" placeholder="Tous" autocomplete="off">
+          <datalist id="hlanc-modele-datalist"></datalist>
+        </div>
+        <div class="rap-field rap-field-actions">
+          <button type="button" class="rap-btn rap-btn-refresh" id="hlanc-refresh-btn" title="Recalculer le tableau">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Actualiser
+          </button>
+          <button type="button" class="rap-btn rap-btn-print" id="hlanc-print-btn" title="Imprimer / Exporter en PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Exporter PDF
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="hlanc-doc-wrap">
+      <div class="rap-doc hlanc-doc" id="hlanc-doc">
+        <div class="rap-empty">Choisissez une période puis cliquez sur « Actualiser ».</div>
+      </div>
     </div>
   </section>
 
@@ -4052,7 +4162,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         <div class="card-head">
           <div>
             <div class="card-title">Rendement par Chaîne</div>
-            <div class="card-sub">Summary % mois par chaîne (formule Vers Final / Excel)</div>
+            <div class="card-sub">Summary % mois par chaîne (formule Rendement / Excel)</div>
           </div>
         </div>
         <div class="h-280"><canvas id="chart-rend-chain"></canvas></div>
@@ -4755,7 +4865,7 @@ function lineStagiaireJour(c) {
   return m;
 }
 /**
- * % Summary / Vers Final Excel : Σ(AB_sortie×VT) / Σ((AB_eff+AB_stag/2)×60)
+ * % Summary / Rendement Excel : Σ(AB_sortie×VT) / Σ((AB_eff+AB_stag/2)×60)
  * — même formule que le bandeau saisie (#saisie-tot-vers) et SUBTOTAL(AL)/SUBTOTAL(AK).
  * @param {string} month
  * @param {string|null} date — jour précis, ou null = tout le mois
@@ -4798,7 +4908,7 @@ function calcRendementSummary(month, date, chain) {
   }
   return calcRendementSummaryPct(acc);
 }
-/** %Rend mois entier — formule Summary (Vers Final). */
+/** %Rend mois entier — formule Summary (Rendement). */
 function monthRendementWeighted(month) {
   return calcRendementSummary(month, null, null) || 0;
 }
@@ -6584,10 +6694,233 @@ function renderRapports() {
   rapRenderActiveTab();
 }
 
+/* ================================================================ */
+/* MODULE HEURES DE LANCEMENT — même formule H.Manq / colonne saisie  */
+/* ================================================================ */
+
+const HLANC_STATE = {
+  dateDebutIso: null,
+  dateFinIso: null,
+  chain: null,
+  modele: '',
+  _bound: false,
+};
+
+function hlancDatesInRange(month) {
+  const info = PRODUCTION[month];
+  if (!info) return [];
+  const all = info.daily_sheets || [];
+  const ymdMin = _rapIsoYMD(HLANC_STATE.dateDebutIso);
+  const ymdMax = _rapIsoYMD(HLANC_STATE.dateFinIso);
+  return all.filter(fr => {
+    const ymd = _rapFrYMD(fr);
+    if (!ymd) return false;
+    if (ymdMin && _rapCmpYMD(ymd, ymdMin) < 0) return false;
+    if (ymdMax && _rapCmpYMD(ymd, ymdMax) > 0) return false;
+    return true;
+  });
+}
+
+function hlancInitOnce() {
+  if (HLANC_STATE._bound) return;
+  HLANC_STATE._bound = true;
+  document.getElementById('hlanc-date-debut')?.addEventListener('change', e => {
+    HLANC_STATE.dateDebutIso = e.target.value || null;
+    hlancRender();
+  });
+  document.getElementById('hlanc-date-fin')?.addEventListener('change', e => {
+    HLANC_STATE.dateFinIso = e.target.value || null;
+    hlancRender();
+  });
+  document.getElementById('hlanc-chain')?.addEventListener('change', e => {
+    const v = e.target.value;
+    HLANC_STATE.chain = (v === '' || isNaN(v)) ? null : Number(v);
+    hlancRender();
+  });
+  document.getElementById('hlanc-modele')?.addEventListener('input', e => {
+    HLANC_STATE.modele = e.target.value || '';
+    hlancRender();
+  });
+  document.getElementById('hlanc-refresh-btn')?.addEventListener('click', () => {
+    prepareDashboardMetrics(currentMonth);
+    hlancRender();
+  });
+  document.getElementById('hlanc-print-btn')?.addEventListener('click', () => {
+    hlancRender();
+    setTimeout(() => window.print(), 60);
+  });
+}
+
+function hlancSyncOptions(month) {
+  const info = PRODUCTION[month];
+  if (!info) return;
+  const sheets = info.daily_sheets || [];
+  const firstIso = sheets.length ? _rapFrToIsoLocal(sheets[0]) : '';
+  const lastIso  = sheets.length ? _rapFrToIsoLocal(sheets[sheets.length - 1]) : '';
+  const inD = document.getElementById('hlanc-date-debut');
+  const inF = document.getElementById('hlanc-date-fin');
+  if (!HLANC_STATE.dateDebutIso) HLANC_STATE.dateDebutIso = firstIso || null;
+  if (!HLANC_STATE.dateFinIso)   HLANC_STATE.dateFinIso   = lastIso  || null;
+  if (inD) inD.value = HLANC_STATE.dateDebutIso || '';
+  if (inF) inF.value = HLANC_STATE.dateFinIso || '';
+
+  const chains = new Set();
+  const modeles = new Set();
+  for (const d of sheets) {
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line)) continue;
+      if (line.chain != null) chains.add(Number(line.chain));
+      if (line.modele) modeles.add(String(line.modele));
+    }
+  }
+  const chSel = document.getElementById('hlanc-chain');
+  const prev = String(HLANC_STATE.chain != null ? HLANC_STATE.chain : '');
+  if (chSel) {
+    chSel.innerHTML = '<option value="">Toutes</option>' +
+      Array.from(chains).sort((a, b) => a - b).map(c =>
+        `<option value="${c}">Ch${String(c).padStart(2, '0')}</option>`).join('');
+    chSel.value = prev;
+  }
+  const dl = document.getElementById('hlanc-modele-datalist');
+  if (dl) {
+    dl.innerHTML = Array.from(modeles).sort().map(m =>
+      `<option value="${m.replace(/"/g, '&quot;')}"></option>`).join('');
+  }
+  const modInp = document.getElementById('hlanc-modele');
+  if (modInp) modInp.value = HLANC_STATE.modele || '';
+}
+
+function hlancBuildRows(month, dates) {
+  const info = PRODUCTION[month];
+  const chFilter = HLANC_STATE.chain != null ? Number(HLANC_STATE.chain) : null;
+  const modFilter = (HLANC_STATE.modele || '').trim().toLowerCase();
+  const rows = [];
+  let totHManq = 0, totHManqAbs = 0, totHrsJ = 0, totSortie = 0;
+  for (const d of dates) {
+    const excelArr = getExcelDataForDate(d);
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line)) continue;
+      if (chFilter != null && Number(line.chain) !== chFilter) continue;
+      const mod = String(line.modele || '');
+      if (modFilter && !mod.toLowerCase().includes(modFilter)) continue;
+      const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+      const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
+      const vt = (line.methodes != null && !isNaN(line.methodes)) ? Number(line.methodes)
+        : ((excel && excel.r1_meth != null) ? Number(excel.r1_meth) : null);
+      const ph = (line.ph != null && !isNaN(line.ph)) ? Number(line.ph)
+        : ((excel && excel.r1_ph != null) ? Number(excel.r1_ph) : 0);
+      const sortie = calcTotalSortieRow(r1h);
+      const hJour = calcHeuresJourFromSaisie(r1h, d);
+      const hManqRaw = calcHLancHeures(r1h, sortie, ph, line, excel, d, month);
+      let hLanc = hManqRaw;
+      if (hLanc != null && isFinite(hLanc) && Math.abs(hLanc) < 0.0001) hLanc = 0;
+      if (!hJour && !sortie && (hLanc == null || hLanc === 0)) continue;
+      rows.push({
+        ch: line.chain, date: d, imp: line.import, modele: mod,
+        desig: line.desig, vt, ph, hJour, sortie, hLanc,
+      });
+      if (hLanc != null && isFinite(hLanc)) {
+        totHManq += hLanc;
+        totHManqAbs += Math.abs(hLanc);
+      }
+      totHrsJ += hJour || 0;
+      totSortie += sortie || 0;
+    }
+  }
+  rows.sort((a, b) => _rapFrToTs(a.date) - _rapFrToTs(b.date) || (Number(a.ch) || 0) - (Number(b.ch) || 0));
+  return { rows, tot: { hManq: totHManq, hManqAbs: totHManqAbs, hrsJ: totHrsJ, sortie: totSortie } };
+}
+
+function hlancHtmlTable(month, dates, data) {
+  const dDeb = dates[0] || '';
+  const dFin = dates[dates.length - 1] || '';
+  const formulaNote = excelHLancFormulaTitle(dFin || dDeb);
+  let html = ''
+    + '<div class="hlanc-formula-note no-print">' + _rapEscapeHtml(formulaNote) + '</div>'
+    + '<div class="rap-cegid-header">'
+    +   '<div class="rap-ce-left">CODERSA</div>'
+    +   '<div class="rap-ce-title">HEURES DE LANCEMENT</div>'
+    +   '<div class="rap-ce-right">' + _rapEscapeHtml(PRODUCTION[month]?.label || month) + '</div>'
+    + '</div>'
+    + `<div class="rap-cegid-subtitle">DU ${rapFmtDateFull(dDeb)} AU ${rapFmtDateFull(dFin)}</div>`;
+  if (!data.rows.length) {
+    html += '<div class="rap-empty">Aucune ligne ne correspond aux filtres.</div>';
+    return html;
+  }
+  html += '<table class="rap-table">';
+  html += '<thead><tr>'
+    + '<th class="center">CH</th>'
+    + '<th class="center">DATE</th>'
+    + '<th class="center">N°IMP</th>'
+    + '<th class="left">MODELE</th>'
+    + '<th class="left">DESIG</th>'
+    + '<th class="right">VT</th>'
+    + '<th class="right">P/H</th>'
+    + '<th class="right">HRS/J</th>'
+    + '<th class="right">PROD.</th>'
+    + '<th class="right">H . MANQ</th>'
+    + '</tr></thead><tbody>';
+  for (const r of data.rows) {
+    const n = Number(r.hLanc);
+    const cls = r.hLanc != null && isFinite(n) ? (n < 0 ? 'neg' : (n > 0 ? 'pos' : '')) : '';
+    html += '<tr>'
+      + `<td class="center">${rapChShort(r.ch)}</td>`
+      + `<td class="center">${rapFmtDate(r.date)}</td>`
+      + `<td class="center">${_rapEscapeHtml(r.imp || '')}</td>`
+      + `<td class="left">${_rapEscapeHtml(r.modele || '')}</td>`
+      + `<td class="left">${_rapEscapeHtml(r.desig || '')}</td>`
+      + `<td class="num">${r.vt != null && !isNaN(r.vt) ? fmtDecFr(r.vt, 2) : ''}</td>`
+      + `<td class="num">${r.ph ? rapFmtInt(r.ph) : ''}</td>`
+      + `<td class="num">${r.hJour ? rapFmtHrs(r.hJour) : ''}</td>`
+      + `<td class="num">${r.sortie ? rapFmtInt(r.sortie) : ''}</td>`
+      + `<td class="num ${cls}">${r.hLanc != null && isFinite(r.hLanc) ? rapFmtSigned(r.hLanc) : ''}</td>`
+      + '</tr>';
+  }
+  html += '</tbody><tfoot><tr class="totalg">'
+    + '<td colspan="7" class="left strong">Cumul</td>'
+    + `<td class="num">${rapFmtInt(data.tot.sortie)}</td>`
+    + `<td class="num">${rapFmtSigned(data.tot.hManq)}</td>`
+    + '</tr>'
+    + '<tr><td colspan="10" class="right strong">'
+    + `Heures manquantes Net : ${rapFmtSigned(data.tot.hManq)} h &nbsp;(Σ |H.MANQ| = ${rapFmtSigned(data.tot.hManqAbs)} h)`
+    + '</td></tr></tfoot></table>';
+  return html;
+}
+
+function hlancRender() {
+  const month = currentMonth;
+  const info = PRODUCTION[month];
+  const pill = document.getElementById('hlanc-month');
+  if (pill) pill.textContent = info?.label || month;
+  const dates = hlancDatesInRange(month);
+  const rangeEl = document.getElementById('hlanc-range');
+  if (rangeEl) {
+    if (!dates.length) rangeEl.textContent = '—';
+    else rangeEl.textContent = _rapIsoToFr(HLANC_STATE.dateDebutIso) + ' → ' + _rapIsoToFr(HLANC_STATE.dateFinIso)
+      + ' (' + dates.length + ' j.)';
+  }
+  const doc = document.getElementById('hlanc-doc');
+  if (!doc) return;
+  if (!dates.length) {
+    doc.innerHTML = '<div class="rap-empty">Aucune date dans la période sélectionnée.</div>';
+    return;
+  }
+  const data = hlancBuildRows(month, dates);
+  doc.innerHTML = hlancHtmlTable(month, dates, data);
+}
+
+function renderHLanc() {
+  prepareDashboardMetrics(currentMonth);
+  hlancInitOnce();
+  hlancSyncOptions(currentMonth);
+  hlancRender();
+}
+
 function renderPage(page) {
   if (page === 'saisie') { renderSaisie(); return; }
   if (page === 'methodes') { renderMethodesPage(); return; }
   if (page === 'rapports') { renderRapports(); return; }
+  if (page === 'hlanc') { renderHLanc(); return; }
   prepareDashboardMetrics(currentMonth);
   if (page === 'overview') renderOverview(currentMonth);
   else if (page === 'anomalies') renderAnomalies(currentMonth);
@@ -8118,7 +8451,7 @@ function syncExcelManualHourHeader(i) {
 loadExcelHourTimes();
 const EXCEL_FIXED_COLS_BEFORE_HOURS = 10; // CH … DESIGN + METHODES(2) + libellé ligne
 const EXCEL_FREEZE_COLS = 4; // CH, IMPORT, CLIENT, MODELE — figées au scroll horizontal
-const EXCEL_TRAIL_COLS = 7; // Moy · H.Lanc · Total · Cumul · AC · Encours · %Rend
+const EXCEL_TRAIL_COLS = 6; // Moy · Total · Cumul · AC · Encours · %Rend (H.Lancement → onglet dédié)
 const EXCEL_HOUR_COLS_MW = 11; // colonnes heures M…W (Excel)
 const EXCEL_COL_U_INDEX = 8; // colonne U = 9ᵉ créneau (M…W)
 const EXCEL_LAB_SORTIE = 'Sortie Chaine'; // AB3 — critère SUMIF colonne L
@@ -8357,7 +8690,7 @@ function updateExcelMetaSortieTotal() {
 }
 
 /**
- * Vers Final — même logique qu’Excel (feuille jour, ex. 14-05-2026) :
+ * Rendement — même logique qu’Excel (feuille jour, ex. 14-05-2026) :
  * · AI (ligne Sortie) = AB_effectifs + AB_stagiaire/2
  * · AK = AI×60
  * · AL = AB_sortie×J  (J = VT méthodes)
@@ -8384,7 +8717,7 @@ function calcMetaVersFinalPct(lines, excelArr, month, date) {
 }
 
 function updateExcelMetaVersPct() {
-  /* Vers Final affiché dans le bandeau saisie (#saisie-tot-vers) via refreshSummaryStrip */
+  /* Rendement affiché dans le bandeau saisie (#saisie-tot-vers) via refreshSummaryStrip */
 }
 
 /** Tranche M…W pour COUNTA / formules Moy (11 créneaux, hors heures sup.) */
@@ -8564,10 +8897,15 @@ function parseNumFr(s) {
   const n = Number(t);
   return isNaN(n) ? null : n;
 }
-/** Pourcentage grille / Vers Final — 2 décimales, virgule (ex. 73,45 %) */
+/** Pourcentage grille / Rendement — 2 décimales, virgule (ex. 73,45 %) */
 function fmtPctX(v) {
   if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '';
   return fmtDecFr(v * 100, 2) + '%';
+}
+/** Rend équilibrage (colonne METHODES) — sans symbole % (ex. 87,43) */
+function fmtRendEquil(v) {
+  if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '—';
+  return fmtDecFr(v * 100, 2);
 }
 function _sumArr(arr) { if (!Array.isArray(arr)) return 0; return arr.reduce((s,v)=> s + (v == null || isNaN(v) ? 0 : Number(v)), 0); }
 function _countA(arr) { if (!Array.isArray(arr)) return 0; return arr.reduce((c,v)=> c + (v == null || v === '' ? 0 : 1), 0); }
@@ -8753,7 +9091,6 @@ function buildSaisieHeader() {
 
   const trailHdr = `
     <th style="min-width:60px" class="trail-moy" title="${excelMoyColHeaderTitle(saisieDate)}">Moy</th>
-    <th style="min-width:80px" title="${excelHLancFormulaTitle(saisieDate)}">H.Lancement</th>
     <th style="min-width:60px" title="Sortie : somme heures M…W · Bandeau : SUMIF(L;Sortie Chaine;AB)">Total</th>
     <th style="min-width:70px">Cumul</th>
     <th class="hidden-col" style="min-width:60px">AC</th>
@@ -8770,7 +9107,7 @@ function buildSaisieHeader() {
     <th style="min-width:90px">CHEF DE CHAÎNE</th>
     <th style="min-width:80px">QTE PRÉVU</th>
     <th style="min-width:90px">DESIGN</th>
-    <th colspan="2" class="meth-group-h" style="min-width:100px">METHODES</th>
+    <th colspan="2" class="meth-group-h" style="min-width:128px">METHODES</th>
     <th style="min-width:90px"></th>
     ${hourHdr}
     ${trailHdr}
@@ -8841,7 +9178,7 @@ function excelMethodesBlockCell(line, c) {
   const phVal = (line.ph != null && line.ph !== '' && !isNaN(line.ph)) ? fmtPh(line.ph) : '—';
   const effVal = (line.effectifs != null && line.effectifs !== '' && !isNaN(line.effectifs)) ? fmtNumFr(line.effectifs) : '—';
   const hint = 'Onglet VT / P/H / EFF';
-  const pct = c.objRend != null ? fmtPctX(c.objRend) : '—';
+  const pct = c.objRend != null ? fmtRendEquil(c.objRend) : '—';
   return `
     <td colspan="2" rowspan="${rs}" class="merge-cell meth-block-cell meth-from-rules">
       <table class="meth-inner">
@@ -8880,7 +9217,7 @@ function excelHourCells(field, hours) {
   return Array.from({ length: n }, (_, i) => {
     const v = hours[i];
     const val = v != null && v !== '' ? v : '';
-    return `<td class="h-cell"><input class="xs-inp" type="number" data-f="${field}" data-i="${i}" value="${val}"></td>`;
+    return `<td class="h-cell"><input class="xs-inp excel-h-inp" type="number" data-f="${field}" data-i="${i}" value="${val}"></td>`;
   }).join('');
 }
 
@@ -9013,7 +9350,6 @@ function buildSaisieBody() {
         <td class="lab-l">Entre Chaine</td>
         ${excelHourCells('r0h', c.r0h)}
         <td class="calc calc-moy" data-r="r0_moy">${fmtMoyCell(c.moyEntre)}</td>
-        ${excelHLancFusionCell(c)}
         <td class="calc-2" data-r="r0_total">${fmtNumX(c.totalEntre)}</td>
         <td class="calc-2" data-r="r0_cumul">${fmtNumX(c.cumulEntre)}</td>
         <td class="hidden-col">${fmtNumX(c.acEntre)}</td>
@@ -9097,6 +9433,8 @@ function buildSaisieBody() {
   updateExcelMetaSortieTotal();
   updateExcelMetaVersPct();
   scheduleExcelFrozenColumns();
+  excelClearSelection();
+  initExcelHourInteractions();
 }
 
 /** Navigation clavier grille saisie : Tab, flèches, Entrée */
@@ -9168,15 +9506,39 @@ function handleExcelGridKeydown(e) {
     return;
   }
 
+  if (e.key === 'Escape' && excelIsHourInp(inp)) {
+    excelClearSelection();
+    return;
+  }
+  if ((e.key === 'Delete' || e.key === 'Backspace') && excelHourSel.cells.size > 1 && excelIsHourInp(inp)) {
+    e.preventDefault();
+    excelClearSelectedValues();
+    return;
+  }
+
   const navKeys = ['Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
   if (!navKeys.includes(e.key)) return;
+
+  const map = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
+  if (e.shiftKey && excelIsHourInp(inp)) {
+    e.preventDefault();
+    const next = findExcelHourNeighbor(inp, map[e.key] || (e.key === 'Enter' ? 'down' : null));
+    if (next) {
+      const coords = excelHourCoords(next);
+      if (coords) {
+        if (!excelHourSel.anchor) excelSetSelection(excelHourCoords(inp), coords);
+        else excelSetSelection(excelHourSel.anchor, coords);
+        focusExcelNavInput(next);
+      }
+    }
+    return;
+  }
 
   e.preventDefault();
   if (e.key === 'Enter') {
     moveExcelFocusDirection(e.shiftKey ? 'up' : 'down');
     return;
   }
-  const map = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
   moveExcelFocusDirection(map[e.key]);
 }
 
@@ -9569,6 +9931,484 @@ function renderAnomalies(month) {
   });
 }
 
+const EXCEL_HOUR_FIELDS = ['r0h', 'r1h', 'r2h', 'r3h', 'r4h'];
+const EXCEL_HOUR_FIELD_MAP = {
+  r0h: 'hours_entry', r1h: 'hours_exit', r2h: 'effectifs_hours',
+  r3h: 'stagiaire_hours', r4h: 'formation_hours',
+};
+
+function excelIsHourInp(el) {
+  return el && el.classList && el.classList.contains('excel-h-inp')
+    && EXCEL_HOUR_FIELDS.includes(el.dataset.f);
+}
+
+function excelHourCoords(inp) {
+  if (!excelIsHourInp(inp)) return null;
+  const tr = inp.closest('tr');
+  const rk = tr && tr.dataset.rk;
+  if (!rk) return null;
+  return { rk, field: inp.dataset.f, idx: Number(inp.dataset.i) };
+}
+
+function excelGetHourInp(rk, field, idx) {
+  const tbody = document.getElementById('excel-grid-body');
+  if (!tbody) return null;
+  return tbody.querySelector(
+    `tr[data-rk="${CSS.escape(String(rk))}"] input.excel-h-inp[data-f="${field}"][data-i="${idx}"]`
+  );
+}
+
+function excelGetOrderedRks() {
+  const seen = new Set();
+  const rks = [];
+  const tbody = document.getElementById('excel-grid-body');
+  if (!tbody) return rks;
+  tbody.querySelectorAll('tr[data-rk]').forEach(tr => {
+    const rk = tr.dataset.rk;
+    if (rk && !seen.has(rk)) { seen.add(rk); rks.push(rk); }
+  });
+  return rks;
+}
+
+function excelGetLineByRk(rk) {
+  if (!saisieMonth || !saisieDate) return null;
+  return (PRODUCTION[saisieMonth].daily[saisieDate] || []).find(l => l._rowKey === rk) || null;
+}
+
+function excelEnsureHourArray(line, field) {
+  const name = EXCEL_HOUR_FIELD_MAP[field];
+  const n = excelTotalHourCount();
+  if (!Array.isArray(line[name])) line[name] = new Array(n).fill(null);
+  while (line[name].length < n) line[name].push(null);
+  return line[name];
+}
+
+function applyExcelHourValue(line, field, idx, v, opts) {
+  if (!line || !EXCEL_HOUR_FIELDS.includes(field)) return;
+  opts = opts || {};
+  const arr = excelEnsureHourArray(line, field);
+  arr[idx] = v;
+  if (field === 'r0h') line.entre_total = _sumArr(line.hours_entry);
+  else if (field === 'r1h') line.sortie_total = _sumArr(line.hours_exit);
+  else if (field === 'r3h') {
+    line.stagiaire = Math.max(0, ...line.stagiaire_hours.filter(x => x != null).map(Number));
+  } else if (field === 'r4h') line.formation_total = _sumArr(line.formation_hours);
+  if (opts.markDirty !== false) {
+    const inp = excelGetHourInp(line._rowKey, field, idx);
+    if (inp) inp.classList.add('dirty');
+  }
+}
+
+function flushExcelHourBatch(lines) {
+  const set = lines instanceof Set ? lines : new Set(lines || []);
+  for (const line of set) {
+    if (line) refreshExcelRow(line);
+  }
+  if (set.size) refreshSummaryStrip();
+}
+
+const excelHourSel = {
+  cells: new Set(),
+  anchor: null,
+  focus: null,
+  dragging: false,
+  fillDrag: false,
+  fillBounds: null,
+};
+
+function excelCellKey(c) { return `${c.rk}|${c.field}|${c.idx}`; }
+
+function excelParseCellKey(k) {
+  const p = k.split('|');
+  return { rk: p[0], field: p[1], idx: Number(p[2]) };
+}
+
+function excelClearSelection() {
+  excelHourSel.cells.clear();
+  excelHourSel.anchor = null;
+  excelHourSel.focus = null;
+  excelHourSel.dragging = false;
+  excelHourSel.fillDrag = false;
+  excelHourSel.fillBounds = null;
+  document.querySelectorAll('#excel-grid-body td.h-cell.sel-cell, #excel-grid-body td.h-cell.sel-fill-preview')
+    .forEach(td => td.classList.remove('sel-cell', 'sel-cell-focus', 'sel-fill-preview'));
+  const h = document.getElementById('excel-fill-handle');
+  if (h) h.classList.remove('visible');
+}
+
+function excelRectFromCoords(a, b) {
+  const rks = excelGetOrderedRks();
+  const fi0 = EXCEL_HOUR_FIELDS.indexOf(a.field);
+  const fi1 = EXCEL_HOUR_FIELDS.indexOf(b.field);
+  const ri0 = rks.indexOf(a.rk);
+  const ri1 = rks.indexOf(b.rk);
+  return {
+    rk0: Math.min(ri0, ri1), rk1: Math.max(ri0, ri1),
+    f0: Math.min(fi0, fi1), f1: Math.max(fi0, fi1),
+    i0: Math.min(a.idx, b.idx), i1: Math.max(a.idx, b.idx),
+    rks, fields: EXCEL_HOUR_FIELDS,
+  };
+}
+
+function excelIterRect(rect, fn) {
+  const { rks, fields } = rect;
+  for (let ri = rect.rk0; ri <= rect.rk1; ri++) {
+    for (let fi = rect.f0; fi <= rect.f1; fi++) {
+      for (let ii = rect.i0; ii <= rect.i1; ii++) {
+        fn({ rk: rks[ri], field: fields[fi], idx: ii });
+      }
+    }
+  }
+}
+
+function excelSetSelection(anchor, focus) {
+  if (!anchor || !focus) return;
+  excelHourSel.anchor = anchor;
+  excelHourSel.focus = focus;
+  excelHourSel.cells.clear();
+  const rect = excelRectFromCoords(anchor, focus);
+  excelIterRect(rect, c => excelHourSel.cells.add(excelCellKey(c)));
+  excelPaintSelection();
+}
+
+function excelPaintSelection() {
+  document.querySelectorAll('#excel-grid-body td.h-cell.sel-cell, #excel-grid-body td.h-cell.sel-fill-preview')
+    .forEach(td => td.classList.remove('sel-cell', 'sel-cell-focus', 'sel-fill-preview'));
+  const focusKey = excelHourSel.focus ? excelCellKey(excelHourSel.focus) : null;
+  for (const k of excelHourSel.cells) {
+    const c = excelParseCellKey(k);
+    const inp = excelGetHourInp(c.rk, c.field, c.idx);
+    const td = inp && inp.closest('td.h-cell');
+    if (!td) continue;
+    td.classList.add('sel-cell');
+    if (k === focusKey) td.classList.add('sel-cell-focus');
+  }
+  excelPositionFillHandle();
+}
+
+function excelPositionFillHandle() {
+  const handle = ensureExcelFillHandle();
+  if (!isEditable() || excelHourSel.cells.size === 0 || excelHourSel.fillDrag) {
+    handle.classList.remove('visible');
+    return;
+  }
+  const rks = excelGetOrderedRks();
+  let corner = null;
+  for (const k of excelHourSel.cells) {
+    const c = excelParseCellKey(k);
+    const ri = rks.indexOf(c.rk);
+    const fi = EXCEL_HOUR_FIELDS.indexOf(c.field);
+    if (!corner || ri > corner.ri || (ri === corner.ri && fi > corner.fi)
+      || (ri === corner.ri && fi === corner.fi && c.idx > corner.ii)) {
+      corner = { ri, fi, ii: c.idx, c };
+    }
+  }
+  const inp = corner && excelGetHourInp(corner.c.rk, corner.c.field, corner.c.idx);
+  const br = inp && inp.getBoundingClientRect();
+  if (!br) { handle.classList.remove('visible'); return; }
+  handle.style.left = (br.right - 4) + 'px';
+  handle.style.top = (br.bottom - 4) + 'px';
+  handle.classList.add('visible');
+}
+
+function ensureExcelFillHandle() {
+  let h = document.getElementById('excel-fill-handle');
+  if (!h) {
+    h = document.createElement('div');
+    h.id = 'excel-fill-handle';
+    h.className = 'excel-fill-handle';
+    h.title = 'Glisser pour remplir (comme Excel)';
+    document.querySelector('.excel-saisie-wrap')?.appendChild(h);
+  }
+  return h;
+}
+
+function excelReadHourValue(inp) {
+  if (!inp) return null;
+  if (inp.value === '') return null;
+  const v = Number(inp.value);
+  return isNaN(v) ? null : v;
+}
+
+function excelInSelRect(c, rect) {
+  const ri = rect.rks.indexOf(c.rk);
+  const fi = rect.fields.indexOf(c.field);
+  return ri >= rect.rk0 && ri <= rect.rk1 && fi >= rect.f0 && fi <= rect.f1
+    && c.idx >= rect.i0 && c.idx <= rect.i1;
+}
+
+function excelBuildSrcGrid(srcRect) {
+  const grid = [];
+  for (let ri = srcRect.rk0; ri <= srcRect.rk1; ri++) {
+    for (let fi = srcRect.f0; fi <= srcRect.f1; fi++) {
+      const row = [];
+      for (let ii = srcRect.i0; ii <= srcRect.i1; ii++) {
+        const inp = excelGetHourInp(srcRect.rks[ri], srcRect.fields[fi], ii);
+        row.push(excelReadHourValue(inp));
+      }
+      grid.push(row);
+    }
+  }
+  return grid;
+}
+
+function excelApplyFill(extRect, srcRect) {
+  if (!isEditable()) return;
+  const grid = excelBuildSrcGrid(srcRect);
+  const srcH = grid.length;
+  const srcW = srcRect.i1 - srcRect.i0 + 1;
+  const fSpan = srcRect.f1 - srcRect.f0 + 1;
+  const touched = new Set();
+  excelIterRect(extRect, c => {
+    if (excelInSelRect(c, srcRect)) return;
+    const ri = excelGetOrderedRks().indexOf(c.rk);
+    const fi = EXCEL_HOUR_FIELDS.indexOf(c.field);
+    const rowIdx = ((ri - srcRect.rk0) * fSpan + (fi - srcRect.f0)) % srcH;
+    const colIdx = (c.idx - srcRect.i0) % srcW;
+    const v = grid[rowIdx][colIdx];
+    const line = excelGetLineByRk(c.rk);
+    if (!line) return;
+    applyExcelHourValue(line, c.field, c.idx, v, { markDirty: true, skipRefresh: true });
+    const inp = excelGetHourInp(c.rk, c.field, c.idx);
+    if (inp) inp.value = v != null ? v : '';
+    touched.add(line);
+  });
+  flushExcelHourBatch(touched);
+}
+
+function excelPaintFillPreview(extRect, srcRect) {
+  document.querySelectorAll('#excel-grid-body td.h-cell.sel-fill-preview')
+    .forEach(td => td.classList.remove('sel-fill-preview'));
+  excelIterRect(extRect, c => {
+    if (excelInSelRect(c, srcRect)) return;
+    const inp = excelGetHourInp(c.rk, c.field, c.idx);
+    const td = inp && inp.closest('td.h-cell');
+    if (td) td.classList.add('sel-fill-preview');
+  });
+}
+
+function excelBoundsFromCellKeys(keys) {
+  const rks = excelGetOrderedRks();
+  const rect = { rk0: Infinity, rk1: -1, f0: Infinity, f1: -1, i0: Infinity, i1: -1, rks, fields: EXCEL_HOUR_FIELDS };
+  keys.forEach(c => {
+    const ri = rks.indexOf(c.rk);
+    const fi = EXCEL_HOUR_FIELDS.indexOf(c.field);
+    if (ri < rect.rk0) rect.rk0 = ri;
+    if (ri > rect.rk1) rect.rk1 = ri;
+    if (fi < rect.f0) rect.f0 = fi;
+    if (fi > rect.f1) rect.f1 = fi;
+    if (c.idx < rect.i0) rect.i0 = c.idx;
+    if (c.idx > rect.i1) rect.i1 = c.idx;
+  });
+  return rect;
+}
+
+function excelCopyFromSelection() {
+  if (!excelHourSel.cells.size) return '';
+  const rect = excelBoundsFromCellKeys(Array.from(excelHourSel.cells).map(excelParseCellKey));
+  const lines = [];
+  for (let ri = rect.rk0; ri <= rect.rk1; ri++) {
+    for (let fi = rect.f0; fi <= rect.f1; fi++) {
+      const row = [];
+      for (let ii = rect.i0; ii <= rect.i1; ii++) {
+        const inp = excelGetHourInp(rect.rks[ri], rect.fields[fi], ii);
+        const v = excelReadHourValue(inp);
+        row.push(v == null ? '' : String(v).replace('.', ','));
+      }
+      lines.push(row.join('\t'));
+    }
+  }
+  return lines.join('\n');
+}
+
+function excelPasteAt(anchor, text) {
+  if (!isEditable() || !anchor || !text) return;
+  const rows = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  if (!rows.length) return;
+  const rks = excelGetOrderedRks();
+  const ri0 = rks.indexOf(anchor.rk);
+  const fi0 = EXCEL_HOUR_FIELDS.indexOf(anchor.field);
+  if (ri0 < 0 || fi0 < 0) return;
+  const touched = new Set();
+  for (let r = 0; r < rows.length; r++) {
+    const cols = rows[r].split('\t');
+    for (let c = 0; c < cols.length; c++) {
+      const rk = rks[ri0 + r];
+      const field = EXCEL_HOUR_FIELDS[fi0 + c];
+      const idx = anchor.idx + c;
+      if (!rk || !field || idx >= excelTotalHourCount()) continue;
+      const raw = cols[c].trim();
+      let v = null;
+      if (raw !== '') {
+        v = parseNumFr(raw);
+        if (v == null || isNaN(v)) {
+          const n2 = Number(String(raw).replace(',', '.'));
+          v = isNaN(n2) ? null : n2;
+        }
+      }
+      const line = excelGetLineByRk(rk);
+      if (!line) continue;
+      applyExcelHourValue(line, field, idx, v, { markDirty: true, skipRefresh: true });
+      const inp = excelGetHourInp(rk, field, idx);
+      if (inp) inp.value = v != null ? v : '';
+      touched.add(line);
+    }
+  }
+  flushExcelHourBatch(touched);
+  if (excelHourSel.anchor) {
+    const lastR = Math.min(rows.length - 1, rks.length - ri0 - 1);
+    const lastC = Math.max(0, ...rows.map(row => row.split('\t').length - 1));
+    const end = {
+      rk: rks[ri0 + lastR] || anchor.rk,
+      field: EXCEL_HOUR_FIELDS[fi0 + lastC] || anchor.field,
+      idx: anchor.idx + lastC,
+    };
+    excelSetSelection(anchor, end);
+  }
+}
+
+function excelClearSelectedValues() {
+  if (!isEditable() || !excelHourSel.cells.size) return;
+  const touched = new Set();
+  for (const k of excelHourSel.cells) {
+    const c = excelParseCellKey(k);
+    const line = excelGetLineByRk(c.rk);
+    if (!line) continue;
+    applyExcelHourValue(line, c.field, c.idx, null, { markDirty: true, skipRefresh: true });
+    const inp = excelGetHourInp(c.rk, c.field, c.idx);
+    if (inp) inp.value = '';
+    touched.add(line);
+  }
+  flushExcelHourBatch(touched);
+}
+
+function findExcelHourNeighbor(inp, dir) {
+  const list = Array.from(document.getElementById('excel-grid-body')?.querySelectorAll('input.excel-h-inp:not(:disabled)') || []);
+  const cur = inp.getBoundingClientRect();
+  const cx = cur.left + cur.width / 2;
+  const cy = cur.top + cur.height / 2;
+  let best = null, bestDist = Infinity;
+  for (const other of list) {
+    if (other === inp) continue;
+    const r = other.getBoundingClientRect();
+    const ix = r.left + r.width / 2;
+    const iy = r.top + r.height / 2;
+    let ok = false;
+    if (dir === 'right' && ix > cx + 2 && Math.abs(iy - cy) < cur.height * 1.35) ok = true;
+    if (dir === 'left' && ix < cx - 2 && Math.abs(iy - cy) < cur.height * 1.35) ok = true;
+    if (dir === 'down' && iy > cy + 2 && Math.abs(ix - cx) < Math.max(cur.width, r.width) * 1.6) ok = true;
+    if (dir === 'up' && iy < cy - 2 && Math.abs(ix - cx) < Math.max(cur.width, r.width) * 1.6) ok = true;
+    if (!ok) continue;
+    const d = Math.hypot(ix - cx, iy - cy);
+    if (d < bestDist) { bestDist = d; best = other; }
+  }
+  return best;
+}
+
+function initExcelHourInteractions() {
+  if (initExcelHourInteractions._done) return;
+  initExcelHourInteractions._done = true;
+  const grid = document.getElementById('excel-grid');
+  const wrap = document.querySelector('.excel-saisie-wrap');
+  const handle = ensureExcelFillHandle();
+
+  grid?.addEventListener('mousedown', (e) => {
+    if (!isEditable() || excelHourSel.fillDrag) return;
+    const inp = e.target.closest('input.excel-h-inp');
+    if (!inp || !excelIsHourInp(inp)) return;
+    if (e.button !== 0) return;
+    const coords = excelHourCoords(inp);
+    if (!coords) return;
+    if (e.shiftKey && excelHourSel.anchor) {
+      excelSetSelection(excelHourSel.anchor, coords);
+    } else {
+      excelSetSelection(coords, coords);
+      excelHourSel.dragging = true;
+    }
+  }, true);
+
+  document.addEventListener('mousemove', (e) => {
+    if (excelHourSel.fillDrag && excelHourSel.fillBounds) {
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const inp = el && el.closest && el.closest('input.excel-h-inp');
+      const coords = inp && excelHourCoords(inp);
+      const src = excelHourSel.fillBounds.src;
+      if (coords) {
+        const ext = excelRectFromCoords(
+          { rk: excelGetOrderedRks()[src.rk0], field: EXCEL_HOUR_FIELDS[src.f0], idx: src.i0 },
+          coords
+        );
+        ext.rk0 = Math.min(src.rk0, ext.rk0);
+        ext.rk1 = Math.max(src.rk1, ext.rk1);
+        ext.f0 = Math.min(src.f0, ext.f0);
+        ext.f1 = Math.max(src.f1, ext.f1);
+        ext.i0 = Math.min(src.i0, ext.i0);
+        ext.i1 = Math.max(src.i1, ext.i1);
+        excelPaintFillPreview(ext, src);
+        excelHourSel.fillBounds.ext = ext;
+      }
+      return;
+    }
+    if (!excelHourSel.dragging) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const inp = el && el.closest && el.closest('input.excel-h-inp');
+    const coords = inp && excelHourCoords(inp);
+    if (coords && excelHourSel.anchor) excelSetSelection(excelHourSel.anchor, coords);
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (excelHourSel.fillDrag && excelHourSel.fillBounds) {
+      const { src, ext } = excelHourSel.fillBounds;
+      if (ext) excelApplyFill(ext, src);
+      excelHourSel.fillDrag = false;
+      excelHourSel.fillBounds = null;
+      document.querySelectorAll('#excel-grid-body td.h-cell.sel-fill-preview')
+        .forEach(td => td.classList.remove('sel-fill-preview'));
+      excelPaintSelection();
+      return;
+    }
+    excelHourSel.dragging = false;
+  });
+
+  handle.addEventListener('mousedown', (e) => {
+    if (!isEditable() || !excelHourSel.cells.size) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = excelBoundsFromCellKeys(Array.from(excelHourSel.cells).map(excelParseCellKey));
+    excelHourSel.fillDrag = true;
+    excelHourSel.fillBounds = { src: rect, ext: null };
+  });
+
+  grid?.addEventListener('copy', (e) => {
+    if (!excelHourSel.cells.size) return;
+    const tsv = excelCopyFromSelection();
+    if (!tsv) return;
+    e.clipboardData.setData('text/plain', tsv);
+    e.preventDefault();
+  });
+
+  grid?.addEventListener('paste', (e) => {
+    if (!isEditable()) return;
+    const anchor = excelHourSel.anchor || excelHourCoords(document.activeElement);
+    if (!anchor) return;
+    const text = e.clipboardData.getData('text/plain');
+    if (!text) return;
+    e.preventDefault();
+    excelPasteAt(anchor, text);
+  });
+
+  grid?.addEventListener('cut', (e) => {
+    if (!excelHourSel.cells.size || !isEditable()) return;
+    const tsv = excelCopyFromSelection();
+    e.clipboardData.setData('text/plain', tsv);
+    e.preventDefault();
+    excelClearSelectedValues();
+  });
+
+  wrap?.addEventListener('scroll', () => excelPositionFillHandle(), { passive: true });
+  window.addEventListener('resize', () => excelPositionFillHandle());
+}
+
 function onExcelInput(e, line) {
   if (!isEditable()) return;
   const inp = e.target;
@@ -9582,13 +10422,14 @@ function onExcelInput(e, line) {
   else if (isNumFr) v = parseNumFr(inp.value);
   else { v = inp.value === '' ? null : Number(inp.value); if (v != null && isNaN(v)) v = null; }
 
-  function ensure(name, n) { n = n || excelTotalHourCount(); if (!Array.isArray(line[name])) line[name] = new Array(n).fill(null); while (line[name].length < n) line[name].push(null); }
-
-  if (f === 'r0h') { ensure('hours_entry'); line.hours_entry[idx] = v; line.entre_total = _sumArr(line.hours_entry); }
-  else if (f === 'r1h') { ensure('hours_exit'); line.hours_exit[idx] = v; line.sortie_total = _sumArr(line.hours_exit); }
-  else if (f === 'r2h') { ensure('effectifs_hours'); line.effectifs_hours[idx] = v; }
-  else if (f === 'r3h') { ensure('stagiaire_hours'); line.stagiaire_hours[idx] = v; line.stagiaire = Math.max(0, ...line.stagiaire_hours.filter(x=>x!=null).map(Number)); }
-  else if (f === 'r4h') { ensure('formation_hours'); line.formation_hours[idx] = v; line.formation_total = _sumArr(line.formation_hours); }
+  if (EXCEL_HOUR_FIELDS.includes(f)) {
+    applyExcelHourValue(line, f, idx, v);
+    refreshExcelRow(line);
+    refreshSummaryStrip();
+    const coords = excelHourCoords(inp);
+    if (coords) { excelHourSel.focus = coords; excelPaintSelection(); }
+    return;
+  }
   else if (f === 'form_topic') line.formation_topic = v;
   else if (f === 'obj_k') line.objective = v;
   else if (f === 'qte_prevu') line.qte_prevu = v;
@@ -9653,10 +10494,6 @@ function refreshExcelRow(line) {
     ? fmtNumFr(c.cumulJours) : '');
   set('[data-r="qte_reste"]', fmtQteReste(c.qteReste));
   set('[data-r="r0_moy"]',   fmtMoyCell(c.moyEntre));
-  tbody.querySelectorAll(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r0_hlanc"]`).forEach(el => {
-    el.title = excelHLancFormulaTitle(saisieDate);
-    el.innerHTML = hlancCellInnerHtml(c);
-  });
   set('[data-r="r1_total"]', fmtNumX(c.totalSortie));
   set('[data-r="r1_cumul"]', fmtNumX(c.cumulSortie));
   set('[data-r="r1_moy"]',   fmtMoyCell(c.moySortie));
@@ -9669,7 +10506,7 @@ function refreshExcelRow(line) {
   set('[data-r="r3_total"]', fmtNumX(c.totalStag));
   set('[data-r="r4_total"]', fmtNumX(c.totalFormation));
   set('[data-r="r3_ratio"]', c.stagRatio != null ? fmtPctX(c.stagRatio) : '');
-  const rendEq = c.objRend != null ? fmtPctX(c.objRend) : '—';
+  const rendEq = c.objRend != null ? fmtRendEquil(c.objRend) : '—';
   set('[data-r="rend_equil"]', rendEq);
   set('[data-r="meth_vt"]', (line.methodes != null && line.methodes !== '' && !isNaN(line.methodes)) ? fmtNumFr(line.methodes) : '—');
   set('[data-r="meth_ph"]', (line.ph != null && line.ph !== '' && !isNaN(line.ph)) ? fmtPh(line.ph) : '—');
@@ -9694,9 +10531,17 @@ if (excelGridEl) {
   excelGridEl.addEventListener('focusin', (e) => {
     const inp = e.target;
     if (inp && inp.classList && inp.classList.contains('xs-inp') && document.getElementById('excel-grid-body')?.contains(inp)) {
+      if (excelIsHourInp(inp)) {
+        const coords = excelHourCoords(inp);
+        if (coords && !excelHourSel.dragging && !excelHourSel.fillDrag) {
+          if (!e.shiftKey && excelHourSel.cells.size <= 1) excelSetSelection(coords, coords);
+          else if (e.shiftKey && excelHourSel.anchor) excelSetSelection(excelHourSel.anchor, coords);
+        }
+      }
       requestAnimationFrame(() => { if (document.activeElement === inp && typeof inp.select === 'function') inp.select(); });
     }
   }, true);
+  initExcelHourInteractions();
 }
 
 let _excelFreezeResizeT;
@@ -9727,7 +10572,7 @@ function refreshSummaryStrip() {
   const lines = PRODUCTION[saisieMonth].daily[saisieDate] || [];
   const excelArr = getExcelDataForDate(saisieDate);
   const date = saisieDate;
-  let entre = 0, sortie = 0, eff = 0, stag = 0;
+  let entre = 0, sortie = 0, eff = 0, form = 0, stag = 0;
   const chainIds = new Set();
   for (const line of lines) {
     if (!isActiveProductionRow(line)) continue;
@@ -9737,15 +10582,18 @@ function refreshSummaryStrip() {
     const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
     const r2h = (line.effectifs_hours && line.effectifs_hours.length) ? line.effectifs_hours : ((excel && excel.r2_hours) || []);
     const r3h = (line.stagiaire_hours && line.stagiaire_hours.length) ? line.stagiaire_hours : ((excel && excel.r3_hours) || []);
+    const r4h = (line.formation_hours && line.formation_hours.length) ? line.formation_hours : ((excel && excel.r4_hours) || []);
     entre += _sumArr(r0h);
     sortie += calcTotalSortieRow(r1h);
     eff += calcTotalEffectifsRow(r2h, date);
+    form += calcTotalFormationRow(r4h, date);
     stag += calcTotalStagiaireRow(r3h, date);
   }
   const versPct = calcMetaVersFinalPct(lines, excelArr, saisieMonth, date);
   document.getElementById('saisie-tot-entre').innerHTML  = fmtInt(entre)  + '<span class="unit">pcs</span>';
   document.getElementById('saisie-tot-sortie').innerHTML = fmtInt(sortie) + '<span class="unit">pcs</span>';
   document.getElementById('saisie-tot-eff').textContent  = fmtInt(eff);
+  document.getElementById('saisie-tot-form').textContent = fmtInt(form);
   document.getElementById('saisie-tot-stag').textContent = fmtInt(stag);
   const versEl = document.getElementById('saisie-tot-vers');
   if (versEl) versEl.textContent = versPct != null ? fmtPctX(versPct) : '—';
