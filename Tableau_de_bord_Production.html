@@ -916,15 +916,13 @@ footer {
 
 /* === EXCEL-style saisie grid (replica of Excel sheet) === */
 .excel-saisie-wrap {
-  overflow: auto;
-  max-height: calc(100vh - 240px);
+  overflow-x: hidden;
+  overflow-y: visible;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
   box-shadow: var(--shadow);
   margin-top: 12px;
-  scrollbar-width: auto;
-  scrollbar-color: var(--border-2) var(--surface-2);
 }
 .excel-saisie-wrap::-webkit-scrollbar {
   width: 10px;
@@ -9770,7 +9768,28 @@ function renderSaisie() {
   buildSaisieHeader();
   buildSaisieBody();
   refreshSummaryStrip();
+  fitSaisieTableToWidth();
 }
+
+// Ajuste automatiquement le zoom du tableau de saisie pour qu'il tienne
+// dans la largeur disponible, sans rien casser de la structure existante.
+function fitSaisieTableToWidth() {
+  const wrap  = document.querySelector('.excel-saisie-wrap');
+  const table = document.getElementById('excel-grid');
+  if (!wrap || !table) return;
+  table.style.zoom = '';
+  const required  = table.scrollWidth;
+  const available = wrap.clientWidth;
+  if (required > available + 1) {
+    const z = Math.max(0.55, available / required);
+    table.style.zoom = z.toFixed(3);
+  }
+}
+window.addEventListener('resize', () => {
+  if (document.getElementById('page-saisie')?.classList.contains('active')) {
+    fitSaisieTableToWidth();
+  }
+});
 
 function gotoSaisieToday() {
   ensureTodayInData();
