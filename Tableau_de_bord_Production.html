@@ -2210,24 +2210,182 @@ table.data tbody tr:hover td {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
 }
-.prep-qte-wrap { max-height: min(320px, 40vh); }
+.prep-qte-card .card-sub { max-width: 52ch; }
+.prep-qte-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 16px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--border-2);
+  margin-bottom: 12px;
+}
+.prep-qte-toolbar-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 14px;
+  flex: 1;
+  min-width: 200px;
+}
+.prep-qte-field-month label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.45px;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+.prep-qte-field-month select {
+  min-width: 108px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+.prep-qte-search-wrap {
+  position: relative;
+  flex: 1 1 200px;
+  max-width: 360px;
+}
+.prep-qte-search-wrap::before {
+  content: "⌕";
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+.prep-qte-search-wrap input {
+  width: 100%;
+  padding: 9px 12px 9px 30px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+.prep-qte-search-wrap input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+}
+.prep-qte-only-filled {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding-bottom: 8px;
+  user-select: none;
+}
+.prep-qte-only-filled input { accent-color: var(--accent); }
+.prep-qte-count-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(56,189,248,0.1);
+  color: var(--accent);
+  border: 1px solid rgba(56,189,248,0.25);
+  white-space: nowrap;
+}
+.prep-qte-month-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.28);
+  line-height: 1.45;
+}
+.prep-qte-month-hint b { color: var(--text); }
+.prep-qte-table-wrap {
+  overflow: auto;
+  max-height: min(420px, 50vh);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+table.prep-qte-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+table.prep-qte-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface);
+  box-shadow: 0 1px 0 var(--border);
+}
+table.prep-qte-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-dim);
+}
+table.prep-qte-table th.num { text-align: right; }
+table.prep-qte-table tbody tr:hover td { background: rgba(56,189,248,0.06); }
+table.prep-qte-table tbody tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+table.prep-qte-table td {
+  padding: 6px 10px;
+  border-top: 1px solid var(--border-2);
+  vertical-align: middle;
+}
+table.prep-qte-table td.num { text-align: right; }
+table.prep-qte-table .prep-qte-ch-lab {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--accent);
+}
 .prep-qte-table input.prep-qte-inp {
   width: 100%;
-  max-width: 120px;
-  padding: 5px 8px;
-  border-radius: 6px;
+  padding: 6px 9px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
   font-size: 12px;
   font-weight: 700;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
+  box-sizing: border-box;
+}
+.prep-qte-table input.prep-qte-inp[data-prep-qte-val] {
+  max-width: 110px;
   text-align: right;
 }
+.prep-qte-table input.prep-qte-inp[data-prep-qte-ch] {
+  max-width: 52px;
+  text-align: center;
+}
+.prep-qte-table td.prep-qte-td-mod { min-width: 160px; }
 .prep-qte-table input.prep-qte-inp:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
+}
+.prep-qte-empty-row td {
+  text-align: center;
+  color: var(--text-dim);
+  padding: 24px 16px !important;
 }
 .excel-saisie .qte-prevu-read {
   display: block;
@@ -3142,8 +3300,8 @@ header.topbar {
 .meth-toolbar-left {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 12px 16px;
+  align-items: center;
+  gap: 10px 18px;
   flex: 1;
   min-width: 220px;
 }
@@ -3151,21 +3309,39 @@ header.topbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  align-self: center;
   gap: 8px;
 }
-.meth-field-modele { min-width: 240px; flex: 0 1 280px; }
-.meth-field-modele label {
+.meth-toolbar .field {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.meth-field-modele { flex: 1 1 240px; min-width: 200px; max-width: 340px; }
+.meth-field-chain { flex: 0 0 auto; }
+.meth-field-date { flex: 0 0 auto; }
+.meth-field-modele label,
+.meth-field-chain label,
+.meth-field-date label {
   display: block;
+  flex-shrink: 0;
   font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.45px;
   color: var(--text-dim);
-  margin-bottom: 5px;
+  margin: 0;
+  white-space: nowrap;
 }
-.meth-field-modele select {
+.meth-toolbar-left input[type="text"],
+.meth-toolbar-left input[type="number"],
+.meth-toolbar-left input[type="date"].meth-rule-date {
   width: 100%;
-  padding: 10px 36px 10px 12px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
   border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface-2);
@@ -3173,15 +3349,17 @@ header.topbar {
   font-size: 13px;
   font-weight: 700;
   font-family: inherit;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
   transition: border-color .15s, box-shadow .15s;
+  box-sizing: border-box;
 }
-.meth-field-modele select:hover { border-color: rgba(56,189,248,0.45); }
-.meth-field-modele select:focus {
+.meth-field-modele input[type="text"] { min-width: 140px; }
+.meth-field-chain input[type="number"] { width: 72px; flex-shrink: 0; }
+.meth-field-date input[type="date"] { width: 148px; flex-shrink: 0; }
+.meth-toolbar-left input[type="number"] { text-align: center; }
+.meth-toolbar-left input[type="date"].meth-rule-date { color-scheme: dark; cursor: pointer; }
+:root[data-theme="light"] .meth-toolbar-left input[type="date"].meth-rule-date { color-scheme: light; }
+.meth-toolbar-left input:hover { border-color: rgba(56,189,248,0.45); }
+.meth-toolbar-left input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(56,189,248,0.18);
@@ -3189,10 +3367,11 @@ header.topbar {
 .meth-count-pill {
   display: inline-flex;
   align-items: center;
+  align-self: center;
   gap: 6px;
   font-size: 11px;
   font-weight: 700;
-  padding: 10px 14px;
+  padding: 0 14px;
   border-radius: 10px;
   background: rgba(56,189,248,0.12);
   color: var(--accent);
@@ -3201,6 +3380,7 @@ header.topbar {
   letter-spacing: -0.01em;
   box-sizing: border-box;
   height: 40px;
+  flex-shrink: 0;
 }
 .meth-count-pill::before {
   content: "";
@@ -3212,10 +3392,15 @@ header.topbar {
   flex-shrink: 0;
 }
 .meth-toolbar-actions .btn {
-  padding: 9px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 16px;
   border-radius: 10px;
   font-size: 12px;
   font-weight: 700;
+  box-sizing: border-box;
   transition: transform .12s, box-shadow .15s, background .15s, border-color .15s;
 }
 .meth-toolbar-actions .btn:not(:disabled):hover { transform: translateY(-1px); }
@@ -3489,8 +3674,11 @@ table.meth-chains-compact input { width: 100%; min-width: 64px; }
 }
 @media (max-width: 600px) {
   .meth-edit-dates { grid-template-columns: 1fr; }
-  .meth-toolbar-actions { width: 100%; }
+  .meth-toolbar { flex-direction: column; align-items: stretch; }
+  .meth-toolbar-left { width: 100%; }
+  .meth-toolbar-actions { width: 100%; justify-content: stretch; }
   .meth-toolbar-actions .btn { flex: 1; min-width: 0; }
+  .meth-toolbar .field { flex-wrap: wrap; }
   .meth-table-card-head { flex-direction: column; align-items: flex-start; }
 }
 .meth-rules-layout {
@@ -4076,7 +4264,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     <div class="page-head">
       <div class="left">
         <h2><span class="accent">Méthodes</span></h2>
-        <div class="sub">VT, EFF et P/H par chaîne et par période — une ligne par chaîne. Double-clic ou « Modifier » pour éditer une période.</div>
+        <div class="sub">Filtrez par modèle (saisie libre), chaîne ou dates — double-clic ou « Modifier » pour éditer une période.</div>
       </div>
       <div class="pill-meta"><span class="dot"></span><span id="meth-rules-month-pill">—</span></div>
     </div>
@@ -4086,7 +4274,22 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         <div class="meth-toolbar-left">
           <div class="field meth-field-modele">
             <label for="meth-filter-modele">Modèle</label>
-            <select id="meth-filter-modele" title="Choisir un modèle"><option value="">— Choisir un modèle —</option></select>
+            <input type="text" id="meth-filter-modele" list="meth-filter-modele-dl" autocomplete="off"
+              placeholder="Saisir ou rechercher…" title="Saisie libre ou suggestion depuis les données du mois">
+            <datalist id="meth-filter-modele-dl"></datalist>
+          </div>
+          <div class="field meth-field-chain">
+            <label for="meth-filter-chain">Chaîne</label>
+            <input type="number" id="meth-filter-chain" min="1" max="20" placeholder="Toutes"
+              title="Filtrer par n° de chaîne (1–20)" autocomplete="off">
+          </div>
+          <div class="field meth-field-date">
+            <label for="meth-filter-debut">Du</label>
+            <input type="date" id="meth-filter-debut" class="meth-rule-date" title="Calendrier — filtre date début">
+          </div>
+          <div class="field meth-field-date">
+            <label for="meth-filter-fin">Au</label>
+            <input type="date" id="meth-filter-fin" class="meth-rule-date" title="Calendrier — filtre date fin">
           </div>
           <span class="meth-count-pill" id="meth-toolbar-count">—</span>
         </div>
@@ -4098,7 +4301,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       </div>
 
       <div class="meth-body">
-        <div class="meth-empty" id="meth-rules-flat-empty">Choisissez un <strong>modèle</strong> pour afficher les périodes et les chaînes.</div>
+        <div class="meth-empty" id="meth-rules-flat-empty">Saisissez un <strong>modèle</strong>, une <strong>chaîne</strong> ou des <strong>dates</strong> pour afficher les périodes.</div>
         <div class="meth-table-card" id="meth-rules-flat-wrap" style="display:none">
           <div class="meth-table-card-head">
             <span class="meth-table-title" id="meth-table-title">Périodes</span>
@@ -4137,16 +4340,17 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
             <div class="meth-edit-dates">
               <div class="field">
                 <label for="meth-rule-modele">Modèle</label>
-                <input type="text" id="meth-rule-modele" list="meth-rule-modele-datalist" autocomplete="off" placeholder="Ex. 034-26">
+                <input type="text" id="meth-rule-modele" list="meth-rule-modele-datalist" autocomplete="off"
+                  placeholder="Saisir un modèle (libre)" title="Saisie libre — suggestions depuis le mois">
                 <datalist id="meth-rule-modele-datalist"></datalist>
               </div>
               <div class="field">
                 <label for="meth-rule-debut">Du</label>
-                <input type="date" id="meth-rule-debut" class="meth-rule-date">
+                <input type="date" id="meth-rule-debut" class="meth-rule-date" title="Calendrier — date de début">
               </div>
               <div class="field">
                 <label for="meth-rule-fin">Au</label>
-                <input type="date" id="meth-rule-fin" class="meth-rule-date">
+                <input type="date" id="meth-rule-fin" class="meth-rule-date" title="Calendrier — date de fin">
               </div>
             </div>
           </div>
@@ -5159,15 +5363,35 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       <div class="kpi"><div class="kpi-top"><div class="kpi-label">Σ Reste</div><div class="kpi-ic c5"></div></div><div class="kpi-value" id="pr-manque">0</div><div class="kpi-foot">Entrée/j − plan</div></div>
     </div>
 
-    <div class="card row-gap">
+    <div class="card row-gap prep-qte-card">
       <div class="card-head">
         <div>
           <div class="card-title">Quantités prévues</div>
-          <div class="card-sub">Saisie par chaîne et modèle — reportées en lecture seule dans la grille Saisie</div>
+          <div class="card-sub">Données par mois — appliquées uniquement à la grille Saisie du mois choisi (lecture seule dans Saisie)</div>
+        </div>
+        <button type="button" class="btn primary" id="prep-qte-add-btn" title="Ajouter une ligne chaîne / modèle">+ Ligne</button>
+      </div>
+      <div class="prep-qte-month-hint" id="prep-qte-month-hint" hidden>
+        Édition du mois <b id="prep-qte-month-hint-lbl">—</b> — la Saisie ouverte reste sur <b id="prep-qte-saisie-month-lbl">—</b>.
+      </div>
+      <div class="prep-qte-toolbar">
+        <div class="prep-qte-toolbar-left">
+          <div class="field prep-qte-field-month">
+            <label for="prep-qte-month">Mois</label>
+            <select id="prep-qte-month" title="Mois des quantités prévues"></select>
+          </div>
+          <div class="prep-qte-search-wrap">
+            <input type="search" id="prep-qte-search" placeholder="Rechercher chaîne ou modèle…" autocomplete="off">
+          </div>
+          <label class="prep-qte-only-filled" title="Masquer les combinaisons sans qté enregistrée">
+            <input type="checkbox" id="prep-qte-only-filled" checked>
+            Avec qté seulement
+          </label>
+          <span class="prep-qte-count-pill" id="prep-qte-count">—</span>
         </div>
       </div>
-      <div class="table-wrap prep-qte-wrap">
-        <table class="data prep-qte-table" id="prep-qte-table">
+      <div class="prep-qte-table-wrap">
+        <table class="prep-qte-table" id="prep-qte-table">
           <thead>
             <tr>
               <th class="num">Ch</th>
@@ -5177,6 +5401,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
           </thead>
           <tbody></tbody>
         </table>
+        <datalist id="prep-qte-modele-dl"></datalist>
       </div>
     </div>
 
@@ -6293,8 +6518,19 @@ function prepPlanObjStore() {
 function savePrepPlanObjStore(all) {
   try { localStorage.setItem(PREP_PLAN_OBJ_STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
 }
-function prepPlanRowKey(chain, modele) {
-  return String(chain) + '|' + ((modele || '') + '').trim();
+function prepPlanRowKey(chainOrLine, modele) {
+  if (chainOrLine != null && typeof chainOrLine === 'object') {
+    return String(chainOrLine.chain) + '|' + ((chainOrLine.modele || '') + '').trim();
+  }
+  return String(chainOrLine) + '|' + ((modele || '') + '').trim();
+}
+function parsePrepPlanRowKey(k) {
+  const idx = String(k).indexOf('|');
+  if (idx < 0) return null;
+  const chain = Number(k.slice(0, idx));
+  const modele = k.slice(idx + 1);
+  if (!chain || isNaN(chain) || !modele) return null;
+  return { chain, modele };
 }
 function getPrepPlanObjEnc(month, chain, modele) {
   const all = prepPlanObjStore();
@@ -6318,7 +6554,7 @@ function savePrepQtePrevuStore(all) {
 }
 function getPrepQtePrevu(month, chain, modele) {
   const all = prepQtePrevuStore();
-  const k = prepPlanRowKey({ chain, modele });
+  const k = prepPlanRowKey(chain, modele);
   const v = all[month]?.[k];
   if (v != null && v !== '' && !isNaN(v)) return Number(v);
   return null;
@@ -6326,10 +6562,46 @@ function getPrepQtePrevu(month, chain, modele) {
 function setPrepQtePrevu(month, chain, modele, val) {
   const all = prepQtePrevuStore();
   if (!all[month]) all[month] = {};
-  const k = prepPlanRowKey({ chain, modele });
+  const k = prepPlanRowKey(chain, modele);
   if (val == null || val === '' || isNaN(val)) delete all[month][k];
   else all[month][k] = Number(val);
   savePrepQtePrevuStore(all);
+}
+function prepQteExtraRowsStore() {
+  try { return JSON.parse(localStorage.getItem(PREP_QTE_EXTRA_ROWS_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function savePrepQteExtraRowsStore(all) {
+  try { localStorage.setItem(PREP_QTE_EXTRA_ROWS_KEY, JSON.stringify(all)); } catch (e) {}
+}
+function prunePrepQteExtraRow(month, chain, modele) {
+  const all = prepQteExtraRowsStore();
+  if (!all[month]?.length) return;
+  const k = prepPlanRowKey(chain, modele);
+  all[month] = all[month].filter(r => prepPlanRowKey(r.chain, r.modele) !== k);
+  if (!all[month].length) delete all[month];
+  savePrepQteExtraRowsStore(all);
+}
+function migratePrepQteRowKeys(month, oldChain, oldModele, newChain, newModele) {
+  const ok = prepPlanRowKey(oldChain, oldModele);
+  const nk = prepPlanRowKey(newChain, newModele);
+  if (!oldChain || !oldModele || ok === nk) return;
+  const qAll = prepQtePrevuStore();
+  const qv = qAll[month]?.[ok];
+  if (qv != null) {
+    if (!qAll[month]) qAll[month] = {};
+    delete qAll[month][ok];
+    if (newChain && newModele) qAll[month][nk] = qv;
+    savePrepQtePrevuStore(qAll);
+  }
+  const oAll = prepPlanObjStore();
+  const ov = oAll[month]?.[ok];
+  if (ov != null) {
+    if (!oAll[month]) oAll[month] = {};
+    delete oAll[month][ok];
+    if (newChain && newModele) oAll[month][nk] = ov;
+    savePrepPlanObjStore(oAll);
+  }
 }
 function findProductionQtePrevuSeed(month, chain, modele) {
   const info = PRODUCTION[month];
@@ -6360,29 +6632,121 @@ function applyPrepQtePrevuToMonth(month) {
     }
   }
 }
+function getPrepQteEditMonth() {
+  const sel = document.getElementById('prep-qte-month');
+  const m = (sel?.value || currentMonth || '').trim();
+  return m && PRODUCTION[m] ? m : currentMonth;
+}
+function populatePrepQteMonthSelect(preferredMonth) {
+  const sel = document.getElementById('prep-qte-month');
+  if (!sel) return;
+  const prev = sel.value;
+  const months = Object.keys(PRODUCTION).sort((a, b) =>
+    String(PRODUCTION[a]?.label || a).localeCompare(String(PRODUCTION[b]?.label || b), 'fr'));
+  sel.innerHTML = months.map(m => {
+    const lbl = (PRODUCTION[m]?.label || m).replace(/</g, '&lt;');
+    return `<option value="${m}">${lbl}</option>`;
+  }).join('');
+  const pick = (prev && PRODUCTION[prev]) ? prev
+    : ((preferredMonth && PRODUCTION[preferredMonth]) ? preferredMonth : currentMonth);
+  sel.value = PRODUCTION[pick] ? pick : (months[0] || '');
+}
+function updatePrepQteMonthHint() {
+  const hint = document.getElementById('prep-qte-month-hint');
+  const editM = getPrepQteEditMonth();
+  const lbl = document.getElementById('prep-qte-month-hint-lbl');
+  const saisieLbl = document.getElementById('prep-qte-saisie-month-lbl');
+  if (!hint) return;
+  const show = editM && currentMonth && editM !== currentMonth;
+  hint.hidden = !show;
+  if (lbl) lbl.textContent = PRODUCTION[editM]?.label || editM;
+  if (saisieLbl) saisieLbl.textContent = PRODUCTION[currentMonth]?.label || currentMonth;
+}
+function prepQteRowHasValue(month, chain, modele) {
+  if (getPrepQtePrevu(month, chain, modele) != null) return true;
+  return findProductionQtePrevuSeed(month, chain, modele) != null;
+}
+function filterPrepQtePrevuRows(rows, month) {
+  const q = (document.getElementById('prep-qte-search')?.value || '').trim().toLowerCase();
+  const onlyFilled = document.getElementById('prep-qte-only-filled')?.checked !== false;
+  let list = rows.slice();
+  if (onlyFilled) {
+    list = list.filter(r => r.draft || prepQteRowHasValue(month, r.chain, r.modele));
+  }
+  if (q) {
+    list = list.filter(r => {
+      const ch = String(r.chain || '');
+      const mod = String(r.modele || '').toLowerCase();
+      const chPad = ch ? `ch${ch.padStart(2, '0')}` : '';
+      return mod.includes(q) || ch === q || chPad.includes(q) || (`ch${ch}`).includes(q);
+    });
+  }
+  return list;
+}
 function collectPrepQtePrevuRows(month) {
-  const info = PRODUCTION[month];
-  if (!info) return [];
   const map = new Map();
-  for (const d of info.daily_sheets || []) {
-    for (const line of info.daily[d] || []) {
-      if (!isActiveProductionRow(line) || !line.modele) continue;
-      const k = prepPlanRowKey(line);
-      if (!map.has(k)) map.set(k, { chain: Number(line.chain), modele: line.modele });
+  const add = (chain, modele) => {
+    const ch = Number(chain);
+    const mod = ((modele || '') + '').trim();
+    if (!ch || isNaN(ch) || !mod) return;
+    const k = prepPlanRowKey(ch, mod);
+    if (!map.has(k)) map.set(k, { chain: ch, modele: mod });
+  };
+  const info = PRODUCTION[month];
+  if (info) {
+    for (const d of info.daily_sheets || []) {
+      for (const line of info.daily[d] || []) {
+        if (!isActiveProductionRow(line) || !line.modele) continue;
+        add(line.chain, line.modele);
+      }
     }
   }
-  return Array.from(map.values()).sort((a, b) => {
+  const qstore = prepQtePrevuStore()[month] || {};
+  for (const k of Object.keys(qstore)) {
+    const p = parsePrepPlanRowKey(k);
+    if (p) add(p.chain, p.modele);
+  }
+  const drafts = [];
+  for (const r of prepQteExtraRowsStore()[month] || []) {
+    const mod = ((r.modele || '') + '').trim();
+    const ch = Number(r.chain);
+    if (ch && !isNaN(ch) && mod) add(ch, mod);
+    else drafts.push({ chain: ch || '', modele: mod, draft: true });
+  }
+  const sorted = Array.from(map.values()).sort((a, b) => {
     if (a.chain !== b.chain) return a.chain - b.chain;
     return String(a.modele).localeCompare(String(b.modele), 'fr');
   });
+  return sorted.concat(drafts);
 }
 function renderPrepQtePrevuTable(month) {
   const tbody = document.querySelector('#prep-qte-table tbody');
+  const dl = document.getElementById('prep-qte-modele-dl');
+  const countEl = document.getElementById('prep-qte-count');
   if (!tbody) return;
-  const rows = collectPrepQtePrevuRows(month);
+  month = month || getPrepQteEditMonth();
+  updatePrepQteMonthHint();
+  if (dl) {
+    const mods = new Set(collectModelesForMonth(month));
+    for (const k of Object.keys(prepQtePrevuStore()[month] || {})) {
+      const p = parsePrepPlanRowKey(k);
+      if (p?.modele) mods.add(p.modele);
+    }
+    dl.innerHTML = Array.from(mods).sort((a, b) => a.localeCompare(b, 'fr'))
+      .map(m => `<option value="${String(m).replace(/"/g, '&quot;')}"></option>`).join('');
+  }
+  const allRows = collectPrepQtePrevuRows(month);
+  const rows = filterPrepQtePrevuRows(allRows, month);
+  if (countEl) {
+    const lbl = PRODUCTION[month]?.label || month;
+    countEl.textContent = rows.length + ' / ' + allRows.length + ' · ' + lbl;
+  }
   tbody.innerHTML = '';
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-dim);padding:16px">Aucune chaîne / modèle pour ce mois.</td></tr>';
+    const msg = allRows.length
+      ? 'Aucun résultat pour cette recherche — élargissez les filtres.'
+      : 'Aucune ligne — choisissez le mois, puis « + Ligne » pour saisir chaîne, modèle et qté.';
+    tbody.innerHTML = '<tr class="prep-qte-empty-row"><td colspan="3">' + msg + '</td></tr>';
     return;
   }
   const esc = (s) => String(s ?? '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -6391,30 +6755,44 @@ function renderPrepQtePrevuTable(month) {
     const seed = stored != null ? stored : findProductionQtePrevuSeed(month, r.chain, r.modele);
     const val = seed != null ? fmtInt(seed) : '';
     const tr = document.createElement('tr');
-    tr.dataset.chain = String(r.chain);
+    tr.dataset.chain = r.chain ? String(r.chain) : '';
     tr.dataset.modele = r.modele || '';
+    const chAttr = r.chain ? ` value="${r.chain}"` : '';
     tr.innerHTML = `
-      <td class="num"><b>Ch${String(r.chain).padStart(2, '0')}</b></td>
-      <td>${esc(r.modele)}</td>
+      <td class="num prep-qte-td-ch">
+        <input type="number" class="prep-qte-inp" data-prep-qte-ch="1" min="1" max="${METH_CHAIN_COUNT}"${chAttr}
+          placeholder="Ch" title="N° chaîne (1–20)" autocomplete="off">
+      </td>
+      <td class="prep-qte-td-mod">
+        <input type="text" class="prep-qte-inp" data-prep-qte-mod="1" list="prep-qte-modele-dl"
+          value="${esc(r.modele)}" placeholder="Modèle" autocomplete="off">
+      </td>
       <td class="num">
-        <input type="text" class="prep-qte-inp" inputmode="numeric" data-prep-qte="1"
+        <input type="text" class="prep-qte-inp" inputmode="numeric" data-prep-qte-val="1"
           value="${val}" placeholder="—" autocomplete="off">
       </td>`;
     tbody.appendChild(tr);
   }
 }
-function onPrepQtePrevuInput(e) {
-  const inp = e.target;
-  if (!inp?.dataset?.prepQte) return;
-  const tr = inp.closest('tr');
+function commitPrepQteRow(tr) {
   if (!tr) return;
-  const month = currentMonth;
-  const chain = Number(tr.dataset.chain);
-  const modele = tr.dataset.modele || '';
-  const val = parseNumFr(inp.value);
+  const month = getPrepQteEditMonth();
+  const oldChain = tr.dataset.chain || '';
+  const oldModele = tr.dataset.modele || '';
+  const chain = Number(tr.querySelector('[data-prep-qte-ch]')?.value);
+  const modele = (tr.querySelector('[data-prep-qte-mod]')?.value || '').trim();
+  if (!chain || isNaN(chain) || !modele) return;
+  migratePrepQteRowKeys(month, oldChain, oldModele, chain, modele);
+  const val = parseNumFr(tr.querySelector('[data-prep-qte-val]')?.value);
   setPrepQtePrevu(month, chain, modele, val);
+  tr.dataset.chain = String(chain);
+  tr.dataset.modele = modele;
+  prunePrepQteExtraRow(month, chain, modele);
   applyPrepQtePrevuToMonth(month);
-  if (currentPage === 'prep') renderPrep(currentMonth);
+  if (currentPage === 'prep') {
+    renderPrepQtePrevuTable(month);
+    updatePrepQteMonthHint();
+  }
   if (saisieMonth === month) {
     syncMonthProductionMetrics(month);
     if (saisieDate) {
@@ -6422,6 +6800,22 @@ function onPrepQtePrevuInput(e) {
       refreshSummaryStrip();
     }
   }
+}
+function onPrepQtePrevuInput(e) {
+  const t = e.target;
+  if (!t?.dataset?.prepQteCh && !t?.dataset?.prepQteMod && !t?.dataset?.prepQteVal) return;
+  commitPrepQteRow(t.closest('tr'));
+}
+function onPrepQteAddRow() {
+  const month = getPrepQteEditMonth();
+  const all = prepQteExtraRowsStore();
+  if (!all[month]) all[month] = [];
+  all[month].push({ chain: '', modele: '' });
+  savePrepQteExtraRowsStore(all);
+  renderPrepQtePrevuTable(month);
+  const tbody = document.querySelector('#prep-qte-table tbody');
+  const last = tbody?.querySelector('tr:last-child [data-prep-qte-ch]');
+  last?.focus();
 }
 function getPrepPlanHoursJour(dateStr) {
   if (dateStr) return getJourHeuresConfig(dateStr).h;
@@ -6496,9 +6890,6 @@ function onPrepPlanDateChange() {
   if (!sel?.value) return;
   setPrepPlanSelectedDate(currentMonth, sel.value);
   renderPrep(currentMonth);
-}
-function prepPlanRowKey(line) {
-  return String(line.chain) + '|' + ((line.modele || '') + '').trim();
 }
 /** Prépare la ligne comme buildSaisieBody (overrides + feuille Excel). */
 function prepHydrateLine(month, dateStr, line) {
@@ -6717,7 +7108,8 @@ function onPrepPlanObjInput(e) {
 function renderPrep(month) {
   populatePrepPlanDateSelect(month);
   applyPrepQtePrevuToMonth(month);
-  renderPrepQtePrevuTable(month);
+  populatePrepQteMonthSelect(month);
+  renderPrepQtePrevuTable(getPrepQteEditMonth());
   const enc = PRODUCTION[month].encours || [];
   const { rows: planRows, lastDate, hJour } = collectPrepPlanRows(month);
   let plan = 0, tissu = 0, doub = 0, manque = 0;
@@ -7985,6 +8377,7 @@ const SAISIE_STORAGE_KEY = 'prodH-saisie-overrides-v1';
 const METH_RULES_STORAGE_KEY = 'prodH-meth-rules-v1';
 const PREP_PLAN_OBJ_STORAGE_KEY = 'prodH-prep-plan-obj-v1';
 const PREP_QTE_PREVU_STORAGE_KEY = 'prodH-prep-qte-prevu-v1';
+const PREP_QTE_EXTRA_ROWS_KEY = 'prodH-prep-qte-extra-v1';
 const METH_CHAIN_COUNT = 20;
 let methRuleEditId = null;
 /** Jour affiché sur Plan de préparation (par mois). */
@@ -8061,6 +8454,48 @@ function getMethRuleModeleValue() {
 function getMethRulesDisplayModele() {
   return (document.getElementById('meth-filter-modele')?.value || '').trim();
 }
+function setMethFilterModeleValue(modele) {
+  const inp = document.getElementById('meth-filter-modele');
+  if (inp) inp.value = (modele || '').trim();
+}
+function getMethFilterChain() {
+  const v = Number(document.getElementById('meth-filter-chain')?.value);
+  return v && !isNaN(v) ? v : null;
+}
+function getMethFilterDateFr(which) {
+  const el = document.getElementById(which === 'fin' ? 'meth-filter-fin' : 'meth-filter-debut');
+  if (!el?.value) return '';
+  return _isoToFr(el.value);
+}
+function methHasActiveFilters() {
+  return !!(getMethRulesDisplayModele() || getMethFilterChain()
+    || getMethFilterDateFr('debut') || getMethFilterDateFr('fin'));
+}
+function methModeleMatchesFilter(modele, filter) {
+  const q = (filter || '').trim();
+  if (!q) return true;
+  const m = ((modele || '') + '').trim();
+  if (!m) return false;
+  if (normalizeModeleKey(m) === normalizeModeleKey(q)) return true;
+  return m.toLowerCase().includes(q.toLowerCase());
+}
+function methPeriodMatchesDateFilter(dateDebut, dateFin, fDebut, fFin) {
+  if (!fDebut && !fFin) return true;
+  const d0 = dateDebut || '';
+  const d1 = dateFin || d0;
+  if (fDebut && compareFrDate(d1, fDebut) < 0) return false;
+  if (fFin && compareFrDate(d0, fFin) > 0) return false;
+  return true;
+}
+function collectMethFilterModeleSuggestions(month) {
+  const map = new Map();
+  for (const m of collectModelesForMonth(month)) map.set(normalizeModeleKey(m), m);
+  for (const r of methRulesForMonth(month)) {
+    const m = (r.modele || '').trim();
+    if (m) map.set(normalizeModeleKey(m), m);
+  }
+  return Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'fr'));
+}
 function formatMethDisplayDate(fr) {
   if (!fr) return '—';
   const m = String(fr).match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
@@ -8092,16 +8527,25 @@ function updateMethToolbarActions() {
   if (editBtn) editBtn.disabled = !on;
   if (delBtn) delBtn.disabled = !on;
 }
-function updateMethToolbarCountForModele(month, modele) {
+function countMethFilteredFlatRows(month) {
+  const modele = getMethRulesDisplayModele();
+  const chainF = getMethFilterChain();
+  const fDeb = getMethFilterDateFr('debut');
+  const fFin = getMethFilterDateFr('fin');
+  let rows = buildMethRulesFlatRows(month, modele || null);
+  if (chainF) rows = rows.filter(r => r.chain === chainF);
+  if (fDeb || fFin) rows = rows.filter(r => methPeriodMatchesDateFilter(r.dateDebut, r.dateFin, fDeb, fFin));
+  return rows;
+}
+function updateMethToolbarCountForModele(month) {
   const el = document.getElementById('meth-toolbar-count');
   if (!el) return;
-  if (!modele) { el.textContent = '—'; return; }
-  const mk = normalizeModeleKey(modele);
-  const nPer = methRulesForMonth(month).filter(r => normalizeModeleKey(r.modele) === mk).length;
-  const nRows = buildMethRulesFlatRows(month, modele).length;
-  if (!nPer) el.textContent = 'Aucune période';
-  else if (!nRows) el.textContent = nPer + ' période(s)';
-  else el.textContent = nPer + ' période(s) · ' + nRows + ' ligne(s)';
+  if (!methHasActiveFilters()) { el.textContent = '—'; return; }
+  const rows = countMethFilteredFlatRows(month);
+  const nPer = new Set(rows.map(r => r.ruleId)).size;
+  if (!rows.length) el.textContent = 'Aucune ligne';
+  else if (!nPer) el.textContent = rows.length + ' ligne(s)';
+  else el.textContent = nPer + ' période(s) · ' + rows.length + ' ligne(s)';
 }
 function methRuleAuLabel(month, dateFin) {
   if (!dateFin) return '—';
@@ -8112,11 +8556,10 @@ function methRuleAuLabel(month, dateFin) {
   if (dateFin === last || dateFin === today) return 'Aujourd\'hui';
   return dateFin;
 }
-function buildMethRulesFlatRows(month, modele) {
-  const mk = normalizeModeleKey(modele);
-  if (!mk) return [];
+function buildMethRulesFlatRows(month, modeleFilter) {
   const rows = [];
-  const rules = methRulesForMonth(month).filter(r => normalizeModeleKey(r.modele) === mk);
+  let rules = methRulesForMonth(month);
+  if (modeleFilter) rules = rules.filter(r => methModeleMatchesFilter(r.modele, modeleFilter));
   for (const rule of rules) {
     const chains = rule.chains || {};
     const chKeys = Object.keys(chains).map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b);
@@ -8173,24 +8616,30 @@ function renderMethRulesFlatTable(month) {
   const table = document.getElementById('meth-rules-flat-table');
   if (!tbody || !wrap || !empty) return;
   const modele = getMethRulesDisplayModele();
+  const chainF = getMethFilterChain();
+  const fDeb = getMethFilterDateFr('debut');
+  const fFin = getMethFilterDateFr('fin');
   updateMethTableTitle(modele);
-  if (!modele) {
+  if (!methHasActiveFilters()) {
     wrap.style.display = 'none';
-    setMethEmptyState('Choisissez un <strong>modèle</strong> pour afficher les périodes et les chaînes.');
+    setMethEmptyState('Saisissez un <strong>modèle</strong>, une <strong>chaîne</strong> ou des <strong>dates</strong> pour afficher les périodes.');
     tbody.innerHTML = '';
     if (table) table.classList.remove('hide-col-modele');
     return;
   }
-  const rows = buildMethRulesFlatRows(month, modele);
+  let rows = buildMethRulesFlatRows(month, modele || null);
+  if (chainF) rows = rows.filter(r => r.chain === chainF);
+  if (fDeb || fFin) rows = rows.filter(r => methPeriodMatchesDateFilter(r.dateDebut, r.dateFin, fDeb, fFin));
   if (!rows.length) {
     wrap.style.display = 'none';
-    setMethEmptyState('Aucune période pour <strong>' + methEscHtml(modele) + '</strong>.<br>Cliquez <strong>+ Période</strong> pour en créer une.');
+    const hint = modele ? (' pour « ' + methEscHtml(modele) + ' »') : '';
+    setMethEmptyState('Aucune période' + hint + ' avec ces filtres.<br>Cliquez <strong>+ Période</strong> pour en créer une.');
     tbody.innerHTML = '';
     return;
   }
   wrap.style.display = '';
   empty.style.display = 'none';
-  if (table) table.classList.add('hide-col-modele');
+  if (table) table.classList.toggle('hide-col-modele', !!modele);
   let prevRuleId = null;
   let periodIdx = -1;
   tbody.innerHTML = rows.map(r => {
@@ -8327,13 +8776,12 @@ function setMethRuleDateFr(which, frDate) {
 function syncMethRuleDatePickerBounds(month) {
   const info = PRODUCTION[month];
   const sheets = info?.daily_sheets || [];
-  const d0 = document.getElementById('meth-rule-debut');
-  const d1 = document.getElementById('meth-rule-fin');
+  const ids = ['meth-rule-debut', 'meth-rule-fin', 'meth-filter-debut', 'meth-filter-fin'];
+  const els = ids.map(id => document.getElementById(id)).filter(Boolean);
   if (!sheets.length) return;
   const min = _frToIso(sheets[0]);
   const max = _frToIso(sheets[sheets.length - 1]);
-  if (d0) { d0.min = min; d0.max = max; }
-  if (d1) { d1.min = min; d1.max = max; }
+  for (const el of els) { el.min = min; el.max = max; }
 }
 function collectMethValueSuggestions(month, field, modele) {
   const set = new Set();
@@ -8460,31 +8908,20 @@ function filterMethRulesForDisplay(month, rules) {
   }
   return list;
 }
-function populateMethFilterModeleSelect(month) {
-  const sel = document.getElementById('meth-filter-modele');
-  if (!sel) return;
-  const prev = sel.value;
-  const map = new Map();
-  for (const m of collectModelesForMonth(month)) map.set(normalizeModeleKey(m), m);
-  for (const r of methRulesForMonth(month)) {
-    const m = (r.modele || '').trim();
-    if (m) map.set(normalizeModeleKey(m), m);
-  }
-  const modeles = Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'fr'));
-  sel.innerHTML = '<option value="">— Choisir un modèle —</option>'
-    + modeles.map(m => `<option value="${m.replace(/"/g, '&quot;')}">${m.replace(/</g, '&lt;')}</option>`).join('');
-  if (prev && modeles.includes(prev)) sel.value = prev;
+function populateMethFilterModeleDatalist(month) {
+  const dl = document.getElementById('meth-filter-modele-dl');
+  if (!dl) return;
+  dl.innerHTML = collectMethFilterModeleSuggestions(month)
+    .map(m => `<option value="${m.replace(/"/g, '&quot;')}"></option>`).join('');
 }
 function onMethFiltersChanged() {
   const month = currentMonth;
   methRuleEditId = null;
   toggleMethRulesViews(month);
 }
-function onMethFilterModeleSelect() {
-  onMethFiltersChanged();
-}
 function initMethFilterControls(month) {
-  populateMethFilterModeleSelect(month);
+  populateMethFilterModeleDatalist(month);
+  syncMethRuleDatePickerBounds(month);
   populateMethChainsRangeSelects();
   const showSel = document.getElementById('meth-chains-show');
   if (showSel && (showSel.value === 'active' || showSel.value === 'filled')) showSel.value = 'all';
@@ -8673,8 +9110,7 @@ function loadMethRuleIntoForm(month, ruleId) {
   methRuleEditId = rule.id;
   const modInp = document.getElementById('meth-rule-modele');
   if (modInp) modInp.value = rule.modele || '';
-  const fsel = document.getElementById('meth-filter-modele');
-  if (fsel && rule.modele && Array.from(fsel.options).some(o => o.value === rule.modele)) fsel.value = rule.modele;
+  if (rule.modele) setMethFilterModeleValue(rule.modele);
   setMethRuleDateFr('debut', rule.dateDebut || '');
   setMethRuleDateFr('fin', rule.dateFin || '');
   fillMethRuleChainsForm(rule.chains || {});
@@ -8719,11 +9155,8 @@ function countMethRulesForModele(rules, modele) {
 function syncMethListFilterToModele(modele) {
   const q = (modele || '').trim();
   const listSearch = document.getElementById('meth-list-search');
-  const fsel = document.getElementById('meth-filter-modele');
   if (listSearch) listSearch.value = q;
-  if (fsel) {
-    fsel.value = (q && Array.from(fsel.options).some(o => o.value === q)) ? q : '';
-  }
+  setMethFilterModeleValue(q);
 }
 function saveMethRuleFromForm(month) {
   const modele = getMethRuleModeleValue();
@@ -8775,9 +9208,8 @@ function saveMethRuleFromForm(month) {
     buildSaisieBody();
     refreshSummaryStrip();
   }
-  populateMethFilterModeleSelect(month);
-  const fsel = document.getElementById('meth-filter-modele');
-  if (fsel && modele && Array.from(fsel.options).some(o => o.value === modele)) fsel.value = modele;
+  populateMethFilterModeleDatalist(month);
+  setMethFilterModeleValue(modele);
   methRuleEditId = null;
   closeMethEditModal();
   updateMethRuleSaveBtnLabel();
@@ -8821,6 +9253,7 @@ function renderMethodesPage() {
   const pill = document.getElementById('meth-rules-month-pill');
   if (pill) pill.textContent = info.label || month;
   populateMethRuleModeleDatalist(month);
+  populateMethFilterModeleDatalist(month);
   syncMethRuleDatePickerBounds(month);
   if (!document.getElementById('meth-rules-chains-body')?.children.length) buildMethRulesChainsTable();
   initMethFilterControls(month);
@@ -11929,7 +12362,12 @@ document.getElementById('meth-row-del-btn')?.addEventListener('click', () => {
 });
 document.getElementById('meth-rule-modele')?.addEventListener('input', onMethRuleModeleInput);
 document.getElementById('meth-rule-modele')?.addEventListener('change', onMethRuleModeleInput);
-document.getElementById('meth-filter-modele')?.addEventListener('change', onMethFilterModeleSelect);
+document.getElementById('meth-filter-modele')?.addEventListener('input', onMethFiltersChanged);
+document.getElementById('meth-filter-modele')?.addEventListener('change', onMethFiltersChanged);
+document.getElementById('meth-filter-chain')?.addEventListener('input', onMethFiltersChanged);
+document.getElementById('meth-filter-chain')?.addEventListener('change', onMethFiltersChanged);
+document.getElementById('meth-filter-debut')?.addEventListener('change', onMethFiltersChanged);
+document.getElementById('meth-filter-fin')?.addEventListener('change', onMethFiltersChanged);
 document.getElementById('prep-table')?.addEventListener('change', onPrepPlanObjInput);
 document.getElementById('prep-table')?.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
@@ -11941,6 +12379,10 @@ document.getElementById('prep-table')?.addEventListener('keydown', (e) => {
 });
 document.getElementById('prep-filter-date')?.addEventListener('change', onPrepPlanDateChange);
 document.getElementById('prep-qte-table')?.addEventListener('change', onPrepQtePrevuInput);
+document.getElementById('prep-qte-add-btn')?.addEventListener('click', onPrepQteAddRow);
+document.getElementById('prep-qte-month')?.addEventListener('change', () => renderPrepQtePrevuTable());
+document.getElementById('prep-qte-search')?.addEventListener('input', () => renderPrepQtePrevuTable());
+document.getElementById('prep-qte-only-filled')?.addEventListener('change', () => renderPrepQtePrevuTable());
 document.getElementById('meth-chains-show')?.addEventListener('change', applyMethChainsTableFilter);
 document.getElementById('meth-chains-from')?.addEventListener('change', applyMethChainsTableFilter);
 document.getElementById('meth-chains-to')?.addEventListener('change', applyMethChainsTableFilter);
