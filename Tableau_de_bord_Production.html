@@ -1328,6 +1328,23 @@ footer {
   font-weight: 700;
   font-size: 15px;
 }
+.excel-saisie td.calc-x,
+.excel-saisie td.trail-merge.calc-x {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 15px;
+  background: rgba(251, 146, 60, 0.08);
+  color: var(--text);
+}
+.excel-saisie td.calc-x.calc-moy-neg,
+.excel-saisie td.trail-merge.calc-x.calc-moy-neg {
+  color: #c62828;
+}
+.excel-saisie th.trail-x {
+  min-width: 52px;
+  text-align: center;
+}
 .excel-saisie td.calc-moy-neg {
   color: #c62828;
   font-weight: 800;
@@ -2445,33 +2462,15 @@ table.prep-qte-table .prep-qte-ch-lab {
   text-align: center;
 }
 .prep-qte-table td.prep-qte-td-mod { min-width: 160px; }
-.prep-qte-table td.prep-qte-td-du,
-.prep-qte-table td.prep-qte-td-au {
-  text-align: center;
-  padding: 4px 6px;
+.prep-qte-table td.prep-qte-td-import {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  white-space: nowrap;
+  min-width: 72px;
 }
-.prep-qte-table th.prep-qte-th-period { text-align: center; }
-.prep-qte-table input.prep-qte-date {
-  width: 100%;
-  min-width: 118px;
-  max-width: 140px;
-  padding: 6px 8px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 600;
-  box-sizing: border-box;
-  color-scheme: dark;
-  cursor: pointer;
-}
-:root[data-theme="light"] .prep-qte-table input.prep-qte-date { color-scheme: light; }
-.prep-qte-table input.prep-qte-date:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
-}
+.prep-qte-table td.prep-qte-td-import.is-empty { color: var(--text-faint); font-weight: 600; }
 .prep-qte-table tr.prep-qte-from-saisie td.prep-qte-td-mod::after {
   content: "Saisie";
   margin-left: 6px;
@@ -3681,15 +3680,26 @@ table.meth-rules-flat td.col-date .meth-au-today {
   color: var(--accent);
   border: 1px solid rgba(56,189,248,0.3);
 }
+#meth-edit-modal.pin-modal-backdrop {
+  align-items: center;
+  padding: 16px 12px;
+  overflow-y: auto;
+}
 #meth-edit-modal .pin-modal.meth-edit-modal {
-  width: min(540px, 94vw);
+  width: min(520px, 96vw);
+  max-height: calc(100dvh - 32px);
   padding: 0;
   overflow: hidden;
   border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: 0 24px 64px rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  flex-shrink: 0;
 }
 .meth-modal-head {
+  flex-shrink: 0;
   padding: 20px 22px 14px;
   border-bottom: 1px solid var(--border-2);
   background: linear-gradient(180deg, rgba(56,189,248,0.1) 0%, transparent 100%);
@@ -3706,7 +3716,14 @@ table.meth-rules-flat td.col-date .meth-au-today {
   color: var(--text-dim);
   line-height: 1.5;
 }
-.meth-edit-modal .meth-edit-body { padding: 16px 22px 8px; }
+.meth-edit-modal .meth-edit-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 16px 22px 8px;
+  -webkit-overflow-scrolling: touch;
+}
 .meth-edit-section { margin-bottom: 16px; }
 .meth-section-label {
   display: block;
@@ -3752,10 +3769,11 @@ table.meth-rules-flat td.col-date .meth-au-today {
 .meth-edit-dates input[type="date"] { color-scheme: dark; }
 :root[data-theme="light"] .meth-edit-dates input[type="date"] { color-scheme: light; }
 .meth-chains-modal-wrap {
-  max-height: min(380px, 52vh);
+  max-height: min(220px, 32dvh);
   margin: 0;
   border-radius: 10px;
   border: 1px solid var(--border);
+  overflow: auto;
 }
 table.meth-chains-compact { font-size: 12px; }
 table.meth-chains-compact thead th { padding: 8px 10px; }
@@ -3768,6 +3786,7 @@ table.meth-chains-compact td.chain-lab {
 }
 table.meth-chains-compact input { width: 100%; min-width: 64px; }
 #meth-edit-modal .pin-actions {
+  flex-shrink: 0;
   margin: 0;
   padding: 14px 22px 18px;
   border-top: 1px solid var(--border-2);
@@ -4449,7 +4468,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
               <div class="field">
                 <label for="meth-rule-modele">Modèle</label>
                 <input type="text" id="meth-rule-modele" list="meth-rule-modele-datalist" autocomplete="off"
-                  placeholder="Saisir un modèle (libre)" title="Saisie libre — suggestions depuis le mois">
+                  placeholder="Référence modèle (nouveau ou existant)" title="Saisie libre — le modèle n'a pas besoin d'exister dans la Saisie">
                 <datalist id="meth-rule-modele-datalist"></datalist>
               </div>
               <div class="field">
@@ -5518,9 +5537,8 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
           <thead>
             <tr>
               <th class="num">Ch</th>
+              <th>IMPORT</th>
               <th>Modèle</th>
-              <th class="prep-qte-th-period">Du</th>
-              <th class="prep-qte-th-period">Au</th>
               <th class="num">Qté prévue</th>
             </tr>
           </thead>
@@ -7038,6 +7056,26 @@ function prepQteDateInPeriod(dateStr, fDebut, fFin) {
   if (fFin && compareFrDate(dateStr, fFin) > 0) return false;
   return true;
 }
+/** Dernier IMPORT saisi en grille pour ce couple chaîne / modèle (filtre période toolbar). */
+function findPrepQteImport(month, chain, modele) {
+  const mod = ((modele || '') + '').trim();
+  if (!mod || !chain) return '';
+  const fDeb = getPrepQteFilterDateFr('debut');
+  const fFin = getPrepQteFilterDateFr('fin');
+  let imp = '';
+  for (const d of PRODUCTION[month]?.daily_sheets || []) {
+    if (fDeb && compareFrDate(d, fDeb) < 0) continue;
+    if (fFin && compareFrDate(d, fFin) > 0) continue;
+    for (const line of PRODUCTION[month].daily[d] || []) {
+      if (Number(line.chain) !== Number(chain)) continue;
+      if (((line.modele || '') + '').trim() !== mod) continue;
+      if (!isActiveProductionRow(line)) continue;
+      const v = ((line.import || '') + '').trim();
+      if (v) imp = v;
+    }
+  }
+  return imp;
+}
 function renderPrepQtePrevuTable(month) {
   const tbody = document.querySelector('#prep-qte-table tbody');
   const dl = document.getElementById('prep-qte-modele-dl');
@@ -7060,40 +7098,29 @@ function renderPrepQtePrevuTable(month) {
     const msg = allRows.length
       ? 'Aucun résultat pour cette période ou ces filtres — élargissez la plage de dates.'
       : 'Aucune ligne sur cette période — ajoutez un modèle dans la Saisie ou « + Ligne » pour saisir la qté.';
-    tbody.innerHTML = '<tr class="prep-qte-empty-row"><td colspan="5">' + msg + '</td></tr>';
+    tbody.innerHTML = '<tr class="prep-qte-empty-row"><td colspan="4">' + msg + '</td></tr>';
     return;
   }
   const esc = (s) => String(s ?? '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-  const sheets = PRODUCTION[month]?.daily_sheets || [];
-  const dateMin = sheets.length ? _frToIso(sheets[0]) : '';
-  const dateMax = sheets.length ? _frToIso(sheets[sheets.length - 1]) : '';
   for (const r of rows) {
     const stored = getPrepQtePrevu(month, r.chain, r.modele);
     const seed = stored != null ? stored : findProductionQtePrevuSeed(month, r.chain, r.modele);
     const val = seed != null ? fmtInt(seed) : '';
+    const imp = findPrepQteImport(month, r.chain, r.modele);
     const tr = document.createElement('tr');
     if (r.fromSaisie) tr.classList.add('prep-qte-from-saisie');
     tr.dataset.chain = r.chain ? String(r.chain) : '';
     tr.dataset.modele = r.modele || '';
     const chAttr = r.chain ? ` value="${r.chain}"` : '';
-    const duIso = r.dateFirst ? _frToIso(r.dateFirst) : '';
-    const auIso = r.dateLast ? _frToIso(r.dateLast) : '';
     tr.innerHTML = `
       <td class="num prep-qte-td-ch">
         <input type="number" class="prep-qte-inp" data-prep-qte-ch="1" min="1" max="${METH_CHAIN_COUNT}"${chAttr}
           placeholder="Ch" title="N° chaîne (1–20)" autocomplete="off">
       </td>
+      <td class="prep-qte-td-import${imp ? '' : ' is-empty'}" title="Import — lu depuis la grille Saisie">${imp ? esc(imp) : '—'}</td>
       <td class="prep-qte-td-mod">
         <input type="text" class="prep-qte-inp" data-prep-qte-mod="1" list="prep-qte-modele-dl"
           value="${esc(r.modele)}" placeholder="Modèle" autocomplete="off">
-      </td>
-      <td class="prep-qte-td-du">
-        <input type="date" class="prep-qte-date" data-prep-qte-du="1" value="${duIso}"
-          min="${dateMin}" max="${dateMax}" title="Date début d'affectation" autocomplete="off">
-      </td>
-      <td class="prep-qte-td-au">
-        <input type="date" class="prep-qte-date" data-prep-qte-au="1" value="${auIso}"
-          min="${dateMin}" max="${dateMax}" title="Date fin (vide = en cours) — se remplit seule si le modèle disparaît de la Saisie" autocomplete="off">
       </td>
       <td class="num">
         <input type="text" class="prep-qte-inp" inputmode="numeric" data-prep-qte-val="1"
@@ -7113,10 +7140,6 @@ function commitPrepQteRow(tr) {
   migratePrepQteRowKeys(month, oldChain, oldModele, chain, modele);
   const val = parseNumFr(tr.querySelector('[data-prep-qte-val]')?.value);
   setPrepQtePrevu(month, chain, modele, val);
-  const duFr = tr.querySelector('[data-prep-qte-du]')?.value ? _isoToFr(tr.querySelector('[data-prep-qte-du]').value) : '';
-  const auFr = tr.querySelector('[data-prep-qte-au]')?.value ? _isoToFr(tr.querySelector('[data-prep-qte-au]').value) : '';
-  if (duFr || auFr) setPrepQtePeriod(month, chain, modele, duFr, auFr);
-  else setPrepQtePeriod(month, chain, modele, '', '');
   tr.dataset.chain = String(chain);
   tr.dataset.modele = modele;
   prunePrepQteExtraRow(month, chain, modele);
@@ -7135,8 +7158,7 @@ function commitPrepQteRow(tr) {
 }
 function onPrepQtePrevuInput(e) {
   const t = e.target;
-  if (!t?.dataset?.prepQteCh && !t?.dataset?.prepQteMod && !t?.dataset?.prepQteVal
-      && !t?.dataset?.prepQteDu && !t?.dataset?.prepQteAu) return;
+  if (!t?.dataset?.prepQteCh && !t?.dataset?.prepQteMod && !t?.dataset?.prepQteVal) return;
   commitPrepQteRow(t.closest('tr'));
 }
 function onPrepQteAddRow() {
@@ -8854,7 +8876,7 @@ function updateMethEditModalTitle() {
   if (sub) {
     sub.textContent = methRuleEditId
       ? (mod ? mod + ' — dates et valeurs par chaîne.' : 'Dates et valeurs par chaîne.')
-      : (mod ? 'Nouvelle fiche pour « ' + mod + ' ».' : 'Choisissez les dates et les chaînes.');
+      : (mod ? 'Nouvelle fiche pour « ' + mod + ' ».' : 'Saisissez un modèle (nouveau ou existant), les dates et au moins une valeur par chaîne.');
   }
 }
 function updateMethToolbarActions() {
@@ -9478,7 +9500,13 @@ function resetMethRuleForm(month, openModal) {
   updateMethRuleSaveBtnLabel();
   updateMethEditModalTitle();
   applyMethChainsTableFilter();
-  if (openModal !== false) openMethEditModal();
+  if (openModal !== false) {
+    openMethEditModal();
+    requestAnimationFrame(() => {
+      const focusEl = document.getElementById('meth-rule-modele');
+      if (focusEl && !keepMod) focusEl.focus();
+    });
+  }
   renderMethRulesFlatTable(month);
   updateMethToolbarActions();
 }
@@ -10318,7 +10346,7 @@ function syncExcelManualHourHeader(i) {
 loadExcelHourTimes();
 const EXCEL_FIXED_COLS_BEFORE_HOURS = 10; // CH … DESIGN + METHODES(2) + libellé ligne
 const EXCEL_FREEZE_COLS = 4; // CH, IMPORT, CLIENT, MODELE — figées au scroll horizontal
-const EXCEL_TRAIL_COLS = 6; // Moy · Total · Cumul · AC · Encours · %Rend (H.Lancement → onglet dédié)
+const EXCEL_TRAIL_COLS = 7; // X · Moy · Total · Cumul · AC · Encours · %Rend (H.Lancement → onglet dédié)
 const EXCEL_HOUR_COLS_MW = 11; // colonnes heures M…W (Excel)
 const EXCEL_COL_U_INDEX = 8; // colonne U = 9ᵉ créneau (M…W)
 const EXCEL_LAB_SORTIE = 'Sortie Chaine'; // AB3 — critère SUMIF colonne L
@@ -10500,7 +10528,11 @@ function excelHLancFormulaTitle(dateStr) {
 
 function excelMoyColHeaderTitle(dateStr) {
   const p = fmtOffsetFr(getPartialHeureForDate(dateStr));
-  return 'Entrée / Sortie : somme ÷ heures (auto selon créneaux remplis ; col. U → +' + p + ' h) · Effectifs : total−P/H×heures';
+  return 'Somme des créneaux M…W ÷ heures du jour (auto ; col. U → +' + p + ' h)';
+}
+function excelXColHeaderTitle(dateStr) {
+  const h = fmtOffsetFr(getJourHeuresConfig(dateStr).h);
+  return 'X = Total sortie − P/H × heures du jour (' + h + ' h) — fusionné sur les 5 lignes du modèle';
 }
 
 /** Total AB ligne Sortie : somme des heures sortie M…W (=SUM(L:W) en Excel) */
@@ -10637,7 +10669,7 @@ function fmtMoyEffCol(v) {
   return fmtMoyCell(v);
 }
 
-/** Colonne Moy — ligne Effectifs : AB_sortie − P/H × heures (auto). */
+/** Colonne X (fusion) : total sortie − P/H × heures du jour. */
 function calcEcartEffMoyCol(r2_size, totalSortie, r1h, kPh, dateStr) {
   const k = Number(kPh) || 0;
   const ab = Number(totalSortie) || 0;
@@ -10822,7 +10854,9 @@ function computeBlock(line, excel, chainTotalSortie, month, date) {
   const moySortie = (String(r2_size).toLowerCase() === 's') ? 0 : calcMoyenneLigne(r1h, date);
   const ecartEff = calcEcartEff(r2_size, totalSortie, r1h, sumifSortie, ph, date);
   const ecartEffMoy = calcEcartEffMoyCol(r2_size, totalSortie, r1h, ph, date);
-  const moyEff = calcMoyHeures(r2h);
+  const moyEff = calcMoyenneLigne(r2h, date);
+  const moyStag = calcMoyenneLigne(r3h, date);
+  const moyForm = calcMoyenneLigne(r4h, date);
   const qtePrevu = (line.qte_prevu != null && !isNaN(line.qte_prevu)) ? Number(line.qte_prevu) : null;
   const qteReste = (qtePrevu != null) ? qtePrevu - cumulEntre : null;
   const hlancCalc = calcHLancHeures(r1h, totalSortie, ph, line, excel, date, month);
@@ -10843,7 +10877,7 @@ function computeBlock(line, excel, chainTotalSortie, month, date) {
   const cumulJours = calcEncoursJours(encours, ph, date, r1h, excel);
   return { r0h, r1h, r2h, r3h, r4h, objRend, totalEntre, totalSortie, totalEff, totalStag, totalFormation,
            cumulEntre, cumulSortie, cumulDiff, cumulJours, cumul2em, encours, rend, moySortie, moyEntre,
-           ecartEff, ecartEffMoy, moyEff, hlancCalc, hlancHeures, hlancLocked,
+           ecartEff, ecartEffMoy, moyEff, moyStag, moyForm, hlancCalc, hlancHeures, hlancLocked,
            acEntre, acSortie, ph, vt, k_obj, stagRatio, qtePrevu, qteReste };
 }
 
@@ -10957,6 +10991,7 @@ function buildSaisieHeader() {
   thead.appendChild(trMeta2);
 
   const trailHdr = `
+    <th style="min-width:52px" class="trail-x" title="${excelXColHeaderTitle(saisieDate)}">X</th>
     <th style="min-width:60px" class="trail-moy" title="${excelMoyColHeaderTitle(saisieDate)}">Moy</th>
     <th style="min-width:60px" title="Sortie : somme heures M…W · Bandeau : SUMIF(L;Sortie Chaine;AB)">Total</th>
     <th style="min-width:70px">Cumul</th>
@@ -11100,6 +11135,17 @@ function excelHLancFusionCell(c) {
   </td>`;
 }
 
+/** X — fusion rowspan 5 : total sortie − P/H × heures jour */
+function excelEcartXFusionCell(c) {
+  const rs = EXCEL_ROWS_PER_BLOCK;
+  const v = c.ecartEffMoy;
+  const neg = v != null && !isNaN(v) && Number(v) < 0;
+  const txt = (v != null && !isNaN(v) && isFinite(v)) ? fmtNumFr(v) : '—';
+  const h = fmtOffsetFr(calcHeuresJourFromSaisie(c.r1h, saisieDate) || getExpectedHeuresJour(saisieDate));
+  return `<td rowspan="${rs}" class="merge-cell trail-merge calc-x${neg ? ' calc-moy-neg' : ''}" data-r="ecart_x"
+    title="Total sortie − P/H × ${h} h (heures jour auto)">${txt}</td>`;
+}
+
 /** Encours — fusion rowspan 5 : AC entrée − AC sortie, puis AG/(P/H×heures jour) */
 function excelEncoursFusionCell(c) {
   const rs = EXCEL_ROWS_PER_BLOCK;
@@ -11221,6 +11267,7 @@ function buildSaisieBody() {
         ${excelMethodesBlockCell(line, c)}
         <td class="lab-l">Entre Chaine</td>
         ${excelHourCells('r0h', c.r0h)}
+        ${excelEcartXFusionCell(c)}
         <td class="calc calc-moy" data-r="r0_moy">${fmtMoyCell(c.moyEntre)}</td>
         <td class="calc-2" data-r="r0_total">${fmtNumX(c.totalEntre)}</td>
         <td class="calc-2" data-r="r0_cumul">${fmtNumX(c.cumulEntre)}</td>
@@ -11251,7 +11298,7 @@ function buildSaisieBody() {
       tr2.innerHTML = `
         <td class="lab-l">Effectifs</td>
         ${excelHourCells('r2h', c.r2h)}
-        <td class="${moyEffCellClass(c.ecartEffMoy)}" data-r="r2_moy">${fmtMoyEffCol(c.ecartEffMoy)}</td>
+        <td class="calc calc-moy" data-r="r2_moy">${fmtMoyCell(c.moyEff)}</td>
         <td class="calc-2" data-r="r2_total" title="${excelMW_UTitle(saisieDate)}">${fmtNumX(c.totalEff)}</td>
         <td class="muted"></td>
         <td class="hidden-col"></td>
@@ -11266,7 +11313,7 @@ function buildSaisieBody() {
       tr3.innerHTML = `
         <td class="lab-l">${r3_lab}</td>
         ${excelHourCells('r3h', c.r3h)}
-        <td class="muted calc-moy"></td>
+        <td class="calc calc-moy" data-r="r3_moy">${fmtMoyCell(c.moyStag)}</td>
         <td class="calc-2" data-r="r3_total" title="${excelMW_UTitle(saisieDate)}">${fmtNumX(c.totalStag)}</td>
         <td class="muted"></td>
         <td class="hidden-col"></td>
@@ -11279,7 +11326,7 @@ function buildSaisieBody() {
       tr4.innerHTML = `
         <td class="lab-l">Formation</td>
         ${excelHourCells('r4h', c.r4h)}
-        <td class="muted calc-moy"></td>
+        <td class="calc calc-moy" data-r="r4_moy">${fmtMoyCell(c.moyForm)}</td>
         <td class="calc-2" data-r="r4_total" title="${excelMW_UTitle(saisieDate)}">${fmtNumX(c.totalFormation)}</td>
         <td class="muted"></td>
         <td class="hidden-col"></td>
@@ -12374,11 +12421,17 @@ function refreshExcelRow(line) {
   set('[data-r="r1_moy"]',   fmtMoyCell(c.moySortie));
   refreshRendFusionCell(rk, c.rend);
   set('[data-r="r2_total"]', fmtNumX(c.totalEff));
-  tbody.querySelectorAll(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r2_moy"]`).forEach(el => {
-    el.textContent = fmtMoyEffCol(c.ecartEffMoy);
-    el.className = moyEffCellClass(c.ecartEffMoy);
-  });
+  set('[data-r="r2_moy"]', fmtMoyCell(c.moyEff));
+  const xCell = tbody.querySelector(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="ecart_x"]`);
+  if (xCell) {
+    const v = c.ecartEffMoy;
+    const neg = v != null && !isNaN(v) && Number(v) < 0;
+    xCell.textContent = (v != null && !isNaN(v) && isFinite(v)) ? fmtNumFr(v) : '—';
+    xCell.className = 'merge-cell trail-merge calc-x' + (neg ? ' calc-moy-neg' : '');
+  }
+  set('[data-r="r3_moy"]', fmtMoyCell(c.moyStag));
   set('[data-r="r3_total"]', fmtNumX(c.totalStag));
+  set('[data-r="r4_moy"]', fmtMoyCell(c.moyForm));
   set('[data-r="r4_total"]', fmtNumX(c.totalFormation));
   set('[data-r="r3_ratio"]', c.stagRatio != null ? fmtPctX(c.stagRatio) : '');
   const rendEq = c.objRend != null ? fmtRendEquil(c.objRend) : '—';
@@ -12708,7 +12761,6 @@ document.getElementById('saisie-add-modal').addEventListener('click', (e) => { i
 document.getElementById('add-line-modele').addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmSaisieAddLine(); });
 document.getElementById('meth-rule-save-btn')?.addEventListener('click', () => saveMethRuleFromForm(currentMonth));
 document.getElementById('meth-rule-new-btn')?.addEventListener('click', () => {
-  if (!getMethRulesDisplayModele()) { toast('Choisissez un modèle dans la liste.', true); return; }
   resetMethRuleForm(currentMonth, true);
 });
 document.getElementById('meth-edit-cancel')?.addEventListener('click', closeMethEditModal);
