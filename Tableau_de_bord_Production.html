@@ -2211,6 +2211,74 @@ table.data tbody tr:hover td {
   box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
 }
 .prep-qte-card .card-sub { max-width: 52ch; }
+.prep-qte-card .card-head { align-items: flex-start; }
+.prep-qte-add-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px 10px 12px;
+  border: 1px solid rgba(56,189,248,0.35);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(56,189,248,0.18) 0%, rgba(56,189,248,0.06) 100%);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+  transition: transform .15s cubic-bezier(.2,.7,.2,1), box-shadow .2s, border-color .2s, background .2s, color .2s;
+}
+.prep-qte-add-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: var(--grad-a);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(56,189,248,0.4);
+  transition: transform .15s, box-shadow .2s;
+}
+.prep-qte-add-btn-icon svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  fill: none;
+}
+.prep-qte-add-btn-label { line-height: 1; }
+.prep-qte-add-btn:hover {
+  border-color: rgba(56,189,248,0.55);
+  background: linear-gradient(135deg, rgba(56,189,248,0.28) 0%, rgba(56,189,248,0.1) 100%);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(56,189,248,0.22), inset 0 1px 0 rgba(255,255,255,0.08);
+  transform: translateY(-1px);
+}
+.prep-qte-add-btn:hover .prep-qte-add-btn-icon {
+  transform: scale(1.06);
+  box-shadow: 0 6px 16px rgba(56,189,248,0.5);
+}
+.prep-qte-add-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(56,189,248,0.2);
+}
+.prep-qte-add-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.35), 0 4px 14px rgba(56,189,248,0.2);
+}
+:root[data-theme="light"] .prep-qte-add-btn {
+  background: linear-gradient(135deg, rgba(2,132,199,0.12) 0%, rgba(2,132,199,0.04) 100%);
+  border-color: rgba(2,132,199,0.28);
+  box-shadow: 0 2px 10px rgba(2,132,199,0.1);
+}
+:root[data-theme="light"] .prep-qte-add-btn:hover {
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(2,132,199,0.2) 0%, rgba(2,132,199,0.08) 100%);
+}
 .prep-qte-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -2248,11 +2316,35 @@ table.data tbody tr:hover td {
   font-size: 13px;
   font-weight: 700;
 }
+.prep-qte-field-period label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.45px;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+.prep-qte-field-period input[type="date"].meth-rule-date {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 132px;
+  color-scheme: dark;
+  cursor: pointer;
+}
+:root[data-theme="light"] .prep-qte-field-period input[type="date"].meth-rule-date { color-scheme: light; }
 .prep-qte-search-wrap {
   position: relative;
-  flex: 1 1 200px;
-  max-width: 360px;
+  flex: 0 1 140px;
+  min-width: 108px;
+  max-width: 200px;
 }
+.prep-qte-search-wrap.prep-qte-search-modele { flex: 1 1 180px; max-width: 280px; }
 .prep-qte-search-wrap::before {
   content: "⌕";
   position: absolute;
@@ -2277,30 +2369,6 @@ table.data tbody tr:hover td {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
-}
-.prep-qte-only-filled {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-dim);
-  cursor: pointer;
-  padding-bottom: 8px;
-  user-select: none;
-}
-.prep-qte-only-filled input { accent-color: var(--accent); }
-.prep-qte-count-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 700;
-  background: rgba(56,189,248,0.1);
-  color: var(--accent);
-  border: 1px solid rgba(56,189,248,0.25);
-  white-space: nowrap;
 }
 .prep-qte-month-hint {
   font-size: 12px;
@@ -2377,6 +2445,46 @@ table.prep-qte-table .prep-qte-ch-lab {
   text-align: center;
 }
 .prep-qte-table td.prep-qte-td-mod { min-width: 160px; }
+.prep-qte-table td.prep-qte-td-du,
+.prep-qte-table td.prep-qte-td-au {
+  text-align: center;
+  padding: 4px 6px;
+}
+.prep-qte-table th.prep-qte-th-period { text-align: center; }
+.prep-qte-table input.prep-qte-date {
+  width: 100%;
+  min-width: 118px;
+  max-width: 140px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  box-sizing: border-box;
+  color-scheme: dark;
+  cursor: pointer;
+}
+:root[data-theme="light"] .prep-qte-table input.prep-qte-date { color-scheme: light; }
+.prep-qte-table input.prep-qte-date:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
+}
+.prep-qte-table tr.prep-qte-from-saisie td.prep-qte-td-mod::after {
+  content: "Saisie";
+  margin-left: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.35px;
+  color: var(--accent);
+  background: rgba(56,189,248,0.12);
+  padding: 2px 5px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
 .prep-qte-table input.prep-qte-inp:focus {
   outline: none;
   border-color: var(--accent);
@@ -4505,6 +4613,10 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         <input type="text" id="add-line-modele" class="pin-input" placeholder="Référence modèle" autocomplete="off">
       </div>
       <div class="field">
+        <label for="add-line-debut">Date début</label>
+        <input type="date" id="add-line-debut" class="pin-input meth-rule-date" title="Début d'affectation chaîne / modèle (quantités prévues)">
+      </div>
+      <div class="field">
         <label for="add-line-client">Client (optionnel)</label>
         <input type="text" id="add-line-client" class="pin-input" placeholder="MANGO, ZARA…" autocomplete="off">
       </div>
@@ -5367,9 +5479,14 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       <div class="card-head">
         <div>
           <div class="card-title">Quantités prévues</div>
-          <div class="card-sub">Données par mois — appliquées uniquement à la grille Saisie du mois choisi (lecture seule dans Saisie)</div>
+          <div class="card-sub">Par mois — synchronisé avec la Saisie (chaîne + modèle) · filtrez par période pour les modèles actifs sur la chaîne</div>
         </div>
-        <button type="button" class="btn primary" id="prep-qte-add-btn" title="Ajouter une ligne chaîne / modèle">+ Ligne</button>
+        <button type="button" class="prep-qte-add-btn" id="prep-qte-add-btn" title="Ajouter une ligne chaîne / modèle">
+          <span class="prep-qte-add-btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+          <span class="prep-qte-add-btn-label">Ligne</span>
+        </button>
       </div>
       <div class="prep-qte-month-hint" id="prep-qte-month-hint" hidden>
         Édition du mois <b id="prep-qte-month-hint-lbl">—</b> — la Saisie ouverte reste sur <b id="prep-qte-saisie-month-lbl">—</b>.
@@ -5380,14 +5497,20 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
             <label for="prep-qte-month">Mois</label>
             <select id="prep-qte-month" title="Mois des quantités prévues"></select>
           </div>
-          <div class="prep-qte-search-wrap">
-            <input type="search" id="prep-qte-search" placeholder="Rechercher chaîne ou modèle…" autocomplete="off">
+          <div class="field prep-qte-field-period">
+            <label for="prep-qte-debut">Du</label>
+            <input type="date" id="prep-qte-debut" class="meth-rule-date" title="Début de période (journées Saisie)">
           </div>
-          <label class="prep-qte-only-filled" title="Masquer les combinaisons sans qté enregistrée">
-            <input type="checkbox" id="prep-qte-only-filled" checked>
-            Avec qté seulement
-          </label>
-          <span class="prep-qte-count-pill" id="prep-qte-count">—</span>
+          <div class="field prep-qte-field-period">
+            <label for="prep-qte-fin">Au</label>
+            <input type="date" id="prep-qte-fin" class="meth-rule-date" title="Fin de période (journées Saisie)">
+          </div>
+          <div class="prep-qte-search-wrap prep-qte-search-chain">
+            <input type="search" id="prep-qte-search-chain" placeholder="Chaîne…" autocomplete="off" title="N° chaîne ou Ch01…">
+          </div>
+          <div class="prep-qte-search-wrap prep-qte-search-modele">
+            <input type="search" id="prep-qte-search-modele" placeholder="Modèle…" autocomplete="off" title="Référence modèle">
+          </div>
         </div>
       </div>
       <div class="prep-qte-table-wrap">
@@ -5396,6 +5519,8 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
             <tr>
               <th class="num">Ch</th>
               <th>Modèle</th>
+              <th class="prep-qte-th-period">Du</th>
+              <th class="prep-qte-th-period">Au</th>
               <th class="num">Qté prévue</th>
             </tr>
           </thead>
@@ -6582,6 +6707,82 @@ function prunePrepQteExtraRow(month, chain, modele) {
   if (!all[month].length) delete all[month];
   savePrepQteExtraRowsStore(all);
 }
+function prepQtePeriodStore() {
+  try { return JSON.parse(localStorage.getItem(PREP_QTE_PERIOD_STORAGE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function savePrepQtePeriodStore(all) {
+  try { localStorage.setItem(PREP_QTE_PERIOD_STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
+}
+function getPrepQtePeriod(month, chain, modele) {
+  const all = prepQtePeriodStore();
+  const k = prepPlanRowKey(chain, modele);
+  const p = all[month]?.[k];
+  if (!p) return null;
+  return {
+    debut: (p.debut || '').trim(),
+    fin: (p.fin || '').trim(),
+  };
+}
+function setPrepQtePeriod(month, chain, modele, debut, fin) {
+  const all = prepQtePeriodStore();
+  if (!all[month]) all[month] = {};
+  const k = prepPlanRowKey(chain, modele);
+  const cur = all[month][k] || {};
+  const d = debut != null ? String(debut || '').trim() : (cur.debut || '');
+  const f = fin !== undefined ? String(fin || '').trim() : (cur.fin || '');
+  if (!d && !f) {
+    delete all[month][k];
+    if (!Object.keys(all[month]).length) delete all[month];
+  } else {
+    all[month][k] = { debut: d, fin: f };
+  }
+  savePrepQtePeriodStore(all);
+}
+function saisieRowExistsOnDate(month, dateStr, chain, modele) {
+  const mod = ((modele || '') + '').trim().toUpperCase();
+  return (PRODUCTION[month]?.daily[dateStr] || []).some(c =>
+    Number(c.chain) === Number(chain) &&
+    ((c.modele || '') + '').trim().toUpperCase() === mod &&
+    (c.client || c._added || c.modele)
+  );
+}
+function getLastSaisiePresenceDate(month, chain, modele) {
+  let last = '';
+  for (const d of PRODUCTION[month]?.daily_sheets || []) {
+    if (saisieRowExistsOnDate(month, d, chain, modele)) last = d;
+  }
+  return last;
+}
+function hasFutureSaisiePresence(month, chain, modele, afterDate) {
+  for (const d of PRODUCTION[month]?.daily_sheets || []) {
+    if (compareFrDate(d, afterDate) <= 0) continue;
+    if (saisieRowExistsOnDate(month, d, chain, modele)) return true;
+  }
+  return false;
+}
+/** Clôture Au automatiquement si le modèle n'est plus dans la Saisie (jour courant, sans reprise future). */
+function autoClosePrepQtePeriods(month, refDate) {
+  if (!month || !refDate) return false;
+  const all = prepQtePeriodStore();
+  const per = all[month];
+  if (!per) return false;
+  let changed = false;
+  for (const [k, p] of Object.entries(per)) {
+    if (!p?.debut || p.fin) continue;
+    const parsed = parsePrepPlanRowKey(k);
+    if (!parsed) continue;
+    const { chain, modele } = parsed;
+    if (saisieRowExistsOnDate(month, refDate, chain, modele)) continue;
+    if (hasFutureSaisiePresence(month, chain, modele, refDate)) continue;
+    const last = getLastSaisiePresenceDate(month, chain, modele);
+    if (!last || compareFrDate(last, refDate) > 0) continue;
+    p.fin = last;
+    changed = true;
+  }
+  if (changed) savePrepQtePeriodStore(all);
+  return changed;
+}
 function migratePrepQteRowKeys(month, oldChain, oldModele, newChain, newModele) {
   const ok = prepPlanRowKey(oldChain, oldModele);
   const nk = prepPlanRowKey(newChain, newModele);
@@ -6601,6 +6802,14 @@ function migratePrepQteRowKeys(month, oldChain, oldModele, newChain, newModele) 
     delete oAll[month][ok];
     if (newChain && newModele) oAll[month][nk] = ov;
     savePrepPlanObjStore(oAll);
+  }
+  const pAll = prepQtePeriodStore();
+  const pv = pAll[month]?.[ok];
+  if (pv) {
+    if (!pAll[month]) pAll[month] = {};
+    delete pAll[month][ok];
+    if (newChain && newModele) pAll[month][nk] = pv;
+    savePrepQtePeriodStore(pAll);
   }
 }
 function findProductionQtePrevuSeed(month, chain, modele) {
@@ -6637,6 +6846,77 @@ function getPrepQteEditMonth() {
   const m = (sel?.value || currentMonth || '').trim();
   return m && PRODUCTION[m] ? m : currentMonth;
 }
+function getPrepQteFilterDateFr(which) {
+  const el = document.getElementById(which === 'fin' ? 'prep-qte-fin' : 'prep-qte-debut');
+  if (!el?.value) return '';
+  return _isoToFr(el.value);
+}
+function getPrepQteDefaultPeriod(month) {
+  const sheets = PRODUCTION[month]?.daily_sheets || [];
+  if (!sheets.length) return { debut: '', fin: '' };
+  let anchor = '';
+  if (saisieMonth === month && saisieDate && sheets.includes(saisieDate)) anchor = saisieDate;
+  else {
+    const pd = getPrepPlanSelectedDate(month);
+    if (pd && sheets.includes(pd)) anchor = pd;
+    else anchor = sheets[sheets.length - 1];
+  }
+  const d = parseFrDate(anchor);
+  if (isNaN(d.getTime())) return { debut: sheets[0], fin: sheets[sheets.length - 1] };
+  const dow = d.getDay();
+  const monOff = dow === 0 ? -6 : 1 - dow;
+  const mon = new Date(d);
+  mon.setDate(d.getDate() + monOff);
+  const fri = new Date(mon);
+  fri.setDate(mon.getDate() + 4);
+  const fmt = (dt) => {
+    const dd = String(dt.getDate()).padStart(2, '0');
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    return `${dd}-${mm}-${dt.getFullYear()}`;
+  };
+  let debut = fmt(mon);
+  let fin = fmt(fri);
+  if (compareFrDate(debut, sheets[0]) < 0) debut = sheets[0];
+  if (compareFrDate(fin, sheets[sheets.length - 1]) > 0) fin = sheets[sheets.length - 1];
+  return { debut, fin };
+}
+function populatePrepQtePeriodInputs(month, resetDefaults) {
+  const debEl = document.getElementById('prep-qte-debut');
+  const finEl = document.getElementById('prep-qte-fin');
+  if (!debEl || !finEl) return;
+  const sheets = PRODUCTION[month]?.daily_sheets || [];
+  const minIso = sheets.length ? _frToIso(sheets[0]) : '';
+  const maxIso = sheets.length ? _frToIso(sheets[sheets.length - 1]) : '';
+  debEl.min = minIso;
+  debEl.max = maxIso;
+  finEl.min = minIso;
+  finEl.max = maxIso;
+  if (resetDefaults) {
+    const { debut, fin } = getPrepQteDefaultPeriod(month);
+    debEl.value = debut ? _frToIso(debut) : '';
+    finEl.value = fin ? _frToIso(fin) : '';
+  }
+}
+function prepQtePeriodMatchesRow(row, fDebut, fFin) {
+  if (!fDebut && !fFin) return true;
+  if (row.draft) return true;
+  const d0 = row.dateFirst || row.dateLast || '';
+  const d1 = row.dateLast || row.dateFirst || d0;
+  if (!d0 && !d1) return true;
+  if (fDebut && compareFrDate(d1, fDebut) < 0) return false;
+  if (fFin && compareFrDate(d0, fFin) > 0) return false;
+  return true;
+}
+function syncPrepQteAfterSaisieChange(month, chain, modele, refDate) {
+  if (!month || !chain || !modele) return;
+  if (refDate) autoClosePrepQtePeriods(month, refDate);
+  applyPrepQtePrevuToMonth(month);
+  if (getPrepQteEditMonth() === month) renderPrepQtePrevuTable(month);
+}
+function getAddLineDebutFr() {
+  const el = document.getElementById('add-line-debut');
+  return el?.value ? _isoToFr(el.value) : '';
+}
 function populatePrepQteMonthSelect(preferredMonth) {
   const sel = document.getElementById('prep-qte-month');
   if (!sel) return;
@@ -6650,6 +6930,7 @@ function populatePrepQteMonthSelect(preferredMonth) {
   const pick = (prev && PRODUCTION[prev]) ? prev
     : ((preferredMonth && PRODUCTION[preferredMonth]) ? preferredMonth : currentMonth);
   sel.value = PRODUCTION[pick] ? pick : (months[0] || '');
+  populatePrepQtePeriodInputs(sel.value, !prev || prev !== sel.value);
 }
 function updatePrepQteMonthHint() {
   const hint = document.getElementById('prep-qte-month-hint');
@@ -6662,47 +6943,66 @@ function updatePrepQteMonthHint() {
   if (lbl) lbl.textContent = PRODUCTION[editM]?.label || editM;
   if (saisieLbl) saisieLbl.textContent = PRODUCTION[currentMonth]?.label || currentMonth;
 }
-function prepQteRowHasValue(month, chain, modele) {
-  if (getPrepQtePrevu(month, chain, modele) != null) return true;
-  return findProductionQtePrevuSeed(month, chain, modele) != null;
-}
 function filterPrepQtePrevuRows(rows, month) {
-  const q = (document.getElementById('prep-qte-search')?.value || '').trim().toLowerCase();
-  const onlyFilled = document.getElementById('prep-qte-only-filled')?.checked !== false;
+  const chQ = (document.getElementById('prep-qte-search-chain')?.value || '').trim().toLowerCase();
+  const modQ = (document.getElementById('prep-qte-search-modele')?.value || '').trim().toLowerCase();
+  const fDeb = getPrepQteFilterDateFr('debut');
+  const fFin = getPrepQteFilterDateFr('fin');
   let list = rows.slice();
-  if (onlyFilled) {
-    list = list.filter(r => r.draft || prepQteRowHasValue(month, r.chain, r.modele));
+  if (fDeb || fFin) {
+    list = list.filter(r => r.draft || prepQtePeriodMatchesRow(r, fDeb, fFin));
   }
-  if (q) {
+  if (chQ) {
     list = list.filter(r => {
       const ch = String(r.chain || '');
-      const mod = String(r.modele || '').toLowerCase();
       const chPad = ch ? `ch${ch.padStart(2, '0')}` : '';
-      return mod.includes(q) || ch === q || chPad.includes(q) || (`ch${ch}`).includes(q);
+      return ch === chQ || ch.includes(chQ) || chPad.includes(chQ) || (`ch${ch}`).includes(chQ);
     });
+  }
+  if (modQ) {
+    list = list.filter(r => String(r.modele || '').toLowerCase().includes(modQ));
   }
   return list;
 }
 function collectPrepQtePrevuRows(month) {
   const map = new Map();
-  const add = (chain, modele) => {
+  const meta = new Map();
+  const fDeb = getPrepQteFilterDateFr('debut');
+  const fFin = getPrepQteFilterDateFr('fin');
+  const hasPeriodFilter = !!(fDeb || fFin);
+  const touchDate = (k, dateStr, fromSaisie) => {
+    if (!dateStr) return;
+    let m = meta.get(k);
+    if (!m) { m = { first: dateStr, last: dateStr, fromSaisie: false }; meta.set(k, m); }
+    if (compareFrDate(dateStr, m.first) < 0) m.first = dateStr;
+    if (compareFrDate(dateStr, m.last) > 0) m.last = dateStr;
+    if (fromSaisie) m.fromSaisie = true;
+  };
+  const add = (chain, modele, dateStr, fromSaisie) => {
     const ch = Number(chain);
     const mod = ((modele || '') + '').trim();
     if (!ch || isNaN(ch) || !mod) return;
+    if (dateStr && hasPeriodFilter && !prepQteDateInPeriod(dateStr, fDeb, fFin)) return;
     const k = prepPlanRowKey(ch, mod);
     if (!map.has(k)) map.set(k, { chain: ch, modele: mod });
+    if (dateStr) touchDate(k, dateStr, !!fromSaisie);
   };
   const info = PRODUCTION[month];
   if (info) {
     for (const d of info.daily_sheets || []) {
       for (const line of info.daily[d] || []) {
         if (!isActiveProductionRow(line) || !line.modele) continue;
-        add(line.chain, line.modele);
+        add(line.chain, line.modele, d, true);
       }
     }
   }
   const qstore = prepQtePrevuStore()[month] || {};
   for (const k of Object.keys(qstore)) {
+    const p = parsePrepPlanRowKey(k);
+    if (p) add(p.chain, p.modele);
+  }
+  const perStore = prepQtePeriodStore()[month] || {};
+  for (const k of Object.keys(perStore)) {
     const p = parsePrepPlanRowKey(k);
     if (p) add(p.chain, p.modele);
   }
@@ -6713,16 +7013,34 @@ function collectPrepQtePrevuRows(month) {
     if (ch && !isNaN(ch) && mod) add(ch, mod);
     else drafts.push({ chain: ch || '', modele: mod, draft: true });
   }
-  const sorted = Array.from(map.values()).sort((a, b) => {
+  const sorted = Array.from(map.values()).map(r => {
+    const m = meta.get(prepPlanRowKey(r.chain, r.modele));
+    const period = getPrepQtePeriod(month, r.chain, r.modele);
+    return {
+      ...r,
+      dateFirst: period?.debut || m?.first || '',
+      dateLast: period?.fin || '',
+      fromSaisie: !!m?.fromSaisie || !!period?.debut,
+    };
+  }).filter(r => {
+    if (r.draft) return true;
+    if (!hasPeriodFilter) return true;
+    return prepQtePeriodMatchesRow(r, fDeb, fFin);
+  }).sort((a, b) => {
     if (a.chain !== b.chain) return a.chain - b.chain;
     return String(a.modele).localeCompare(String(b.modele), 'fr');
   });
   return sorted.concat(drafts);
 }
+function prepQteDateInPeriod(dateStr, fDebut, fFin) {
+  if (!dateStr) return false;
+  if (fDebut && compareFrDate(dateStr, fDebut) < 0) return false;
+  if (fFin && compareFrDate(dateStr, fFin) > 0) return false;
+  return true;
+}
 function renderPrepQtePrevuTable(month) {
   const tbody = document.querySelector('#prep-qte-table tbody');
   const dl = document.getElementById('prep-qte-modele-dl');
-  const countEl = document.getElementById('prep-qte-count');
   if (!tbody) return;
   month = month || getPrepQteEditMonth();
   updatePrepQteMonthHint();
@@ -6737,27 +7055,29 @@ function renderPrepQtePrevuTable(month) {
   }
   const allRows = collectPrepQtePrevuRows(month);
   const rows = filterPrepQtePrevuRows(allRows, month);
-  if (countEl) {
-    const lbl = PRODUCTION[month]?.label || month;
-    countEl.textContent = rows.length + ' / ' + allRows.length + ' · ' + lbl;
-  }
   tbody.innerHTML = '';
   if (!rows.length) {
     const msg = allRows.length
-      ? 'Aucun résultat pour cette recherche — élargissez les filtres.'
-      : 'Aucune ligne — choisissez le mois, puis « + Ligne » pour saisir chaîne, modèle et qté.';
-    tbody.innerHTML = '<tr class="prep-qte-empty-row"><td colspan="3">' + msg + '</td></tr>';
+      ? 'Aucun résultat pour cette période ou ces filtres — élargissez la plage de dates.'
+      : 'Aucune ligne sur cette période — ajoutez un modèle dans la Saisie ou « + Ligne » pour saisir la qté.';
+    tbody.innerHTML = '<tr class="prep-qte-empty-row"><td colspan="5">' + msg + '</td></tr>';
     return;
   }
   const esc = (s) => String(s ?? '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  const sheets = PRODUCTION[month]?.daily_sheets || [];
+  const dateMin = sheets.length ? _frToIso(sheets[0]) : '';
+  const dateMax = sheets.length ? _frToIso(sheets[sheets.length - 1]) : '';
   for (const r of rows) {
     const stored = getPrepQtePrevu(month, r.chain, r.modele);
     const seed = stored != null ? stored : findProductionQtePrevuSeed(month, r.chain, r.modele);
     const val = seed != null ? fmtInt(seed) : '';
     const tr = document.createElement('tr');
+    if (r.fromSaisie) tr.classList.add('prep-qte-from-saisie');
     tr.dataset.chain = r.chain ? String(r.chain) : '';
     tr.dataset.modele = r.modele || '';
     const chAttr = r.chain ? ` value="${r.chain}"` : '';
+    const duIso = r.dateFirst ? _frToIso(r.dateFirst) : '';
+    const auIso = r.dateLast ? _frToIso(r.dateLast) : '';
     tr.innerHTML = `
       <td class="num prep-qte-td-ch">
         <input type="number" class="prep-qte-inp" data-prep-qte-ch="1" min="1" max="${METH_CHAIN_COUNT}"${chAttr}
@@ -6766,6 +7086,14 @@ function renderPrepQtePrevuTable(month) {
       <td class="prep-qte-td-mod">
         <input type="text" class="prep-qte-inp" data-prep-qte-mod="1" list="prep-qte-modele-dl"
           value="${esc(r.modele)}" placeholder="Modèle" autocomplete="off">
+      </td>
+      <td class="prep-qte-td-du">
+        <input type="date" class="prep-qte-date" data-prep-qte-du="1" value="${duIso}"
+          min="${dateMin}" max="${dateMax}" title="Date début d'affectation" autocomplete="off">
+      </td>
+      <td class="prep-qte-td-au">
+        <input type="date" class="prep-qte-date" data-prep-qte-au="1" value="${auIso}"
+          min="${dateMin}" max="${dateMax}" title="Date fin (vide = en cours) — se remplit seule si le modèle disparaît de la Saisie" autocomplete="off">
       </td>
       <td class="num">
         <input type="text" class="prep-qte-inp" inputmode="numeric" data-prep-qte-val="1"
@@ -6785,6 +7113,10 @@ function commitPrepQteRow(tr) {
   migratePrepQteRowKeys(month, oldChain, oldModele, chain, modele);
   const val = parseNumFr(tr.querySelector('[data-prep-qte-val]')?.value);
   setPrepQtePrevu(month, chain, modele, val);
+  const duFr = tr.querySelector('[data-prep-qte-du]')?.value ? _isoToFr(tr.querySelector('[data-prep-qte-du]').value) : '';
+  const auFr = tr.querySelector('[data-prep-qte-au]')?.value ? _isoToFr(tr.querySelector('[data-prep-qte-au]').value) : '';
+  if (duFr || auFr) setPrepQtePeriod(month, chain, modele, duFr, auFr);
+  else setPrepQtePeriod(month, chain, modele, '', '');
   tr.dataset.chain = String(chain);
   tr.dataset.modele = modele;
   prunePrepQteExtraRow(month, chain, modele);
@@ -6803,7 +7135,8 @@ function commitPrepQteRow(tr) {
 }
 function onPrepQtePrevuInput(e) {
   const t = e.target;
-  if (!t?.dataset?.prepQteCh && !t?.dataset?.prepQteMod && !t?.dataset?.prepQteVal) return;
+  if (!t?.dataset?.prepQteCh && !t?.dataset?.prepQteMod && !t?.dataset?.prepQteVal
+      && !t?.dataset?.prepQteDu && !t?.dataset?.prepQteAu) return;
   commitPrepQteRow(t.closest('tr'));
 }
 function onPrepQteAddRow() {
@@ -6889,6 +7222,7 @@ function onPrepPlanDateChange() {
   const sel = document.getElementById('prep-filter-date');
   if (!sel?.value) return;
   setPrepPlanSelectedDate(currentMonth, sel.value);
+  if (getPrepQteEditMonth() === currentMonth) populatePrepQtePeriodInputs(currentMonth, true);
   renderPrep(currentMonth);
 }
 /** Prépare la ligne comme buildSaisieBody (overrides + feuille Excel). */
@@ -8378,6 +8712,7 @@ const METH_RULES_STORAGE_KEY = 'prodH-meth-rules-v1';
 const PREP_PLAN_OBJ_STORAGE_KEY = 'prodH-prep-plan-obj-v1';
 const PREP_QTE_PREVU_STORAGE_KEY = 'prodH-prep-qte-prevu-v1';
 const PREP_QTE_EXTRA_ROWS_KEY = 'prodH-prep-qte-extra-v1';
+const PREP_QTE_PERIOD_STORAGE_KEY = 'prodH-prep-qte-period-v1';
 const METH_CHAIN_COUNT = 20;
 let methRuleEditId = null;
 /** Jour affiché sur Plan de préparation (par mois). */
@@ -9621,6 +9956,13 @@ function openSaisieAddModal(mode) {
   }
   document.getElementById('add-line-modele').value = '';
   document.getElementById('add-line-client').value = '';
+  const debInp = document.getElementById('add-line-debut');
+  if (debInp && saisieMonth) {
+    const sheets = PRODUCTION[saisieMonth]?.daily_sheets || [];
+    debInp.min = sheets.length ? _frToIso(sheets[0]) : '';
+    debInp.max = sheets.length ? _frToIso(sheets[sheets.length - 1]) : '';
+    debInp.value = saisieDate ? _frToIso(saisieDate) : '';
+  }
   m.classList.add('open');
   setTimeout(() => document.getElementById('add-line-modele').focus(), 60);
 }
@@ -9655,6 +9997,11 @@ function confirmSaisieAddLine() {
     err.textContent = 'Ce modèle existe déjà sur Ch' + String(chain).padStart(2, '0') + ' pour ce jour.';
     return;
   }
+  const dateDebut = getAddLineDebutFr();
+  if (!dateDebut) {
+    err.textContent = 'Indiquez la date de début.';
+    return;
+  }
   const line = createEmptySaisieLine(chain, modele, { client: clientVal, _added: true });
   if (saisieAddMode === 'chain') {
     const dayLines = PRODUCTION[saisieMonth].daily[saisieDate] || [];
@@ -9669,8 +10016,10 @@ function confirmSaisieAddLine() {
     }
   }
   registerAddedLine(line);
+  setPrepQtePeriod(saisieMonth, chain, modele, dateDebut, '');
   closeSaisieAddModal();
   syncMonthProductionMetrics(saisieMonth);
+  syncPrepQteAfterSaisieChange(saisieMonth, chain, modele, saisieDate);
   buildSaisieBody();
   refreshSummaryStrip();
   const chLab = 'Ch' + String(chain).padStart(2, '0');
@@ -10792,6 +11141,7 @@ function buildSaisieBody() {
   if (saisieMonth) {
     applyPrepQtePrevuToMonth(saisieMonth);
     applyMethRulesToMonth(saisieMonth);
+    if (saisieDate) autoClosePrepQtePeriods(saisieMonth, saisieDate);
   }
   const editable = isEditable();
   const chains = PRODUCTION[saisieMonth].daily[saisieDate] || [];
@@ -11842,7 +12192,7 @@ function initExcelHourInteractions() {
     if (e.shiftKey && excelHourSel.anchor) {
       excelSetSelection(excelHourSel.anchor, coords);
     } else {
-      excelSetSelection(coords, coords);
+      excelSetSelection(coords, coords);g
       excelHourSel.dragging = true;
     }
   }, true);
@@ -12212,6 +12562,9 @@ function saveSaisie() {
   else delete dayOv.__added;
   saveSaisieOverrides(overrides);
   syncMonthProductionMetrics(saisieMonth);
+  if (autoClosePrepQtePeriods(saisieMonth, saisieDate) && getPrepQteEditMonth() === saisieMonth) {
+    renderPrepQtePrevuTable(saisieMonth);
+  }
   document.querySelectorAll('#excel-grid-body .dirty').forEach(i => i.classList.remove('dirty'));
   toast('Saisie enregistrée.');
   buildSaisieBody(); refreshSummaryStrip();
@@ -12312,6 +12665,10 @@ document.getElementById('saisie-date').addEventListener('change', (e) => {
   saisieUserPickedDate = true;
   saisieUnlocked = false;
   saisieDate = e.target.value;
+  if (saisieMonth && saisieDate) {
+    autoClosePrepQtePeriods(saisieMonth, saisieDate);
+    if (getPrepQteEditMonth() === saisieMonth) renderPrepQtePrevuTable(saisieMonth);
+  }
   syncSaisiePartialHeureSelect();
   updateLockBadges();
   buildSaisieHeader();
@@ -12380,9 +12737,14 @@ document.getElementById('prep-table')?.addEventListener('keydown', (e) => {
 document.getElementById('prep-filter-date')?.addEventListener('change', onPrepPlanDateChange);
 document.getElementById('prep-qte-table')?.addEventListener('change', onPrepQtePrevuInput);
 document.getElementById('prep-qte-add-btn')?.addEventListener('click', onPrepQteAddRow);
-document.getElementById('prep-qte-month')?.addEventListener('change', () => renderPrepQtePrevuTable());
-document.getElementById('prep-qte-search')?.addEventListener('input', () => renderPrepQtePrevuTable());
-document.getElementById('prep-qte-only-filled')?.addEventListener('change', () => renderPrepQtePrevuTable());
+document.getElementById('prep-qte-month')?.addEventListener('change', () => {
+  populatePrepQtePeriodInputs(getPrepQteEditMonth(), true);
+  renderPrepQtePrevuTable();
+});
+document.getElementById('prep-qte-debut')?.addEventListener('change', () => renderPrepQtePrevuTable());
+document.getElementById('prep-qte-fin')?.addEventListener('change', () => renderPrepQtePrevuTable());
+document.getElementById('prep-qte-search-chain')?.addEventListener('input', () => renderPrepQtePrevuTable());
+document.getElementById('prep-qte-search-modele')?.addEventListener('input', () => renderPrepQtePrevuTable());
 document.getElementById('meth-chains-show')?.addEventListener('change', applyMethChainsTableFilter);
 document.getElementById('meth-chains-from')?.addEventListener('change', applyMethChainsTableFilter);
 document.getElementById('meth-chains-to')?.addEventListener('change', applyMethChainsTableFilter);
