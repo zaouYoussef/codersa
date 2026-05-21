@@ -1067,15 +1067,17 @@ footer {
 .excel-saisie td.ch-cell .ch-num { display: block; font-size: 16px; }
 .excel-saisie td.modele-cell .modele-heures-badge {
   display: block;
-  margin-top: 4px;
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--text-dim);
+  margin-top: 5px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
   letter-spacing: 0.02em;
+  line-height: 1.25;
   font-family: 'JetBrains Mono', monospace;
 }
 .excel-saisie td.modele-cell .modele-heures-badge.supp {
   color: var(--orange);
+  font-size: 13px;
 }
 .excel-saisie td.merge-cell input.xs-inp.txt { text-align: center; font-size: 15px; }
 .excel-saisie td.merge-cell.desig-cell input.xs-inp.txt {
@@ -4370,9 +4372,9 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     <div class="saisie-info-strip">
       <div class="info-tile"><div class="info-lab">Total Entrée</div><div class="info-val" id="saisie-tot-entre">0<span class="unit">pcs</span></div></div>
       <div class="info-tile"><div class="info-lab">Total Sortie</div><div class="info-val" id="saisie-tot-sortie">0<span class="unit">pcs</span></div></div>
-      <div class="info-tile" title="Somme des totaux ligne Effectifs (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Effectifs</div><div class="info-val" id="saisie-tot-eff">0</div></div>
-      <div class="info-tile" title="Somme des totaux ligne Stagiaire (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Stagiaires</div><div class="info-val" id="saisie-tot-stag">0</div></div>
-      <div class="info-tile" title="Somme des totaux ligne Formation (SUM créneaux − U×coef) pour tous les modèles du jour"><div class="info-lab">Formation</div><div class="info-val" id="saisie-tot-form">0</div></div>
+      <div class="info-tile" title="Σ colonne Moy — ligne Effectifs (tous les modèles du jour)"><div class="info-lab">Effectifs</div><div class="info-val" id="saisie-tot-eff">0</div></div>
+      <div class="info-tile" title="Σ colonne Moy — ligne Stagiaire (tous les modèles du jour)"><div class="info-lab">Stagiaires</div><div class="info-val" id="saisie-tot-stag">0</div></div>
+      <div class="info-tile" title="Σ colonne Moy — ligne Formation (tous les modèles du jour)"><div class="info-lab">Formation</div><div class="info-val" id="saisie-tot-form">0</div></div>
       <div class="info-tile info-tile-vers"><div class="info-lab">Rendement</div><div class="info-val" id="saisie-tot-vers" title="SUBTOTAL(AL)/SUBTOTAL(AK) — AI=AB_eff+AB_stag/2, AK=AI×60, AL=AB_sortie×VT">—</div></div>
       <div class="info-tile" title="Nombre de chaînes distinctes (Ch01, Ch02…) avec au moins un modèle saisi"><div class="info-lab">Chaînes actives</div><div class="info-val" id="saisie-tot-ch">0</div></div>
     </div>
@@ -12500,7 +12502,7 @@ function refreshSummaryStrip() {
   const lines = PRODUCTION[saisieMonth].daily[saisieDate] || [];
   const excelArr = getExcelDataForDate(saisieDate);
   const date = saisieDate;
-  let entre = 0, sortie = 0, eff = 0, form = 0, stag = 0;
+  let entre = 0, sortie = 0, sumMoyEff = 0, sumMoyForm = 0, sumMoyStag = 0;
   const chainIds = new Set();
   for (const line of lines) {
     if (!isActiveProductionRow(line)) continue;
@@ -12513,16 +12515,19 @@ function refreshSummaryStrip() {
     const r4h = (line.formation_hours && line.formation_hours.length) ? line.formation_hours : ((excel && excel.r4_hours) || []);
     entre += _sumArr(r0h);
     sortie += calcTotalSortieRow(r1h);
-    eff += calcTotalEffectifsRow(r2h, date);
-    form += calcTotalFormationRow(r4h, date);
-    stag += calcTotalStagiaireRow(r3h, date);
+    const moyEff = calcMoyenneLigne(r2h, date);
+    const moyStag = calcMoyenneLigne(r3h, date);
+    const moyForm = calcMoyenneLigne(r4h, date);
+    if (moyEff != null && !isNaN(moyEff)) sumMoyEff += moyEff;
+    if (moyStag != null && !isNaN(moyStag)) sumMoyStag += moyStag;
+    if (moyForm != null && !isNaN(moyForm)) sumMoyForm += moyForm;
   }
   const versPct = calcMetaVersFinalPct(lines, excelArr, saisieMonth, date);
   document.getElementById('saisie-tot-entre').innerHTML  = fmtInt(entre)  + '<span class="unit">pcs</span>';
   document.getElementById('saisie-tot-sortie').innerHTML = fmtInt(sortie) + '<span class="unit">pcs</span>';
-  document.getElementById('saisie-tot-eff').textContent  = fmtInt(eff);
-  document.getElementById('saisie-tot-form').textContent = fmtInt(form);
-  document.getElementById('saisie-tot-stag').textContent = fmtInt(stag);
+  document.getElementById('saisie-tot-eff').textContent  = fmtInt(sumMoyEff);
+  document.getElementById('saisie-tot-form').textContent = fmtInt(sumMoyForm);
+  document.getElementById('saisie-tot-stag').textContent = fmtInt(sumMoyStag);
   const versEl = document.getElementById('saisie-tot-vers');
   if (versEl) versEl.textContent = versPct != null ? fmtPctX(versPct) : '—';
   document.getElementById('saisie-tot-ch').textContent   = String(chainIds.size);
