@@ -7154,11 +7154,11 @@ function getPrepPlanHoursJour(dateStr) {
   if (dateStr) return getJourHeuresConfig(dateStr).h;
   return 8.75;
 }
-/** EnC/j = (EnC par pcs ÷ P/H) × h jour */
+/** EnC/j = (EnC par pcs ÷ P/H) ÷ h jour — aligné grille Saisie (Encours ÷ (P/H × h)) */
 function calcPrepEncJ(encParPcs, ph, hJour) {
   const enc = Number(encParPcs), p = Number(ph), h = Number(hJour);
   if (!enc || !p || !h || isNaN(enc) || isNaN(p)) return null;
-  const r = (enc / p) * h;
+  const r = enc / (p * h);
   return isFinite(r) ? r : null;
 }
 /** plan Entré Chaine/pcs = P/H×h + P/H×h×obj − EnC */
@@ -7312,7 +7312,9 @@ function collectPrepPlanRows(month, options) {
     const encParPcs = c.encours != null && !isNaN(c.encours) ? Number(c.encours) : 0;
     const entreJ = getPrepEntreJ(month, refDate, line);
     const objEnc = getPrepPlanObjEnc(month, chain, line.modele);
-    const encJ = calcPrepEncJ(encParPcs, ph, hJour);
+    const encJ = (c.cumulJours != null && !isNaN(c.cumulJours) && isFinite(c.cumulJours))
+      ? Number(c.cumulJours)
+      : calcPrepEncJ(encParPcs, ph, hJour);
     const planEntre = calcPrepPlanEntre(ph, objEnc, encParPcs, hJour);
     const reste = calcPrepReste(entreJ, planEntre);
     rows.push({
