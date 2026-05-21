@@ -8491,20 +8491,47 @@ function initMethFilterControls(month) {
   if (showSel && !showSel.value) showSel.value = 'all';
   applyMethChainsTableFilter();
 }
-/** Valeurs VT/P/H/EFF pour une chaîne+modèle à une date (dernière règle correspondante). */
+function methChainEntryHasValues(ce) {
+  if (!ce) return false;
+  return (ce.vt != null && ce.vt !== '' && !isNaN(ce.vt))
+    || (ce.ph != null && ce.ph !== '' && !isNaN(ce.ph))
+    || (ce.eff != null && ce.eff !== '' && !isNaN(ce.eff));
+}
+/** Chaînes renseignées dans une fiche période. */
+function methRuleChainsWithValues(chains) {
+  if (!chains) return [];
+  return Object.keys(chains).filter(ch => methChainEntryHasValues(chains[ch]));
+}
+/** Conflit si au moins une chaîne est définie dans les deux fiches. */
+function methRulesChainsConflict(chainsA, chainsB) {
+  const setB = new Set(methRuleChainsWithValues(chainsB));
+  return methRuleChainsWithValues(chainsA).some(ch => setB.has(ch));
+}
+/** Doublon strict : même modèle, mêmes dates et mêmes chaînes renseignées (utiliser Modifier). */
+function findMethRuleSaveConflict(rules, modele, dateDebut, dateFin, chains, excludeRuleId) {
+  const mk = normalizeModeleKey(modele);
+  for (const r of rules) {
+    if (excludeRuleId && r.id === excludeRuleId) continue;
+    if (normalizeModeleKey(r.modele) !== mk) continue;
+    if (r.dateDebut !== dateDebut || r.dateFin !== dateFin) continue;
+    if (!methRulesChainsConflict(chains, r.chains)) continue;
+    return { kind: 'duplicate', rule: r };
+  }
+  return null;
+}
+/** Valeurs VT/P/H/EFF pour une chaîne+modèle à une date (période la plus récente qui couvre cette chaîne). */
 function findMethRuleValues(month, date, chain, modele) {
   const mod = normalizeModeleKey(modele);
   const ch = String(Number(chain));
   if (!mod || !ch || isNaN(Number(ch))) return null;
-  let found = null;
-  for (const rule of methRulesForMonth(month)) {
-    if (normalizeModeleKey(rule.modele) !== mod) continue;
-    if (!dateInFrRange(date, rule.dateDebut, rule.dateFin)) continue;
+  const rules = methRulesForMonth(month)
+    .filter(r => normalizeModeleKey(r.modele) === mod && dateInFrRange(date, r.dateDebut, r.dateFin))
+    .sort((a, b) => compareFrDate(b.dateDebut, a.dateDebut));
+  for (const rule of rules) {
     const ce = rule.chains && rule.chains[ch];
-    if (!ce) continue;
-    found = ce;
+    if (methChainEntryHasValues(ce)) return ce;
   }
-  return found;
+  return null;
 }
 function applyMethValuesToRow(row, vals, excel) {
   if (!vals) return;
@@ -8711,19 +8738,18 @@ function saveMethRuleFromForm(month) {
   const payload = { modele, dateDebut, dateFin, chains };
   const wasEdit = !!methRuleEditId;
   const mk = normalizeModeleKey(modele);
-  /* Vérification : pas de chevauchement avec une autre période du même modèle
-     (sauf elle-même en mode édition). Évite l'ambiguïté entre règles concurrentes. */
-  const overlap = rules.find(r =>
-    (!wasEdit || r.id !== methRuleEditId)
-    && normalizeModeleKey(r.modele) === mk
-    && methRuleDatesOverlap(dateDebut, dateFin, r.dateDebut, r.dateFin)
+  const conflict = findMethRuleSaveConflict(
+    rules, modele, dateDebut, dateFin, chains, wasEdit ? methRuleEditId : null
   );
-  if (overlap) {
-    if (overlap.dateDebut === dateDebut && overlap.dateFin === dateFin) {
-      toast('Une période existe déjà pour ce modèle et ces dates — cliquez « Modifier » sur la fiche ou changez les dates.', true);
-    } else {
-      toast('Les dates chevauchent une autre période du même modèle (' + overlap.dateDebut + ' → ' + overlap.dateFin + ').', true);
-    }
+  if (conflict) {
+    const chs = methRuleChainsWithValues(chains).filter(ch =>
+      methRuleChainsWithValues(conflict.rule.chains).includes(ch)
+    ).join(', ');
+    toast(
+      'Une période identique existe déjà (même modèle, dates ' + dateDebut + ' → ' + dateFin
+      + (chs ? ', chaînes ' + chs : '') + ') — cliquez « Modifier » sur la fiche existante.',
+      true
+    );
     return;
   }
   if (wasEdit) {
@@ -8760,7 +8786,7 @@ function saveMethRuleFromForm(month) {
   if (wasEdit) {
     toast('Période mise à jour — ' + modele + ' (' + dateDebut + ' → ' + dateFin + ').');
   } else if (nSame > 1) {
-    toast(nSame + ' périodes pour « ' + modele + ' ». Modifiez les dates puis Enregistrer pour en ajouter une autre.');
+    toast(nSame + ' période(s) pour « ' + modele + ' » — les dates peuvent se chevaucher si les chaînes sont différentes.');
   } else {
     toast('Période enregistrée — ' + modele + ' (' + dateDebut + ' → ' + dateFin + ').');
   }
