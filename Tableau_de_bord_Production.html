@@ -868,6 +868,51 @@ footer {
 .pin-modal .field-check { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); margin: 8px 0 4px; cursor: pointer; }
 .pin-modal .field-check input { accent-color: var(--accent); }
 .excel-saisie tr.block-added-model td { box-shadow: inset 3px 0 0 var(--accent); }
+.saisie-added-remove-block.is-visible {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.28);
+}
+.saisie-added-remove-block.is-visible .saisie-added-remove-title { color: var(--red); }
+.saisie-added-remove-empty {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0;
+  line-height: 1.45;
+}
+.modele-cell.added-modele-cell { position: relative; }
+.modele-cell-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.modele-cell-inner .xs-inp { flex: 1; min-width: 0; }
+.saisie-rm-added-btn {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid rgba(239,68,68,0.45);
+  border-radius: 6px;
+  background: rgba(239,68,68,0.12);
+  color: var(--red);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.saisie-rm-added-btn:hover {
+  background: rgba(239,68,68,0.28);
+  transform: scale(1.05);
+}
+.saisie-rm-added-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(239,68,68,0.35);
+}
 .excel-saisie tr.block-sep-model td { border-top: 2px solid var(--border-2); }
 
 /* Detail page extras: search + range */
@@ -4534,7 +4579,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
         Déverrouiller (PIN)
       </button>
-      <button class="btn" id="saisie-add-chain-btn" title="Ajouter une chaîne ou un modèle du catalogue pour ce jour">+ Chaîne</button>
+      <button class="btn" id="saisie-add-chain-btn" title="Ajouter une ligne ou supprimer une ligne ajoutée par erreur (× rouge ou liste dans la fenêtre)">+ Chaîne</button>
       <button class="btn primary" id="saisie-save-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         Enregistrer
@@ -4844,8 +4889,13 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
   <!-- Ajout chaîne / modèle (catalogue) -->
   <div class="pin-modal-backdrop" id="saisie-add-modal">
     <div class="pin-modal wide" role="dialog" aria-modal="true" aria-labelledby="saisie-add-title">
-      <h3 id="saisie-add-title">Ajouter une ligne</h3>
+      <h3 id="saisie-add-title">Ajouter ou supprimer une ligne</h3>
       <p id="saisie-add-desc">Choisissez un modèle du catalogue (onglet Modèles), puis une chaîne existante ou un nouveau n°.</p>
+      <div class="saisie-added-remove-block" id="saisie-added-remove-block" hidden>
+        <div class="saisie-added-remove-title">Lignes ajoutées ce jour — cliquez Supprimer pour corriger une erreur</div>
+        <ul class="saisie-added-remove-list" id="saisie-added-lines-list"></ul>
+        <p class="saisie-added-remove-empty" id="saisie-added-remove-empty" hidden>Aucune ligne ajoutée via + Chaîne sur cette journée.</p>
+      </div>
       <div class="saisie-add-chain-mode" id="add-chain-mode-wrap">
         <label class="saisie-add-mode-opt"><input type="radio" name="add-chain-target" value="existing" checked> Chaîne existante</label>
         <label class="saisie-add-mode-opt"><input type="radio" name="add-chain-target" value="new"> Nouvelle chaîne</label>
@@ -4866,10 +4916,6 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       <div class="field">
         <label for="add-line-debut">Date début</label>
         <input type="date" id="add-line-debut" class="pin-input meth-rule-date" title="Début d'affectation chaîne / modèle (quantités prévues)">
-      </div>
-      <div class="saisie-added-remove-block" id="saisie-added-remove-block" hidden>
-        <div class="saisie-added-remove-title">Lignes ajoutées ce jour (supprimables)</div>
-        <ul class="saisie-added-remove-list" id="saisie-added-lines-list"></ul>
       </div>
       <div class="pin-error" id="saisie-add-error"></div>
       <div class="pin-actions">
@@ -10477,14 +10523,19 @@ function getAddedLinesForDay() {
 function renderSaisieAddedLinesList() {
   const block = document.getElementById('saisie-added-remove-block');
   const ul = document.getElementById('saisie-added-lines-list');
+  const emptyMsg = document.getElementById('saisie-added-remove-empty');
   if (!block || !ul) return;
   const added = getAddedLinesForDay();
   if (!added.length) {
     block.hidden = true;
+    block.classList.remove('is-visible');
     ul.innerHTML = '';
+    if (emptyMsg) emptyMsg.hidden = true;
     return;
   }
   block.hidden = false;
+  block.classList.add('is-visible');
+  if (emptyMsg) emptyMsg.hidden = true;
   const esc = (s) => String(s ?? '').replace(/</g, '&lt;');
   ul.innerHTML = added.map((c, i) => {
     const chLab = 'Ch' + String(c.chain).padStart(2, '0');
@@ -10492,11 +10543,16 @@ function renderSaisieAddedLinesList() {
       <button type="button" class="btn danger btn-xs" data-saisie-rm-idx="${i}">Supprimer</button></li>`;
   }).join('');
 }
-function removeAddedSaisieLine(chain, modele) {
+function confirmRemoveAddedSaisieLine(chain, modele) {
+  const chLab = 'Ch' + String(chain).padStart(2, '0');
+  return confirm('Supprimer ' + chLab + ' · ' + modele + ' de cette journée ?');
+}
+function removeAddedSaisieLine(chain, modele, skipConfirm) {
   if (!isEditable()) {
     toast('Consultation seule — déverrouillez avec le PIN.', true);
     return;
   }
+  if (!skipConfirm && !confirmRemoveAddedSaisieLine(chain, modele)) return;
   const dayArr = PRODUCTION[saisieMonth]?.daily[saisieDate];
   if (!dayArr) return;
   const idx = dayArr.findIndex(c =>
@@ -10547,6 +10603,13 @@ function openSaisieAddModal() {
     debInp.value = saisieDate ? _frToIso(saisieDate) : '';
   }
   renderSaisieAddedLinesList();
+  const added = getAddedLinesForDay();
+  const desc = document.getElementById('saisie-add-desc');
+  if (desc) {
+    desc.textContent = added.length
+      ? 'Pour corriger une erreur : utilisez Supprimer ci-dessous, ou le bouton × à côté du modèle dans la grille.'
+      : 'Choisissez un modèle du catalogue (onglet Modèles), puis une chaîne existante ou un nouveau n°.';
+  }
   m.classList.add('open');
   setTimeout(() => document.getElementById('add-line-catalog-modele')?.focus(), 60);
 }
@@ -11603,10 +11666,14 @@ function excelModelMetaCells(line, nHeuresSortie) {
   const esc = (s) => (s || '').replace(/"/g, '&quot;');
   const rs = EXCEL_ROWS_PER_BLOCK;
   const hBadge = excelModeleHeuresBadgeHtml(nHeuresSortie, saisieDate);
+  const rmBtn = line._added
+    ? '<button type="button" class="saisie-rm-added-btn" title="Supprimer cette ligne (ajoutée via + Chaîne)">×</button>'
+    : '';
+  const modeleCellCls = line._added ? 'modele-cell added-modele-cell' : 'modele-cell';
   return `
     <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-1"><input class="xs-inp txt" data-f="import" value="${esc(line.import)}" placeholder="—"></td>
     <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-2"><input class="xs-inp txt" data-f="client" value="${esc(line.client)}" placeholder="—"></td>
-    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-3 last-freeze modele-cell" data-modele-heures="${nHeuresSortie || ''}"><input class="xs-inp txt" data-f="modele" value="${esc(line.modele)}" placeholder="—">${hBadge}</td>
+    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-3 last-freeze ${modeleCellCls}" data-modele-heures="${nHeuresSortie || ''}"><div class="modele-cell-inner"><input class="xs-inp txt" data-f="modele" value="${esc(line.modele)}" placeholder="—">${rmBtn}</div>${hBadge}</td>
     <td rowspan="${rs}" class="merge-cell"><input class="xs-inp txt" data-f="chef" value="${esc(line.chef)}" placeholder="—"></td>`;
 }
 
@@ -13318,6 +13385,17 @@ document.getElementById('pin-input').addEventListener('keydown', (e) => { if (e.
 document.getElementById('pin-modal').addEventListener('click', (e) => { if (e.target.id === 'pin-modal') closePinModal(); });
 document.getElementById('saisie-fill-yesterday-btn').addEventListener('click', fillSaisieFromYesterday);
 document.getElementById('saisie-add-chain-btn').addEventListener('click', () => openSaisieAddModal());
+document.getElementById('excel-grid')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('.saisie-rm-added-btn');
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const tr = btn.closest('tr[data-rk]');
+  if (!tr?.dataset.rk) return;
+  const pipe = tr.dataset.rk.indexOf('|');
+  if (pipe < 0) return;
+  removeAddedSaisieLine(tr.dataset.rk.slice(0, pipe), tr.dataset.rk.slice(pipe + 1));
+});
 document.getElementById('saisie-add-cancel').addEventListener('click', closeSaisieAddModal);
 document.getElementById('saisie-add-confirm').addEventListener('click', confirmSaisieAddLine);
 document.getElementById('saisie-add-modal').addEventListener('click', (e) => { if (e.target.id === 'saisie-add-modal') closeSaisieAddModal(); });
