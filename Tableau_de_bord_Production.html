@@ -859,6 +859,17 @@ footer {
 .pin-modal .pin-actions .btn.primary { background: var(--grad-a); color: #fff; border-color: transparent; }
 .pin-modal .pin-error { color: var(--red); font-size: 11px; margin-top: 8px; text-align: center; font-weight: 700; min-height: 14px; }
 .pin-modal.wide { width: 400px; }
+.pin-modal.catalog-add-modal { width: 440px; }
+.catalog-add-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 12px;
+  margin-bottom: 4px;
+}
+.catalog-add-form .field { margin-bottom: 0; }
+@media (max-width: 520px) {
+  .catalog-add-form { grid-template-columns: 1fr; }
+}
 .pin-modal .field { margin-bottom: 12px; }
 .pin-modal .field label { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); margin-bottom: 5px; }
 .pin-modal .field input.pin-input,
@@ -1096,6 +1107,9 @@ footer {
   background: var(--surface-2);
 }
 .excel-saisie tr.r-entre td.lab-l { color: var(--accent); }
+.excel-saisie tbody tr.r-entre-no-qte td.h-cell-locked { background: rgba(148,163,184,0.1); }
+.excel-saisie input.h-inp-locked:disabled { cursor: not-allowed; opacity: 0.55; }
+.excel-saisie tbody tr.r-entre-no-qte td.lab-l { opacity: 0.78; }
 .excel-saisie tr.r-sortie td.lab-l { color: var(--green); }
 .excel-saisie tr.r-eff td.lab-l { color: var(--orange); }
 .excel-saisie tr.r-stag td.lab-l { color: var(--accent-3); }
@@ -2509,48 +2523,24 @@ table.prep-qte-table .prep-qte-ch-lab {
   max-width: 52px;
   text-align: center;
 }
-.prep-qte-table td.prep-qte-td-mod { min-width: 160px; }
-.prep-qte-table td.prep-qte-td-import {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-dim);
-  white-space: nowrap;
+.prep-qte-table input.prep-qte-inp[data-prep-qte-imp],
+.prep-qte-table input.prep-qte-inp[data-prep-qte-client] {
   min-width: 72px;
 }
-.prep-qte-table td.prep-qte-td-import.is-empty { color: var(--text-faint); font-weight: 600; }
+.prep-qte-table input.prep-qte-inp[data-prep-qte-desig] {
+  min-width: 120px;
+}
+.prep-qte-table td.prep-qte-td-mod { min-width: 140px; }
+.prep-qte-table td.prep-qte-td-import,
+.prep-qte-table td.prep-qte-td-client { min-width: 88px; }
+.prep-qte-table td.prep-qte-td-desig { min-width: 120px; }
 .md-catalog-card .card-sub { max-width: 56ch; }
-.md-catalog-form {
-  display: grid;
-  grid-template-columns: minmax(72px, 1fr) minmax(80px, 1.1fr) minmax(100px, 1.4fr) minmax(88px, 0.9fr) minmax(120px, 1.6fr) auto;
-  gap: 8px;
+.md-catalog-head-actions {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  margin-top: 12px;
+  gap: 10px;
 }
-.md-catalog-form .md-cat-add-btn {
-  justify-self: end;
-  min-width: 132px;
-}
-@media (max-width: 900px) {
-  .md-catalog-form { grid-template-columns: 1fr 1fr; }
-  .md-catalog-form .md-cat-add-btn { grid-column: 1 / -1; justify-self: stretch; justify-content: center; }
-}
-.md-cat-inp {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 700;
-  box-sizing: border-box;
-}
-.md-cat-inp-num { text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; }
-.md-catalog-table .md-cat-del-btn {
-  padding: 4px 10px;
-  font-size: 11px;
-}
-.md-cat-act-col { width: 72px; }
 .saisie-add-chain-mode {
   display: flex;
   flex-wrap: wrap;
@@ -4925,6 +4915,46 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     </div>
   </div>
 
+
+  <!-- Ajout ligne catalogue (onglet Modèles) -->
+  <div class="pin-modal-backdrop" id="md-catalog-add-modal">
+    <div class="pin-modal catalog-add-modal wide" role="dialog" aria-modal="true" aria-labelledby="md-catalog-add-title">
+      <h3 id="md-catalog-add-title">Ajouter une ligne</h3>
+      <p id="md-catalog-add-desc">Saisissez CH, IMPORT, CLIENT, MODELE, QTE PRÉVU et DESIGN, puis confirmez.</p>
+      <div class="catalog-add-form">
+        <div class="field">
+          <label for="md-add-chain">CH *</label>
+          <input type="number" id="md-add-chain" class="pin-input" min="1" max="20" placeholder="ex. 3" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="md-add-modele">MODELE *</label>
+          <input type="text" id="md-add-modele" class="pin-input" list="prep-qte-modele-dl" placeholder="Référence modèle" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="md-add-import">IMPORT</label>
+          <input type="text" id="md-add-import" class="pin-input" placeholder="Import" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="md-add-client">CLIENT</label>
+          <input type="text" id="md-add-client" class="pin-input" placeholder="Client" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="md-add-qte">QTE PRÉVU</label>
+          <input type="text" id="md-add-qte" class="pin-input" inputmode="numeric" placeholder="Quantité" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="md-add-desig">DESIGN</label>
+          <input type="text" id="md-add-desig" class="pin-input" placeholder="Désignation" autocomplete="off">
+        </div>
+      </div>
+      <div class="pin-error" id="md-catalog-add-error"></div>
+      <div class="pin-actions">
+        <button type="button" class="btn" id="md-catalog-add-cancel">Annuler</button>
+        <button type="button" class="btn primary" id="md-catalog-add-confirm">Ajouter</button>
+      </div>
+    </div>
+  </div>
+
   <!-- PIN modal -->
   <div class="pin-modal-backdrop" id="pin-modal">
     <div class="pin-modal" role="dialog" aria-modal="true" aria-labelledby="pin-title">
@@ -5575,41 +5605,62 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       <div class="pill-meta"><span class="dot"></span><span id="md-count">—</span></div>
     </div>
 
-    <div class="card row-gap md-catalog-card">
+    <div class="card row-gap md-catalog-card prep-qte-card">
       <div class="card-head">
         <div>
           <div class="card-title">Catalogue des modèles</div>
-          <div class="card-sub">Références utilisées par « + Chaîne » en Saisie — mois <span id="md-catalog-month-lbl">—</span></div>
+          <div class="card-sub">Chaîne + modèle — synchronisé avec la Saisie (« + Chaîne ») · mois <span id="md-catalog-month-lbl">—</span></div>
         </div>
-        <span class="tag cyan" id="md-catalog-count">0 modèle(s)</span>
+        <div class="md-catalog-head-actions">
+          <span class="tag cyan" id="md-catalog-count">0 ligne(s)</span>
+          <button type="button" class="prep-qte-add-btn" id="prep-qte-add-btn" title="Ajouter une ligne chaîne / modèle">
+            <span class="prep-qte-add-btn-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            </span>
+            <span class="prep-qte-add-btn-label">Ligne</span>
+          </button>
+        </div>
+      </div>
+      <div class="prep-qte-month-hint" id="prep-qte-month-hint" hidden>
+        Édition du mois <b id="prep-qte-month-hint-lbl">—</b> — la Saisie ouverte reste sur <b id="prep-qte-saisie-month-lbl">—</b>.
+      </div>
+      <div class="prep-qte-toolbar">
+        <div class="prep-qte-toolbar-left">
+          <div class="field prep-qte-field-month">
+            <label for="prep-qte-month">Mois</label>
+            <select id="prep-qte-month" title="Mois des quantités prévues"></select>
+          </div>
+          <div class="field prep-qte-field-period">
+            <label for="prep-qte-debut">Du</label>
+            <input type="date" id="prep-qte-debut" class="meth-rule-date" title="Début de période (journées Saisie)">
+          </div>
+          <div class="field prep-qte-field-period">
+            <label for="prep-qte-fin">Au</label>
+            <input type="date" id="prep-qte-fin" class="meth-rule-date" title="Fin de période (journées Saisie)">
+          </div>
+          <div class="prep-qte-search-wrap prep-qte-search-chain">
+            <input type="search" id="prep-qte-search-chain" placeholder="Chaîne…" autocomplete="off" title="N° chaîne ou Ch01…">
+          </div>
+          <div class="prep-qte-search-wrap prep-qte-search-modele">
+            <input type="search" id="prep-qte-search-modele" placeholder="Modèle…" autocomplete="off" title="Référence modèle">
+          </div>
+        </div>
       </div>
       <div class="prep-qte-table-wrap">
-        <table class="prep-qte-table md-catalog-table" id="md-catalog-table">
+        <table class="prep-qte-table md-catalog-table" id="prep-qte-table">
           <thead>
             <tr>
+              <th class="num">CH</th>
               <th>IMPORT</th>
               <th>CLIENT</th>
               <th>MODELE</th>
               <th class="num">QTE PRÉVU</th>
               <th>DESIGN</th>
-              <th class="num md-cat-act-col"></th>
             </tr>
           </thead>
-          <tbody id="md-catalog-tbody"></tbody>
+          <tbody></tbody>
         </table>
-      </div>
-      <div class="md-catalog-form">
-        <input type="text" id="md-cat-import" class="md-cat-inp" placeholder="IMPORT" autocomplete="off" title="Import">
-        <input type="text" id="md-cat-client" class="md-cat-inp" placeholder="CLIENT" autocomplete="off" title="Client">
-        <input type="text" id="md-cat-modele" class="md-cat-inp md-cat-inp-modele" placeholder="MODELE *" autocomplete="off" title="Référence modèle (obligatoire)">
-        <input type="text" id="md-cat-qte" class="md-cat-inp md-cat-inp-num" inputmode="numeric" placeholder="QTE PRÉVU" autocomplete="off" title="Quantité prévue">
-        <input type="text" id="md-cat-desig" class="md-cat-inp md-cat-inp-desig" placeholder="DESIGN" autocomplete="off" title="Désignation">
-        <button type="button" class="prep-qte-add-btn md-cat-add-btn" id="md-cat-add-btn" title="Ajouter une référence au catalogue du mois">
-          <span class="prep-qte-add-btn-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          </span>
-          <span class="prep-qte-add-btn-label">Ajouter</span>
-        </button>
+        <datalist id="prep-qte-modele-dl"></datalist>
       </div>
       <div class="pin-error" id="md-catalog-error"></div>
     </div>
@@ -5809,60 +5860,6 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       <div class="kpi"><div class="kpi-top"><div class="kpi-label">Σ EnC par pcs</div><div class="kpi-ic c3"></div></div><div class="kpi-value" id="pr-tissu">0</div><div class="kpi-foot">Encours pièces</div></div>
       <div class="kpi"><div class="kpi-top"><div class="kpi-label">Lignes actives</div><div class="kpi-ic c4"></div></div><div class="kpi-value" id="pr-doub">0</div><div class="kpi-foot">Chaînes · modèles</div></div>
       <div class="kpi"><div class="kpi-top"><div class="kpi-label">Σ Reste</div><div class="kpi-ic c5"></div></div><div class="kpi-value" id="pr-manque">0</div><div class="kpi-foot">Entrée/j − plan</div></div>
-    </div>
-
-    <div class="card row-gap prep-qte-card">
-      <div class="card-head">
-        <div>
-          <div class="card-title">Quantités prévues</div>
-          <div class="card-sub">Par mois — synchronisé avec la Saisie (chaîne + modèle) · filtrez par période pour les modèles actifs sur la chaîne</div>
-        </div>
-        <button type="button" class="prep-qte-add-btn" id="prep-qte-add-btn" title="Ajouter une ligne chaîne / modèle">
-          <span class="prep-qte-add-btn-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          </span>
-          <span class="prep-qte-add-btn-label">Ligne</span>
-        </button>
-      </div>
-      <div class="prep-qte-month-hint" id="prep-qte-month-hint" hidden>
-        Édition du mois <b id="prep-qte-month-hint-lbl">—</b> — la Saisie ouverte reste sur <b id="prep-qte-saisie-month-lbl">—</b>.
-      </div>
-      <div class="prep-qte-toolbar">
-        <div class="prep-qte-toolbar-left">
-          <div class="field prep-qte-field-month">
-            <label for="prep-qte-month">Mois</label>
-            <select id="prep-qte-month" title="Mois des quantités prévues"></select>
-          </div>
-          <div class="field prep-qte-field-period">
-            <label for="prep-qte-debut">Du</label>
-            <input type="date" id="prep-qte-debut" class="meth-rule-date" title="Début de période (journées Saisie)">
-          </div>
-          <div class="field prep-qte-field-period">
-            <label for="prep-qte-fin">Au</label>
-            <input type="date" id="prep-qte-fin" class="meth-rule-date" title="Fin de période (journées Saisie)">
-          </div>
-          <div class="prep-qte-search-wrap prep-qte-search-chain">
-            <input type="search" id="prep-qte-search-chain" placeholder="Chaîne…" autocomplete="off" title="N° chaîne ou Ch01…">
-          </div>
-          <div class="prep-qte-search-wrap prep-qte-search-modele">
-            <input type="search" id="prep-qte-search-modele" placeholder="Modèle…" autocomplete="off" title="Référence modèle">
-          </div>
-        </div>
-      </div>
-      <div class="prep-qte-table-wrap">
-        <table class="prep-qte-table" id="prep-qte-table">
-          <thead>
-            <tr>
-              <th class="num">Ch</th>
-              <th>IMPORT</th>
-              <th>Modèle</th>
-              <th class="num">Qté prévue</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <datalist id="prep-qte-modele-dl"></datalist>
-      </div>
     </div>
 
     <div class="g-wide row-gap">
@@ -6869,6 +6866,14 @@ function buildModelesCatalogFromProduction(month) {
       qte_prevu: v != null && !isNaN(v) ? Number(v) : null
     });
   }
+  const metaAll = typeof prepQteMetaStore === 'function' ? prepQteMetaStore() : {};
+  const metaMonth = metaAll[month] || {};
+  for (const k of Object.keys(metaMonth)) {
+    const p = typeof parsePrepPlanRowKey === 'function' ? parsePrepPlanRowKey(k) : null;
+    if (!p?.modele) continue;
+    const meta = metaMonth[k] || {};
+    touch({ modele: p.modele, import: meta.import || '', client: meta.client || '', desig: meta.desig || '' });
+  }
   return Array.from(byKey.values()).sort((a, b) => a.modele.localeCompare(b.modele, 'fr'));
 }
 function mergeCatalogEntryFromSource(target, src) {
@@ -6909,68 +6914,16 @@ function ensureModelesCatalogSeeded(month) {
 }
 function renderModeleCatalog(month) {
   ensureModelesCatalogSeeded(month);
-  const tbody = document.getElementById('md-catalog-tbody');
   const lbl = document.getElementById('md-catalog-month-lbl');
-  const cnt = document.getElementById('md-catalog-count');
-  if (!tbody) return;
-  const rows = getModelesCatalog(month);
   if (lbl) lbl.textContent = PRODUCTION[month]?.label || month;
-  if (cnt) cnt.textContent = rows.length + ' modèle(s)';
-  const esc = (s) => String(s ?? '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-  if (!rows.length) {
-    tbody.innerHTML = '<tr class="prep-qte-empty-row"><td colspan="6">Aucun modèle — complétez le formulaire ci-dessous.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = rows.map(r => `
-    <tr data-md-modele="${esc(r.modele)}">
-      <td>${r.import ? esc(r.import) : '—'}</td>
-      <td>${r.client ? esc(r.client) : '—'}</td>
-      <td><strong>${esc(r.modele)}</strong></td>
-      <td class="num">${r.qte_prevu != null ? fmtInt(r.qte_prevu) : '—'}</td>
-      <td>${r.desig ? esc(r.desig) : '—'}</td>
-      <td class="num"><button type="button" class="btn danger btn-xs md-cat-del-btn" data-md-del="${esc(r.modele)}">Suppr.</button></td>
-    </tr>`).join('');
-}
-function onModeleCatalogAdd() {
-  const err = document.getElementById('md-catalog-error');
-  const month = currentMonth;
-  if (!month || !PRODUCTION[month]) {
-    if (err) err.textContent = 'Mois invalide.';
-    return;
-  }
-  const msg = addModeleCatalogEntry(month, {
-    import: document.getElementById('md-cat-import')?.value,
-    client: document.getElementById('md-cat-client')?.value,
-    modele: document.getElementById('md-cat-modele')?.value,
-    qte_prevu: document.getElementById('md-cat-qte')?.value,
-    desig: document.getElementById('md-cat-desig')?.value
-  });
-  if (msg) {
-    if (err) err.textContent = msg;
-    return;
-  }
-  if (err) err.textContent = '';
-  ['md-cat-import', 'md-cat-client', 'md-cat-modele', 'md-cat-qte', 'md-cat-desig'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  renderModeleCatalog(month);
-  toast('Modèle ajouté au catalogue.');
-  document.getElementById('md-cat-modele')?.focus();
-}
-function onModeleCatalogTableClick(e) {
-  const btn = e.target.closest('[data-md-del]');
-  if (!btn) return;
-  const modele = btn.getAttribute('data-md-del');
-  if (!modele || !confirm('Retirer « ' + modele + ' » du catalogue ?')) return;
-  deleteModeleCatalogEntry(currentMonth, modele);
-  renderModeleCatalog(currentMonth);
-  toast('Modèle retiré du catalogue.');
 }
 
 // === MODELES ===
 function renderModeles(month) {
   renderModeleCatalog(month);
+  populatePrepQteMonthSelect(month);
+  populatePrepQtePeriodInputs(getPrepQteEditMonth(), true);
+  renderPrepQtePrevuTable(getPrepQteEditMonth());
   const ch = activeChains(month);
   const mmap = {};
   for (const c of ch) {
@@ -7202,6 +7155,20 @@ function getPrepQtePrevu(month, chain, modele) {
   if (v != null && v !== '' && !isNaN(v)) return Number(v);
   return null;
 }
+function resolveLineQtePrevu(month, line) {
+  if (!line) return null;
+  const stored = getPrepQtePrevu(month, line.chain, line.modele);
+  if (stored != null) return stored;
+  const lq = line.qte_prevu;
+  if (lq != null && lq !== '' && !isNaN(lq)) return Number(lq);
+  return null;
+}
+function lineHasQtePrevu(month, line) {
+  return resolveLineQtePrevu(month, line) != null;
+}
+function excelEntreeChaineLocked(line) {
+  return !lineHasQtePrevu(saisieMonth, line);
+}
 function setPrepQtePrevu(month, chain, modele, val) {
   const all = prepQtePrevuStore();
   if (!all[month]) all[month] = {};
@@ -7210,6 +7177,46 @@ function setPrepQtePrevu(month, chain, modele, val) {
   else all[month][k] = Number(val);
   savePrepQtePrevuStore(all);
 }
+function prepQteMetaStore() {
+  try { return JSON.parse(localStorage.getItem(PREP_QTE_META_STORAGE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function savePrepQteMetaStore(all) {
+  try { localStorage.setItem(PREP_QTE_META_STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
+}
+function getPrepQteMetaFieldStored(month, chain, modele, field) {
+  const k = prepPlanRowKey(chain, modele);
+  const row = prepQteMetaStore()[month]?.[k];
+  if (row && field in row) return String(row[field] ?? '').trim();
+  if (field === 'import') {
+    const legacy = prepQteImportStore()[month]?.[k];
+    if (legacy != null) return String(legacy).trim();
+  }
+  return null;
+}
+function setPrepQteMetaField(month, chain, modele, field, val) {
+  const all = prepQteMetaStore();
+  if (!all[month]) all[month] = {};
+  const k = prepPlanRowKey(chain, modele);
+  const txt = String(val ?? '').trim();
+  const cur = { ...(all[month][k] || {}) };
+  if (!txt) delete cur[field];
+  else cur[field] = txt;
+  if (!Object.keys(cur).length) delete all[month][k];
+  else all[month][k] = cur;
+  if (!Object.keys(all[month]).length) delete all[month];
+  savePrepQteMetaStore(all);
+}
+function prepQteImportStore() {
+  try { return JSON.parse(localStorage.getItem(PREP_QTE_IMPORT_STORAGE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function savePrepQteImportStore(all) {
+  try { localStorage.setItem(PREP_QTE_IMPORT_STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
+}
+function setPrepQteImport(month, chain, modele, val) { setPrepQteMetaField(month, chain, modele, 'import', val); }
+function setPrepQteClient(month, chain, modele, val) { setPrepQteMetaField(month, chain, modele, 'client', val); }
+function setPrepQteDesig(month, chain, modele, val) { setPrepQteMetaField(month, chain, modele, 'desig', val); }
 function prepQteExtraRowsStore() {
   try { return JSON.parse(localStorage.getItem(PREP_QTE_EXTRA_ROWS_KEY) || '{}'); }
   catch (e) { return {}; }
@@ -7329,6 +7336,28 @@ function migratePrepQteRowKeys(month, oldChain, oldModele, newChain, newModele) 
     if (newChain && newModele) pAll[month][nk] = pv;
     savePrepQtePeriodStore(pAll);
   }
+  const iAll = prepQteImportStore();
+  if (iAll[month] && ok in iAll[month]) {
+    const iv = iAll[month][ok];
+    delete iAll[month][ok];
+    if (newChain && newModele) {
+      if (!iAll[month]) iAll[month] = {};
+      iAll[month][nk] = iv;
+    }
+    if (!Object.keys(iAll[month] || {}).length) delete iAll[month];
+    savePrepQteImportStore(iAll);
+  }
+  const mAll = prepQteMetaStore();
+  if (mAll[month] && ok in mAll[month]) {
+    const mv = mAll[month][ok];
+    delete mAll[month][ok];
+    if (newChain && newModele) {
+      if (!mAll[month]) mAll[month] = {};
+      mAll[month][nk] = mv;
+    }
+    if (!Object.keys(mAll[month] || {}).length) delete mAll[month];
+    savePrepQteMetaStore(mAll);
+  }
 }
 function findProductionQtePrevuSeed(month, chain, modele) {
   const info = PRODUCTION[month];
@@ -7343,10 +7372,12 @@ function findProductionQtePrevuSeed(month, chain, modele) {
   }
   return null;
 }
-/** Applique les qtés prévues du plan sur toutes les lignes du mois (grille Saisie). */
+/** Applique qtés prévues et métadonnées catalogue sur toutes les lignes du mois (grille Saisie). */
 function applyPrepQtePrevuToMonth(month) {
   const info = PRODUCTION[month];
   if (!info) return;
+  const metaAll = prepQteMetaStore()[month] || {};
+  const impLegacy = prepQteImportStore()[month] || {};
   for (const d of info.daily_sheets || []) {
     for (const line of info.daily[d] || []) {
       if (!isActiveProductionRow(line) || !line.modele) continue;
@@ -7355,6 +7386,15 @@ function applyPrepQtePrevuToMonth(month) {
       else {
         const seed = findProductionQtePrevuSeed(month, line.chain, line.modele);
         if (seed != null) line.qte_prevu = seed;
+      }
+      const rk = prepPlanRowKey(line.chain, line.modele);
+      const meta = metaAll[rk];
+      if (meta) {
+        if ('import' in meta) line.import = meta.import;
+        if ('client' in meta) line.client = meta.client;
+        if ('desig' in meta) line.desig = meta.desig;
+      } else if (rk in impLegacy) {
+        line.import = impLegacy[rk];
       }
     }
   }
@@ -7429,7 +7469,7 @@ function syncPrepQteAfterSaisieChange(month, chain, modele, refDate) {
   if (!month || !chain || !modele) return;
   if (refDate) autoClosePrepQtePeriods(month, refDate);
   applyPrepQtePrevuToMonth(month);
-  if (getPrepQteEditMonth() === month) renderPrepQtePrevuTable(month);
+  if (getPrepQteEditMonth() === month && currentPage === 'modeles') renderPrepQtePrevuTable(month);
 }
 function getAddLineDebutFr() {
   const el = document.getElementById('add-line-debut');
@@ -7556,13 +7596,12 @@ function prepQteDateInPeriod(dateStr, fDebut, fFin) {
   if (fFin && compareFrDate(dateStr, fFin) > 0) return false;
   return true;
 }
-/** Dernier IMPORT saisi en grille pour ce couple chaîne / modèle (filtre période toolbar). */
-function findPrepQteImport(month, chain, modele) {
+function findPrepQteFieldFromSaisie(month, chain, modele, pickFn) {
   const mod = ((modele || '') + '').trim();
   if (!mod || !chain) return '';
   const fDeb = getPrepQteFilterDateFr('debut');
   const fFin = getPrepQteFilterDateFr('fin');
-  let imp = '';
+  let val = '';
   for (const d of PRODUCTION[month]?.daily_sheets || []) {
     if (fDeb && compareFrDate(d, fDeb) < 0) continue;
     if (fFin && compareFrDate(d, fFin) > 0) continue;
@@ -7570,11 +7609,26 @@ function findPrepQteImport(month, chain, modele) {
       if (Number(line.chain) !== Number(chain)) continue;
       if (((line.modele || '') + '').trim() !== mod) continue;
       if (!isActiveProductionRow(line)) continue;
-      const v = ((line.import || '') + '').trim();
-      if (v) imp = v;
+      const v = pickFn(line);
+      if (v) val = v;
     }
   }
-  return imp;
+  return val;
+}
+function resolvePrepQteImport(month, chain, modele) {
+  const stored = getPrepQteMetaFieldStored(month, chain, modele, 'import');
+  if (stored != null) return stored;
+  return findPrepQteFieldFromSaisie(month, chain, modele, line => ((line.import || '') + '').trim());
+}
+function resolvePrepQteClient(month, chain, modele) {
+  const stored = getPrepQteMetaFieldStored(month, chain, modele, 'client');
+  if (stored != null) return stored;
+  return findPrepQteFieldFromSaisie(month, chain, modele, line => ((line.client || line.client_norm || '') + '').trim());
+}
+function resolvePrepQteDesig(month, chain, modele) {
+  const stored = getPrepQteMetaFieldStored(month, chain, modele, 'desig');
+  if (stored != null) return stored;
+  return findPrepQteFieldFromSaisie(month, chain, modele, line => ((line.desig || '') + '').trim());
 }
 function renderPrepQtePrevuTable(month) {
   const tbody = document.querySelector('#prep-qte-table tbody');
@@ -7593,12 +7647,16 @@ function renderPrepQtePrevuTable(month) {
   }
   const allRows = collectPrepQtePrevuRows(month);
   const rows = filterPrepQtePrevuRows(allRows, month);
+  const lbl = document.getElementById('md-catalog-month-lbl');
+  const cnt = document.getElementById('md-catalog-count');
+  if (lbl) lbl.textContent = PRODUCTION[month]?.label || month;
+  if (cnt) cnt.textContent = rows.filter(r => !r.draft).length + ' ligne(s)';
   tbody.innerHTML = '';
   if (!rows.length) {
     const msg = allRows.length
       ? 'Aucun résultat pour cette période ou ces filtres — élargissez la plage de dates.'
       : 'Aucune ligne sur cette période — ajoutez un modèle dans la Saisie ou « + Ligne » pour saisir la qté.';
-    tbody.innerHTML = '<tr class="prep-qte-empty-row"><td colspan="4">' + msg + '</td></tr>';
+    tbody.innerHTML = '<tr class="prep-qte-empty-row"><td colspan="6">' + msg + '</td></tr>';
     return;
   }
   const esc = (s) => String(s ?? '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -7606,7 +7664,9 @@ function renderPrepQtePrevuTable(month) {
     const stored = getPrepQtePrevu(month, r.chain, r.modele);
     const seed = stored != null ? stored : findProductionQtePrevuSeed(month, r.chain, r.modele);
     const val = seed != null ? fmtInt(seed) : '';
-    const imp = findPrepQteImport(month, r.chain, r.modele);
+    const imp = resolvePrepQteImport(month, r.chain, r.modele);
+    const client = resolvePrepQteClient(month, r.chain, r.modele);
+    const desig = resolvePrepQteDesig(month, r.chain, r.modele);
     const tr = document.createElement('tr');
     if (r.fromSaisie) tr.classList.add('prep-qte-from-saisie');
     tr.dataset.chain = r.chain ? String(r.chain) : '';
@@ -7615,16 +7675,27 @@ function renderPrepQtePrevuTable(month) {
     tr.innerHTML = `
       <td class="num prep-qte-td-ch">
         <input type="number" class="prep-qte-inp" data-prep-qte-ch="1" min="1" max="${METH_CHAIN_COUNT}"${chAttr}
-          placeholder="Ch" title="N° chaîne (1–20)" autocomplete="off">
+          placeholder="CH" title="N° chaîne (1–20)" autocomplete="off">
       </td>
-      <td class="prep-qte-td-import${imp ? '' : ' is-empty'}" title="Import — lu depuis la grille Saisie">${imp ? esc(imp) : '—'}</td>
+      <td class="prep-qte-td-import">
+        <input type="text" class="prep-qte-inp" data-prep-qte-imp="1"
+          value="${esc(imp)}" placeholder="IMPORT" title="Import" autocomplete="off">
+      </td>
+      <td class="prep-qte-td-client">
+        <input type="text" class="prep-qte-inp" data-prep-qte-client="1"
+          value="${esc(client)}" placeholder="CLIENT" title="Client" autocomplete="off">
+      </td>
       <td class="prep-qte-td-mod">
         <input type="text" class="prep-qte-inp" data-prep-qte-mod="1" list="prep-qte-modele-dl"
-          value="${esc(r.modele)}" placeholder="Modèle" autocomplete="off">
+          value="${esc(r.modele)}" placeholder="MODELE" title="Référence modèle" autocomplete="off">
       </td>
       <td class="num">
         <input type="text" class="prep-qte-inp" inputmode="numeric" data-prep-qte-val="1"
-          value="${val}" placeholder="—" autocomplete="off">
+          value="${val}" placeholder="QTE PRÉVU" title="Quantité prévue" autocomplete="off">
+      </td>
+      <td class="prep-qte-td-desig">
+        <input type="text" class="prep-qte-inp" data-prep-qte-desig="1"
+          value="${esc(desig)}" placeholder="DESIGN" title="Désignation" autocomplete="off">
       </td>`;
     tbody.appendChild(tr);
   }
@@ -7640,11 +7711,14 @@ function commitPrepQteRow(tr) {
   migratePrepQteRowKeys(month, oldChain, oldModele, chain, modele);
   const val = parseNumFr(tr.querySelector('[data-prep-qte-val]')?.value);
   setPrepQtePrevu(month, chain, modele, val);
+  setPrepQteImport(month, chain, modele, (tr.querySelector('[data-prep-qte-imp]')?.value || '').trim());
+  setPrepQteClient(month, chain, modele, (tr.querySelector('[data-prep-qte-client]')?.value || '').trim());
+  setPrepQteDesig(month, chain, modele, (tr.querySelector('[data-prep-qte-desig]')?.value || '').trim());
   tr.dataset.chain = String(chain);
   tr.dataset.modele = modele;
   prunePrepQteExtraRow(month, chain, modele);
   applyPrepQtePrevuToMonth(month);
-  if (currentPage === 'prep') {
+  if (currentPage === 'modeles') {
     renderPrepQtePrevuTable(month);
     updatePrepQteMonthHint();
   }
@@ -7658,20 +7732,82 @@ function commitPrepQteRow(tr) {
 }
 function onPrepQtePrevuInput(e) {
   const t = e.target;
-  if (!t?.dataset?.prepQteCh && !t?.dataset?.prepQteMod && !t?.dataset?.prepQteVal) return;
+  if (!t?.dataset?.prepQteCh && !t?.dataset?.prepQteMod && !t?.dataset?.prepQteVal && !t?.dataset?.prepQteImp && !t?.dataset?.prepQteClient && !t?.dataset?.prepQteDesig) return;
   commitPrepQteRow(t.closest('tr'));
 }
-function onPrepQteAddRow() {
-  const month = getPrepQteEditMonth();
-  const all = prepQteExtraRowsStore();
-  if (!all[month]) all[month] = [];
-  all[month].push({ chain: '', modele: '' });
-  savePrepQteExtraRowsStore(all);
-  renderPrepQtePrevuTable(month);
-  const tbody = document.querySelector('#prep-qte-table tbody');
-  const last = tbody?.querySelector('tr:last-child [data-prep-qte-ch]');
-  last?.focus();
+function prepQteCatalogRowExists(month, chain, modele) {
+  const k = prepPlanRowKey(chain, modele);
+  if (prepQtePrevuStore()[month]?.[k] != null) return true;
+  if (prepQteMetaStore()[month]?.[k]) return true;
+  if (prepQtePeriodStore()[month]?.[k]) return true;
+  const mod = ((modele || '') + '').trim();
+  for (const d of PRODUCTION[month]?.daily_sheets || []) {
+    for (const line of PRODUCTION[month].daily[d] || []) {
+      if (Number(line.chain) === Number(chain) && ((line.modele || '') + '').trim() === mod && isActiveProductionRow(line)) return true;
+    }
+  }
+  return false;
 }
+function upsertModeleCatalogFromRow(month, fields) {
+  const modele = (fields.modele || '').trim();
+  if (!modele) return;
+  ensureModelesCatalogSeeded(month);
+  let rows = getModelesCatalog(month);
+  let entry = findCatalogEntry(month, modele);
+  if (!entry) {
+    rows.push({ import: fields.import || '', client: fields.client || '', modele, qte_prevu: fields.qte_prevu ?? null, desig: fields.desig || '' });
+    rows.sort((a, b) => a.modele.localeCompare(b.modele, 'fr'));
+    setModelesCatalog(month, rows);
+  } else {
+    mergeCatalogEntryFromSource(entry, fields);
+    setModelesCatalog(month, rows);
+  }
+}
+function openPrepQteAddModal() {
+  const month = getPrepQteEditMonth();
+  if (!month || !PRODUCTION[month]) { toast('Mois invalide.', true); return; }
+  document.getElementById('md-catalog-add-error').textContent = '';
+  ['md-add-chain', 'md-add-import', 'md-add-client', 'md-add-modele', 'md-add-qte', 'md-add-desig'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  const desc = document.getElementById('md-catalog-add-desc');
+  if (desc) desc.textContent = 'Mois ' + (PRODUCTION[month]?.label || month) + ' — saisissez CH, IMPORT, CLIENT, MODELE, QTE PRÉVU et DESIGN.';
+  document.getElementById('md-catalog-add-modal').classList.add('open');
+  setTimeout(() => document.getElementById('md-add-chain')?.focus(), 60);
+}
+function closePrepQteAddModal() {
+  document.getElementById('md-catalog-add-modal')?.classList.remove('open');
+}
+function confirmPrepQteAddLine() {
+  const err = document.getElementById('md-catalog-add-error');
+  const month = getPrepQteEditMonth();
+  const chain = Number(document.getElementById('md-add-chain')?.value);
+  const modele = (document.getElementById('md-add-modele')?.value || '').trim();
+  const imp = (document.getElementById('md-add-import')?.value || '').trim();
+  const client = (document.getElementById('md-add-client')?.value || '').trim();
+  const qte = parseNumFr(document.getElementById('md-add-qte')?.value);
+  const desig = (document.getElementById('md-add-desig')?.value || '').trim();
+  if (!chain || isNaN(chain) || chain < 1 || chain > METH_CHAIN_COUNT) {
+    err.textContent = 'Indiquez un n° de chaîne valide (1–' + METH_CHAIN_COUNT + ').';
+    return;
+  }
+  if (!modele) { err.textContent = 'Indiquez la référence MODELE.'; return; }
+  if (prepQteCatalogRowExists(month, chain, modele)) {
+    err.textContent = 'Ch' + String(chain).padStart(2, '0') + ' · ' + modele + ' existe déjà dans le catalogue.';
+    return;
+  }
+  setPrepQteImport(month, chain, modele, imp);
+  setPrepQteClient(month, chain, modele, client);
+  setPrepQteDesig(month, chain, modele, desig);
+  if (qte != null && !isNaN(qte)) setPrepQtePrevu(month, chain, modele, qte);
+  upsertModeleCatalogFromRow(month, { import: imp, client, modele, qte_prevu: qte, desig });
+  applyPrepQtePrevuToMonth(month);
+  closePrepQteAddModal();
+  renderPrepQtePrevuTable(month);
+  if (saisieMonth === month && saisieDate) { buildSaisieBody(); refreshSummaryStrip(); }
+  toast('Ligne ajoutée : Ch' + String(chain).padStart(2, '0') + ' · ' + modele);
+}
+function onPrepQteAddRow() { openPrepQteAddModal(); }
 function getPrepPlanHoursJour(dateStr) {
   if (dateStr) return getJourHeuresConfig(dateStr).h;
   return 8.75;
@@ -7744,7 +7880,6 @@ function onPrepPlanDateChange() {
   const sel = document.getElementById('prep-filter-date');
   if (!sel?.value) return;
   setPrepPlanSelectedDate(currentMonth, sel.value);
-  if (getPrepQteEditMonth() === currentMonth) populatePrepQtePeriodInputs(currentMonth, true);
   renderPrep(currentMonth);
 }
 /** Prépare la ligne comme buildSaisieBody (overrides + feuille Excel). */
@@ -7966,8 +8101,6 @@ function onPrepPlanObjInput(e) {
 function renderPrep(month) {
   populatePrepPlanDateSelect(month);
   applyPrepQtePrevuToMonth(month);
-  populatePrepQteMonthSelect(month);
-  renderPrepQtePrevuTable(getPrepQteEditMonth());
   const enc = PRODUCTION[month].encours || [];
   const { rows: planRows, lastDate, hJour } = collectPrepPlanRows(month);
   let plan = 0, tissu = 0, doub = 0, manque = 0;
@@ -9237,6 +9370,8 @@ const SAISIE_STORAGE_KEY = 'prodH-saisie-overrides-v1';
 const METH_RULES_STORAGE_KEY = 'prodH-meth-rules-v1';
 const PREP_PLAN_OBJ_STORAGE_KEY = 'prodH-prep-plan-obj-v1';
 const PREP_QTE_PREVU_STORAGE_KEY = 'prodH-prep-qte-prevu-v1';
+const PREP_QTE_IMPORT_STORAGE_KEY = 'prodH-prep-qte-import-v1';
+const PREP_QTE_META_STORAGE_KEY = 'prodH-prep-qte-meta-v1';
 const PREP_QTE_EXTRA_ROWS_KEY = 'prodH-prep-qte-extra-v1';
 const PREP_QTE_PERIOD_STORAGE_KEY = 'prodH-prep-qte-period-v1';
 const MODELES_CATALOG_STORAGE_KEY = 'prodH-modeles-catalog-v1';
@@ -10672,6 +10807,9 @@ function confirmSaisieAddLine() {
   }
   registerAddedLine(line);
   if (catalog.qte_prevu != null) setPrepQtePrevu(saisieMonth, chain, modele, catalog.qte_prevu);
+  if (catalog.import) setPrepQteImport(saisieMonth, chain, modele, catalog.import);
+  if (catalog.client) setPrepQteClient(saisieMonth, chain, modele, catalog.client);
+  if (catalog.desig) setPrepQteDesig(saisieMonth, chain, modele, catalog.desig);
   setPrepQtePeriod(saisieMonth, chain, modele, dateDebut, '');
   closeSaisieAddModal();
   syncMonthProductionMetrics(saisieMonth);
@@ -11743,12 +11881,19 @@ function excelMethodesBlockCell(line, c) {
     </td>`;
 }
 
-function excelHourCells(field, hours) {
+function excelHourCells(field, hours, opts) {
+  opts = opts || {};
+  const locked = !!opts.locked;
   const n = excelTotalHourCount();
+  const lockTitle = 'Qté prévue requise — renseignez le Catalogue modèles';
   return Array.from({ length: n }, (_, i) => {
     const v = hours[i];
     const val = v != null && v !== '' ? v : '';
-    return `<td class="h-cell"><input class="xs-inp excel-h-inp" type="number" data-f="${field}" data-i="${i}" value="${val}"></td>`;
+    const dis = locked ? ' disabled readonly tabindex="-1"' : '';
+    const tdCls = locked ? 'h-cell h-cell-locked' : 'h-cell';
+    const inpCls = locked ? 'xs-inp excel-h-inp h-inp-locked' : 'xs-inp excel-h-inp';
+    const title = locked ? ` title="${lockTitle}"` : '';
+    return `<td class="${tdCls}"><input class="${inpCls}" type="number" data-f="${field}" data-i="${i}" value="${val}"${dis}${title}></td>`;
   }).join('');
 }
 
@@ -11884,7 +12029,8 @@ function buildSaisieBody() {
       // Row 0 - Entre Chaine
       const tr0 = document.createElement('tr');
       const addedCls = line._added ? ' block-added-model' : '';
-      tr0.className = 'r-entre block-sep' + (lineIndexInChain === 0 ? ' block-sep-chain' : ' block-sep-model') + addedCls;
+      const entreLocked = excelEntreeChaineLocked(line);
+      tr0.className = 'r-entre block-sep' + (lineIndexInChain === 0 ? ' block-sep-chain' : ' block-sep-model') + addedCls + (entreLocked ? ' r-entre-no-qte' : '');
       tr0.dataset.rk = rowKey;
       tr0.dataset.chain = chainNo;
       tr0.innerHTML = `
@@ -11893,8 +12039,8 @@ function buildSaisieBody() {
         ${excelQtePrevuCell(line, c)}
         ${excelDesigCell(line)}
         ${excelMethodesBlockCell(line, c)}
-        <td class="lab-l">Entre Chaine</td>
-        ${excelHourCells('r0h', c.r0h)}
+        <td class="lab-l"${entreLocked ? ' title="Qté prévue requise — renseignez le Catalogue modèles"' : ''}>Entre Chaine</td>
+        ${excelHourCells('r0h', c.r0h, { locked: entreLocked })}
         ${excelEcartXFusionCell(c)}
         <td class="calc calc-moy" data-r="r0_moy">${fmtMoyCell(c.moyEntre)}</td>
         <td class="calc-2" data-r="r0_total">${fmtNumX(c.totalEntre)}</td>
@@ -12486,7 +12632,8 @@ const EXCEL_HOUR_FIELD_MAP = {
 
 function excelIsHourInp(el) {
   return el && el.classList && el.classList.contains('excel-h-inp')
-    && EXCEL_HOUR_FIELDS.includes(el.dataset.f);
+    && EXCEL_HOUR_FIELDS.includes(el.dataset.f)
+    && !el.disabled;
 }
 
 function excelHourCoords(inp) {
@@ -12531,8 +12678,12 @@ function excelEnsureHourArray(line, field) {
 }
 
 function applyExcelHourValue(line, field, idx, v, opts) {
-  if (!line || !EXCEL_HOUR_FIELDS.includes(field)) return;
+  if (!line || !EXCEL_HOUR_FIELDS.includes(field)) return false;
   opts = opts || {};
+  if (field === 'r0h' && excelEntreeChaineLocked(line)) {
+    if (!opts.silent) toast('Entrée chaîne bloquée — renseignez d\'abord la qté prévue (Catalogue modèles).', true);
+    return false;
+  }
   const arr = excelEnsureHourArray(line, field);
   arr[idx] = v;
   if (field === 'r0h') line.entre_total = _sumArr(line.hours_entry);
@@ -12544,6 +12695,7 @@ function applyExcelHourValue(line, field, idx, v, opts) {
     const inp = excelGetHourInp(line._rowKey, field, idx);
     if (inp) inp.classList.add('dirty');
   }
+  return true;
 }
 
 function flushExcelHourBatch(lines) {
@@ -12715,7 +12867,8 @@ function excelApplyFill(extRect, srcRect) {
     const v = grid[rowIdx][colIdx];
     const line = excelGetLineByRk(c.rk);
     if (!line) return;
-    applyExcelHourValue(line, c.field, c.idx, v, { markDirty: true, skipRefresh: true });
+    if (c.field === 'r0h' && excelEntreeChaineLocked(line)) return;
+    if (!applyExcelHourValue(line, c.field, c.idx, v, { markDirty: true, skipRefresh: true, silent: true })) return;
     const inp = excelGetHourInp(c.rk, c.field, c.idx);
     if (inp) inp.value = v != null ? v : '';
     touched.add(line);
@@ -12795,7 +12948,8 @@ function excelPasteAt(anchor, text) {
       }
       const line = excelGetLineByRk(rk);
       if (!line) continue;
-      applyExcelHourValue(line, field, idx, v, { markDirty: true, skipRefresh: true });
+      if (field === 'r0h' && excelEntreeChaineLocked(line)) continue;
+      if (!applyExcelHourValue(line, field, idx, v, { markDirty: true, skipRefresh: true, silent: true })) continue;
       const inp = excelGetHourInp(rk, field, idx);
       if (inp) inp.value = v != null ? v : '';
       touched.add(line);
@@ -12821,7 +12975,8 @@ function excelClearSelectedValues() {
     const c = excelParseCellKey(k);
     const line = excelGetLineByRk(c.rk);
     if (!line) continue;
-    applyExcelHourValue(line, c.field, c.idx, null, { markDirty: true, skipRefresh: true });
+    if (c.field === 'r0h' && excelEntreeChaineLocked(line)) continue;
+    if (!applyExcelHourValue(line, c.field, c.idx, null, { markDirty: true, skipRefresh: true, silent: true })) continue;
     const inp = excelGetHourInp(c.rk, c.field, c.idx);
     if (inp) inp.value = '';
     touched.add(line);
@@ -12869,7 +13024,7 @@ function initExcelHourInteractions() {
     if (e.shiftKey && excelHourSel.anchor) {
       excelSetSelection(excelHourSel.anchor, coords);
     } else {
-      excelSetSelection(coords, coords);g
+      excelSetSelection(coords, coords);
       excelHourSel.dragging = true;
     }
   }, true);
@@ -13248,7 +13403,7 @@ function saveSaisie() {
   else delete dayOv.__added;
   saveSaisieOverrides(overrides);
   syncMonthProductionMetrics(saisieMonth);
-  if (autoClosePrepQtePeriods(saisieMonth, saisieDate) && getPrepQteEditMonth() === saisieMonth) {
+  if (autoClosePrepQtePeriods(saisieMonth, saisieDate) && getPrepQteEditMonth() === saisieMonth && currentPage === 'modeles') {
     renderPrepQtePrevuTable(saisieMonth);
   }
   document.querySelectorAll('#excel-grid-body .dirty').forEach(i => i.classList.remove('dirty'));
@@ -13353,7 +13508,7 @@ document.getElementById('saisie-date').addEventListener('change', (e) => {
   saisieDate = e.target.value;
   if (saisieMonth && saisieDate) {
     autoClosePrepQtePeriods(saisieMonth, saisieDate);
-    if (getPrepQteEditMonth() === saisieMonth) renderPrepQtePrevuTable(saisieMonth);
+    if (getPrepQteEditMonth() === saisieMonth && currentPage === 'modeles') renderPrepQtePrevuTable(saisieMonth);
   }
   syncSaisiePartialHeureSelect();
   updateLockBadges();
@@ -13410,13 +13565,6 @@ document.getElementById('saisie-added-lines-list')?.addEventListener('click', (e
   const row = getAddedLinesForDay()[Number(btn.getAttribute('data-saisie-rm-idx'))];
   if (row) removeAddedSaisieLine(row.chain, row.modele);
 });
-document.getElementById('md-cat-add-btn')?.addEventListener('click', onModeleCatalogAdd);
-document.getElementById('md-catalog-table')?.addEventListener('click', onModeleCatalogTableClick);
-['md-cat-modele', 'md-cat-qte'].forEach(id => {
-  document.getElementById(id)?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') onModeleCatalogAdd();
-  });
-});
 document.getElementById('meth-rule-save-btn')?.addEventListener('click', () => saveMethRuleFromForm(currentMonth));
 document.getElementById('meth-rule-new-btn')?.addEventListener('click', () => {
   resetMethRuleForm(currentMonth, true);
@@ -13449,6 +13597,12 @@ document.getElementById('prep-table')?.addEventListener('keydown', (e) => {
 document.getElementById('prep-filter-date')?.addEventListener('change', onPrepPlanDateChange);
 document.getElementById('prep-qte-table')?.addEventListener('change', onPrepQtePrevuInput);
 document.getElementById('prep-qte-add-btn')?.addEventListener('click', onPrepQteAddRow);
+document.getElementById('md-catalog-add-cancel')?.addEventListener('click', closePrepQteAddModal);
+document.getElementById('md-catalog-add-confirm')?.addEventListener('click', confirmPrepQteAddLine);
+document.getElementById('md-catalog-add-modal')?.addEventListener('click', (e) => { if (e.target.id === 'md-catalog-add-modal') closePrepQteAddModal(); });
+['md-add-chain', 'md-add-modele', 'md-add-qte'].forEach(id => {
+  document.getElementById(id)?.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmPrepQteAddLine(); });
+});
 document.getElementById('prep-qte-month')?.addEventListener('change', () => {
   populatePrepQtePeriodInputs(getPrepQteEditMonth(), true);
   renderPrepQtePrevuTable();
