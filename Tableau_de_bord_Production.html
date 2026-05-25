@@ -11854,7 +11854,7 @@ function calcSaisieChainDisplayValues(month, date, chainLines) {
     } else if (previousFinished) {
       c1 = sortieCurrent - ((d1 - ohl) * phCurrent);
     } else if (Math.abs(prevC) < 0.0001) {
-      c1 = -((d1 - ohl) * phCurrent);
+      c1 = sortieCurrent - ((d1 - ohl) * phCurrent);
     } else {
       c1 = sortieCurrent - (phCurrent * (h - (sortieCurrent / phCurrent)));
     }
