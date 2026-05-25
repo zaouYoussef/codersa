@@ -9414,7 +9414,8 @@ const PREP_QTE_EXTRA_ROWS_KEY = 'prodH-prep-qte-extra-v1';
 const PREP_QTE_PERIOD_STORAGE_KEY = 'prodH-prep-qte-period-v1';
 const MODELES_CATALOG_STORAGE_KEY = 'prodH-modeles-catalog-v1';
 const METH_CHAIN_COUNT = 20;
-const METH_DEFAULT_OHL = 6.5;
+const METH_DEFAULT_OHL = 1;
+const METH_OLD_DEFAULT_OHL = 6.5;
 let methRuleEditId = null;
 /** Jour affiché sur Plan de préparation (par mois). */
 const prepPlanDates = {};
@@ -9460,7 +9461,7 @@ function ensureMethRulesOhlDefault(rules) {
         (ce.eff != null && ce.eff !== '' && !isNaN(ce.eff)) ||
         (ce.ohl != null && ce.ohl !== '' && !isNaN(ce.ohl));
       if (!hasAny) continue;
-      if (ce.ohl == null || ce.ohl === '' || isNaN(ce.ohl)) {
+      if (ce.ohl == null || ce.ohl === '' || isNaN(ce.ohl) || Number(ce.ohl) === METH_OLD_DEFAULT_OHL) {
         chains[ch] = { ...ce, ohl: METH_DEFAULT_OHL };
         chainsChanged = true;
         changed = true;
