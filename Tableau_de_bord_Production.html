@@ -215,10 +215,27 @@ header.topbar {
   max-width: 1500px;
   margin: 0 auto;
   padding: 0 24px 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-2) transparent;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
 }
-.tabs-row::-webkit-scrollbar { display: none; }
+.tabs-row::-webkit-scrollbar {
+  display: block;
+  height: 8px;
+}
+.tabs-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+.tabs-row::-webkit-scrollbar-thumb {
+  background: var(--border-2);
+  border-radius: 999px;
+}
+.tabs-row::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
+}
 .tabs {
   display: inline-flex;
   gap: 2px;
@@ -227,6 +244,7 @@ header.topbar {
   border-radius: 12px;
   padding: 3px;
   min-width: max-content;
+  width: max-content;
 }
 .tab {
   appearance: none; border: 0;
@@ -1140,6 +1158,40 @@ footer {
   font-size: 13px;
 }
 .excel-saisie td.merge-cell input.xs-inp.txt { text-align: center; font-size: 15px; }
+.excel-saisie td.excel-col-import,
+.excel-saisie td.excel-col-client {
+  min-width: 64px;
+  width: 64px;
+  max-width: 64px;
+}
+.excel-saisie td.excel-col-import {
+  min-width: 74px;
+  width: 74px;
+  max-width: 74px;
+}
+.excel-saisie td.excel-col-modele {
+  min-width: 124px;
+  width: 124px;
+  max-width: 124px;
+}
+.excel-saisie td.excel-col-qte {
+  min-width: 68px;
+  width: 68px;
+  max-width: 68px;
+}
+.excel-saisie td.excel-col-desig {
+  min-width: 72px;
+  width: 72px;
+  max-width: 72px;
+}
+.excel-saisie td.excel-col-import input.xs-inp,
+.excel-saisie td.excel-col-client input.xs-inp,
+.excel-saisie td.excel-col-modele input.xs-inp,
+.excel-saisie td.excel-col-desig input.xs-inp {
+  font-size: 12px;
+  padding-left: 2px;
+  padding-right: 2px;
+}
 .excel-saisie td.merge-cell.desig-cell input.xs-inp.txt {
   text-align: center;
   font-weight: 600;
@@ -11971,12 +12023,12 @@ function buildSaisieHeader() {
   const tr = document.createElement('tr');
   tr.innerHTML = `
     <th style="min-width:50px" class="excel-freeze excel-freeze-0">CH</th>
-    <th style="min-width:80px" class="excel-freeze excel-freeze-1">IMPORT</th>
-    <th style="min-width:80px" class="excel-freeze excel-freeze-2">CLIENT</th>
-    <th style="min-width:130px" class="excel-freeze excel-freeze-3 last-freeze">MODELE</th>
-    <th style="min-width:90px">CHEF DE CHAÎNE</th>
-    <th style="min-width:80px">QTE PRÉVU</th>
-    <th style="min-width:90px">DESIGN</th>
+    <th style="min-width:74px;width:74px" class="excel-freeze excel-freeze-1">IMPORT</th>
+    <th style="min-width:64px;width:64px" class="excel-freeze excel-freeze-2">CLIENT</th>
+    <th style="min-width:124px;width:124px" class="excel-freeze excel-freeze-3 last-freeze">MODELE</th>
+    <th style="min-width:82px;width:82px">CHEF</th>
+    <th style="min-width:68px;width:68px">QTE PRÉVU</th>
+    <th style="min-width:72px;width:72px">DESIGN</th>
     <th colspan="2" class="meth-group-h" style="min-width:128px">Méthodes</th>
     <th style="min-width:90px"></th>
     ${hourHdr}
@@ -12015,9 +12067,9 @@ function excelModelMetaCells(line, nHeuresSortie) {
     : '';
   const modeleCellCls = line._added ? 'modele-cell added-modele-cell' : 'modele-cell';
   return `
-    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-1"><input class="xs-inp txt" data-f="import" value="${esc(line.import)}" placeholder="—"></td>
-    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-2"><input class="xs-inp txt" data-f="client" value="${esc(line.client)}" placeholder="—"></td>
-    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-3 last-freeze ${modeleCellCls}" data-modele-heures="${nHeuresSortie || ''}"><div class="modele-cell-inner"><input class="xs-inp txt" data-f="modele" value="${esc(line.modele)}" placeholder="—">${rmBtn}</div>${hBadge}</td>
+    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-1 excel-col-import"><input class="xs-inp txt" data-f="import" value="${esc(line.import)}" placeholder="—"></td>
+    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-2 excel-col-client"><input class="xs-inp txt" data-f="client" value="${esc(line.client)}" placeholder="—"></td>
+    <td rowspan="${rs}" class="merge-cell excel-freeze excel-freeze-3 last-freeze excel-col-modele ${modeleCellCls}" data-modele-heures="${nHeuresSortie || ''}"><div class="modele-cell-inner"><input class="xs-inp txt" data-f="modele" value="${esc(line.modele)}" placeholder="—">${rmBtn}</div>${hBadge}</td>
     <td rowspan="${rs}" class="merge-cell"><input class="xs-inp txt" data-f="chef" value="${esc(line.chef)}" placeholder="—"></td>`;
 }
 
@@ -12026,7 +12078,7 @@ function excelQtePrevuCell(line, c) {
   const qp = getPrepQtePrevu(saisieMonth, line.chain, line.modele);
   const qpDisp = qp != null ? fmtInt(qp) : (line.qte_prevu != null && !isNaN(line.qte_prevu) ? fmtInt(line.qte_prevu) : '—');
   return `
-    <td rowspan="${rs}" class="merge-cell qte-prevu-cell qte-prevu-locked" title="Qté prévue : Plan de préparation">
+    <td rowspan="${rs}" class="merge-cell qte-prevu-cell qte-prevu-locked excel-col-qte" title="Qté prévue : Plan de préparation">
       <div class="qte-prevu-stack">
         <div class="qte-prevu-half">
           <span class="qte-prevu-read" data-r="qte_prevu_ro">${qpDisp}</span>
@@ -12042,7 +12094,7 @@ function excelDesigCell(line) {
   const esc = (s) => (s || '').replace(/"/g, '&quot;');
   const rs = EXCEL_ROWS_PER_BLOCK;
   return `
-    <td rowspan="${rs}" class="merge-cell desig-cell">
+    <td rowspan="${rs}" class="merge-cell desig-cell excel-col-desig">
       <input class="xs-inp txt" data-f="desig" value="${esc(line.desig)}" placeholder="Veste, Gilet…" title="Désignation : Veste, Gilet, …">
     </td>`;
 }
