@@ -11778,7 +11778,7 @@ function calcChainWorkHoursFromBlocks(blocks, dateStr) {
   let h = 0;
   for (const item of blocks || []) {
     const v = calcHeuresHLFromSaisie(item?.c?.r1h || [], dateStr);
-    if (v != null && !isNaN(v) && v > 0) h += Number(v);
+    if (v != null && !isNaN(v) && v > h) h = Number(v);
   }
   if (h > 0) return h;
   return getExpectedHeuresJour(dateStr);
