@@ -878,7 +878,7 @@ footer {
 }
 .pin-modal .field-check { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); margin: 8px 0 4px; cursor: pointer; }
 .pin-modal .field-check input { accent-color: var(--accent); }
-.excel-saisie tr.block-added-model td { box-shadow: inset 3px 0 0 var(--accent); }
+.excel-saisie tr.block-added-model td { box-shadow: none; }
 .saisie-added-remove-block.is-visible {
   margin-bottom: 16px;
   padding: 12px 14px;
@@ -1459,6 +1459,36 @@ footer {
   align-items: center;
   justify-content: center;
   min-height: 28px;
+}
+.excel-saisie .hlanc-split-stack {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 0;
+  align-items: stretch;
+  justify-content: stretch;
+  width: 100%;
+  min-height: 0;
+}
+.excel-saisie td.hlanc-merge {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+}
+.excel-saisie .hlanc-half {
+  display: grid !important;
+  place-items: center !important;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0 4px;
+  box-sizing: border-box;
+  text-align: center !important;
+  margin: 0 auto;
+}
+.excel-saisie .hlanc-half + .hlanc-half {
+  border-top: 1px dashed var(--border-2);
 }
 .excel-saisie .hlanc-val {
   font-family: 'JetBrains Mono', monospace;
@@ -4556,7 +4586,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     <div class="page-head">
       <div class="left">
         <h2>Saisie <span class="accent">quotidienne</span></h2>
-        <div class="sub">Saisie du jour : reprise des chaînes/modèles de la veille (heures à zéro). Si hier 2 modèles sur une chaîne, seul le dernier est repris. Les cumuls reprennent les journées précédentes.</div>
+        <div class="sub">Saisie du jour : reprise des chaînes/modèles de la veille (heures à zéro). Si hier plusieurs modèles sont sur une chaîne, seul le dernier est repris. Les cumuls reprennent les journées précédentes.</div>
       </div>
       <div class="pill-meta"><span class="dot"></span><span id="saisie-today-pill">—</span></div>
     </div>
@@ -4722,6 +4752,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
                   <th class="col-val">VT</th>
                   <th class="col-val">EFF</th>
                   <th class="col-val">P/H</th>
+                  <th class="col-val">OHL</th>
                   <th class="col-date">Du</th>
                   <th class="col-date">Au</th>
                 </tr>
@@ -4764,11 +4795,11 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
           <datalist id="meth-datalist-ph"></datalist>
           <datalist id="meth-datalist-eff"></datalist>
           <div class="meth-edit-section">
-            <span class="meth-section-label">Chaînes · VT · EFF · P/H</span>
+            <span class="meth-section-label">Chaînes · VT · EFF · P/H · OHL</span>
             <div class="meth-rules-table-wrap meth-chains-modal-wrap">
               <table class="meth-rules-grid meth-chains-compact">
                 <thead>
-                  <tr><th>Ch</th><th>VT</th><th>EFF</th><th>P/H</th></tr>
+                  <tr><th>Ch</th><th>VT</th><th>EFF</th><th>P/H</th><th>OHL</th></tr>
                 </thead>
                 <tbody id="meth-rules-chains-body"></tbody>
               </table>
@@ -9331,6 +9362,7 @@ const PREP_QTE_EXTRA_ROWS_KEY = 'prodH-prep-qte-extra-v1';
 const PREP_QTE_PERIOD_STORAGE_KEY = 'prodH-prep-qte-period-v1';
 const MODELES_CATALOG_STORAGE_KEY = 'prodH-modeles-catalog-v1';
 const METH_CHAIN_COUNT = 20;
+const METH_DEFAULT_OHL = 6.5;
 let methRuleEditId = null;
 /** Jour affiché sur Plan de préparation (par mois). */
 const prepPlanDates = {};
@@ -9363,13 +9395,42 @@ function methRulesStoreAll() {
 function saveMethRulesStoreAll(all) {
   try { localStorage.setItem(METH_RULES_STORAGE_KEY, JSON.stringify(all)); } catch (e) {}
 }
+function ensureMethRulesOhlDefault(rules) {
+  let changed = false;
+  const out = (rules || []).map(rule => {
+    let chainsChanged = false;
+    const chains = { ...(rule.chains || {}) };
+    for (const [ch, ce] of Object.entries(chains)) {
+      if (!ce) continue;
+      const hasAny =
+        (ce.vt != null && ce.vt !== '' && !isNaN(ce.vt)) ||
+        (ce.ph != null && ce.ph !== '' && !isNaN(ce.ph)) ||
+        (ce.eff != null && ce.eff !== '' && !isNaN(ce.eff)) ||
+        (ce.ohl != null && ce.ohl !== '' && !isNaN(ce.ohl));
+      if (!hasAny) continue;
+      if (ce.ohl == null || ce.ohl === '' || isNaN(ce.ohl)) {
+        chains[ch] = { ...ce, ohl: METH_DEFAULT_OHL };
+        chainsChanged = true;
+        changed = true;
+      }
+    }
+    return chainsChanged ? { ...rule, chains } : rule;
+  });
+  return { rules: out, changed };
+}
 function methRulesForMonth(month) {
   const all = methRulesStoreAll();
-  return Array.isArray(all[month]) ? all[month] : [];
+  const current = Array.isArray(all[month]) ? all[month] : [];
+  const normalized = ensureMethRulesOhlDefault(current);
+  if (normalized.changed) {
+    all[month] = normalized.rules;
+    saveMethRulesStoreAll(all);
+  }
+  return normalized.rules;
 }
 function saveMethRulesForMonth(month, rules) {
   const all = methRulesStoreAll();
-  all[month] = rules;
+  all[month] = ensureMethRulesOhlDefault(rules).rules;
   saveMethRulesStoreAll(all);
 }
 function collectModelesForMonth(month) {
@@ -9518,7 +9579,7 @@ function buildMethRulesFlatRows(month, modeleFilter) {
     for (const ch of chKeys) {
       const ce = chains[String(ch)];
       if (!ce) continue;
-      if (ce.vt == null && ce.ph == null && ce.eff == null) continue;
+      if (ce.vt == null && ce.ph == null && ce.eff == null && ce.ohl == null) continue;
       rows.push({
         ruleId: rule.id,
         modele: rule.modele,
@@ -9526,6 +9587,7 @@ function buildMethRulesFlatRows(month, modeleFilter) {
         vt: ce.vt,
         eff: ce.eff,
         ph: ce.ph,
+        ohl: ce.ohl,
         dateDebut: rule.dateDebut,
         dateFin: rule.dateFin,
       });
@@ -9613,6 +9675,7 @@ function renderMethRulesFlatTable(month) {
       ${methFmtValCell(r.vt, false)}
       ${methFmtValCell(r.eff, false)}
       ${methFmtValCell(r.ph, true)}
+      ${methFmtValCell(r.ohl, false)}
       <td class="col-date col-date-du">${duHtml}</td>
       <td class="col-date col-date-au">${auHtml}</td>
     </tr>`;
@@ -9661,7 +9724,7 @@ function extractMethChainsForModele(month, modele) {
       const eff = (row.effectifs != null && !isNaN(row.effectifs)) ? Number(row.effectifs)
         : (excel && excel.r2_eff != null && !isNaN(excel.r2_eff) ? Number(excel.r2_eff) : null);
       if (vt == null && ph == null && eff == null) continue;
-      chains[ch] = { vt, ph, eff };
+      chains[ch] = { vt, ph, eff, ohl: METH_DEFAULT_OHL };
     }
   }
   return chains;
@@ -9884,7 +9947,8 @@ function methChainEntryHasValues(ce) {
   if (!ce) return false;
   return (ce.vt != null && ce.vt !== '' && !isNaN(ce.vt))
     || (ce.ph != null && ce.ph !== '' && !isNaN(ce.ph))
-    || (ce.eff != null && ce.eff !== '' && !isNaN(ce.eff));
+    || (ce.eff != null && ce.eff !== '' && !isNaN(ce.eff))
+    || (ce.ohl != null && ce.ohl !== '' && !isNaN(ce.ohl));
 }
 /** Chaînes renseignées dans une fiche période. */
 function methRuleChainsWithValues(chains) {
@@ -9908,7 +9972,7 @@ function findMethRuleSaveConflict(rules, modele, dateDebut, dateFin, chains, exc
   }
   return null;
 }
-/** Valeurs VT/P/H/EFF pour une chaîne+modèle à une date (période la plus récente qui couvre cette chaîne). */
+/** Valeurs VT/P/H/EFF/OHL pour une chaîne+modèle à une date (période la plus récente qui couvre cette chaîne). */
 function findMethRuleValues(month, date, chain, modele) {
   const mod = normalizeModeleKey(modele);
   const ch = String(Number(chain));
@@ -9988,6 +10052,11 @@ function syncMethRulesToOverrides(month) {
       if (row.chain == null || !row.modele) continue;
       const vals = findMethRuleValues(month, date, row.chain, row.modele);
       if (!vals) continue;
+      const hasAppliedMethValue =
+        (vals.vt != null && !isNaN(vals.vt)) ||
+        (vals.ph != null && !isNaN(vals.ph)) ||
+        (vals.eff != null && !isNaN(vals.eff));
+      if (!hasAppliedMethValue) continue;
       const rk = row.chain + '|' + (row.modele || '').trim();
       if (!all[month][date]) all[month][date] = {};
       if (!all[month][date][rk]) all[month][date][rk] = {};
@@ -10011,11 +10080,13 @@ function readMethRuleChainsFromForm() {
     const vt = parseNumFr(tr.querySelector('[data-meth="vt"]')?.value);
     const ph = parseNumFr(tr.querySelector('[data-meth="ph"]')?.value);
     const eff = parseNumFr(tr.querySelector('[data-meth="eff"]')?.value);
-    if (vt == null && ph == null && eff == null) return;
+    const ohl = parseNumFr(tr.querySelector('[data-meth="ohl"]')?.value);
+    if (vt == null && ph == null && eff == null && ohl == null) return;
     chains[ch] = {
       vt: vt != null && !isNaN(vt) ? vt : null,
       ph: ph != null && !isNaN(ph) ? ph : null,
       eff: eff != null && !isNaN(eff) ? eff : null,
+      ohl: ohl != null && !isNaN(ohl) ? ohl : METH_DEFAULT_OHL,
     };
   });
   return chains;
@@ -10034,6 +10105,7 @@ function fillMethRuleChainsForm(chains) {
     set('[data-meth="vt"]', ce.vt, fmtNumFr);
     set('[data-meth="ph"]', ce.ph, fmtPh);
     set('[data-meth="eff"]', ce.eff, fmtNumFr);
+    set('[data-meth="ohl"]', ce.ohl, fmtNumFr);
   });
   applyMethChainsTableFilter();
 }
@@ -10048,7 +10120,8 @@ function buildMethRulesChainsTable() {
       <td class="chain-lab">Ch${String(ch).padStart(2, '0')}</td>
       <td><input type="text" inputmode="decimal" data-meth="vt" list="meth-datalist-vt" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>
       <td><input type="text" inputmode="decimal" data-meth="eff" list="meth-datalist-eff" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>
-      <td><input type="text" inputmode="decimal" data-meth="ph" list="meth-datalist-ph" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>`;
+      <td><input type="text" inputmode="decimal" data-meth="ph" list="meth-datalist-ph" placeholder="—" autocomplete="off" title="Suggestions depuis les données du mois"></td>
+      <td><input type="text" inputmode="decimal" data-meth="ohl" placeholder="—" autocomplete="off" title="OHL"></td>`;
     tbody.appendChild(tr);
   }
   applyMethChainsTableFilter();
@@ -11120,7 +11193,7 @@ function syncExcelManualHourHeader(i) {
 loadExcelHourTimes();
 const EXCEL_FIXED_COLS_BEFORE_HOURS = 10; // CH … DESIGN + METHODES(2) + libellé ligne
 const EXCEL_FREEZE_COLS = 4; // CH, IMPORT, CLIENT, MODELE — figées au scroll horizontal
-const EXCEL_TRAIL_COLS = 7; // X · Moy · Total · Cumul · AC · Encours · %Rend (H.Lancement → onglet dédié)
+const EXCEL_TRAIL_COLS = 8; // X · HL · Moy · Total · Cumul · AC · Encours · %Rend
 const EXCEL_HOUR_COLS_MW = 11; // colonnes heures M…W (Excel)
 const EXCEL_COL_U_INDEX = 8; // colonne U = 9ᵉ créneau (M…W)
 const EXCEL_LAB_SORTIE = 'Sortie Chaine'; // AB3 — critère SUMIF colonne L
@@ -11512,6 +11585,126 @@ function calcHLancHeures(r1h, totalSortie, ph, line, excel, dateStr, month) {
   return isFinite(v) ? v : null;
 }
 
+function calcSaisieHL(c, chainModelCount, dateStr) {
+  if (Number(chainModelCount) !== 1 || !c) return null;
+  const h = calcHeuresJourFromSaisie(c.r1h, dateStr);
+  const ph = Number(c.ph) || 0;
+  const sortie = Number(c.totalSortie) || 0;
+  if (!h || !ph) return null;
+  const v = h - (sortie / ph);
+  return isFinite(v) ? v : null;
+}
+
+function calcSaisieHLBas(c, dateStr) {
+  if (!c) return null;
+  const h = calcHeuresJourFromSaisie(c.r1h, dateStr);
+  const ph = Number(c.ph) || 0;
+  const sortie = Number(c.totalSortie) || 0;
+  if (!h || !ph) return null;
+  const v = h - (sortie / ph);
+  return isFinite(v) ? v : null;
+}
+
+function saisieLineKey(line) {
+  return Number(line?.chain) + '|' + ((line?.modele || '') + '').trim().toUpperCase();
+}
+
+function getMethOhlForLine(month, date, line) {
+  const vals = findMethRuleValues(month, date, line?.chain, line?.modele);
+  const v = vals && vals.ohl;
+  return v != null && v !== '' && !isNaN(v) ? Number(v) : null;
+}
+
+function calcChainWorkHoursFromBlocks(blocks, dateStr) {
+  let h = 0;
+  for (const item of blocks || []) {
+    const v = calcHeuresJourFromSaisie(item?.c?.r1h || [], dateStr);
+    if (v != null && !isNaN(v) && v > 0) h += Number(v);
+  }
+  if (h > 0) return h;
+  return getExpectedHeuresJour(dateStr);
+}
+
+function getPreviousSaisieChainDisplay(month, date, chain, modele) {
+  const info = PRODUCTION[month];
+  if (!info || !date) return null;
+  const sheets = info.daily_sheets || [];
+  const idx = sheets.indexOf(date);
+  if (idx <= 0) return null;
+  const prevDate = sheets[idx - 1];
+  const prevLines = (info.daily[prevDate] || []).filter(l =>
+    Number(l.chain) === Number(chain) && (l.client || l._added || l.modele)
+  );
+  const vals = calcSaisieChainDisplayValues(month, prevDate, prevLines);
+  return vals.get(Number(chain) + '|' + ((modele || '') + '').trim().toUpperCase()) || null;
+}
+
+function calcSaisieChainDisplayValues(month, date, chainLines) {
+  const out = new Map();
+  const lines = (chainLines || []).filter(l => l && (l.client || l._added || l.modele));
+  const excelArr = getExcelDataForDate(date);
+  const chainTotalSortie = calcSumifSortieChain(lines, excelArr);
+  const blocks = lines.map(line => {
+    applyMethRulesToLine(month, date, line);
+    const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+    const c = computeBlock(line, excel, chainTotalSortie, month, date);
+    return { line, excel, c };
+  });
+  if (blocks.length < 2) {
+    for (const item of blocks) {
+      out.set(saisieLineKey(item.line), {
+        ecart: item.c.ecartEffMoy,
+        hl: blocks.length === 1 ? calcSaisieHL(item.c, 1, date) : null,
+      });
+    }
+    return out;
+  }
+
+  const previous = blocks.slice(0, -1);
+  const current = blocks[blocks.length - 1];
+  const h = calcChainWorkHoursFromBlocks(blocks, date);
+  const phCurrent = Number(current.c.ph) || 0;
+  const sortieCurrent = Number(current.c.totalSortie) || 0;
+  let timeConsumed = 0;
+  let allPhOk = !!h;
+  for (const item of blocks) {
+    const ph = Number(item.c.ph) || 0;
+    const sortie = Number(item.c.totalSortie) || 0;
+    if (!ph) { allPhOk = false; break; }
+    timeConsumed += sortie / ph;
+  }
+  const previousFinished = previous.every(item => {
+    const ph = Number(item.c.ph) || 0;
+    const qteEcart = item.c.qtePrevu != null && !isNaN(item.c.qtePrevu)
+      ? item.c.cumulEntre - Number(item.c.qtePrevu)
+      : null;
+    const chargeFin = qteEcart != null ? (-qteEcart + (Number(item.c.encours) || 0)) : null;
+    return chargeFin != null && ph && h && chargeFin < (ph * h);
+  });
+  const baseD = allPhOk ? h - timeConsumed : null;
+  const prev = getPreviousSaisieChainDisplay(month, date, current.line.chain, current.line.modele);
+  const prevD = prev && prev.hl != null && !isNaN(prev.hl) ? Number(prev.hl) : 0;
+  const prevC = prev && prev.ecart != null && !isNaN(prev.ecart) ? Number(prev.ecart) : 0;
+  const d1 = baseD == null ? null : (previousFinished ? baseD : prevD + baseD);
+  const ohl = getMethOhlForLine(month, date, current.line);
+  let c1 = null;
+  if (d1 != null && ohl != null && phCurrent) {
+    if (d1 <= ohl) {
+      c1 = 0;
+    } else if (previousFinished) {
+      c1 = sortieCurrent - ((d1 - ohl) * phCurrent);
+    } else if (Math.abs(prevC) < 0.0001) {
+      c1 = -((d1 - ohl) * phCurrent);
+    } else {
+      c1 = sortieCurrent - (phCurrent * (h - (sortieCurrent / phCurrent)));
+    }
+  }
+
+  for (const item of previous) out.set(saisieLineKey(item.line), { ecart: 0, hl: 0 });
+  out.set(saisieLineKey(current.line), { ecart: c1, hl: d1 });
+  return out;
+}
+
 function fmtHlancCell(v) {
   if (v == null || v === '' || (typeof v === 'number' && isNaN(v))) return '';
   return fmtNumFr(v);
@@ -11765,7 +11958,8 @@ function buildSaisieHeader() {
   thead.appendChild(trMeta2);
 
   const trailHdr = `
-    <th style="min-width:52px" class="trail-x" title="${excelXColHeaderTitle(saisieDate)}">X</th>
+    <th style="min-width:78px" class="trail-x" title="${excelXColHeaderTitle(saisieDate)}">Ecart (pcs)</th>
+    <th style="min-width:52px" title="H.Lancement = Sortie ÷ P/H − heures jour">HL</th>
     <th style="min-width:60px" class="trail-moy" title="${excelMoyColHeaderTitle(saisieDate)}">Moy</th>
     <th style="min-width:60px" title="Sortie : somme heures M…W · Bandeau : SUMIF(L;Sortie Chaine;AB)">Total</th>
     <th style="min-width:70px">Cumul</th>
@@ -11910,20 +12104,24 @@ function excelHourCells(field, hours, opts) {
 }
 
 /** H.Lancement — fusion rowspan 5, valeur H.MANQ CEGID. */
-function excelHLancFusionCell(c) {
+function excelHLancFusionCell(c, chainModelCount, hlOverride) {
   const rs = EXCEL_ROWS_PER_BLOCK;
-  const title = excelHLancFormulaTitle(saisieDate);
+  const title = chainModelCount >= 2
+    ? 'HL chaîne multi-modèles — calcul avec OHL Méthodes et report de la veille'
+    : 'HL = heures de travail − (total sortie ÷ P/H), seulement si la chaîne a un seul modèle';
+  const v = hlOverride !== undefined ? hlOverride : calcSaisieHL(c, chainModelCount, saisieDate);
   return `<td rowspan="${rs}" class="merge-cell trail-merge hlanc-merge">
-    <div class="trail-merge-stack">
-      <div class="trail-merge-line hlanc-row" data-r="r0_hlanc" title="${title}">${hlancCellInnerHtml(c)}</div>
+    <div class="trail-merge-stack hlanc-split-stack">
+      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc" title="${title}">${v != null ? fmtNumFr(v) : ''}</div>
+      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc_2" title="HL bas = heures de travail − (total sortie ÷ P/H)">${fmtMoyCell(calcSaisieHLBas(c, saisieDate))}</div>
     </div>
   </td>`;
 }
 
 /** X — fusion rowspan 5 : total sortie − P/H × heures jour */
-function excelEcartXFusionCell(c) {
+function excelEcartXFusionCell(c, ecartOverride) {
   const rs = EXCEL_ROWS_PER_BLOCK;
-  const v = c.ecartEffMoy;
+  const v = ecartOverride !== undefined ? ecartOverride : c.ecartEffMoy;
   const neg = v != null && !isNaN(v) && Number(v) < 0;
   const txt = (v != null && !isNaN(v) && isFinite(v)) ? fmtNumFr(v) : '—';
   const h = fmtOffsetFr(calcHeuresJourFromSaisie(c.r1h, saisieDate) || getExpectedHeuresJour(saisieDate));
@@ -11998,6 +12196,7 @@ function buildSaisieBody() {
     const chainMetaRowspan = lines.length * EXCEL_ROWS_PER_BLOCK;
     let lineIndexInChain = 0;
     const chainTotalSortie = calcSumifSortieChain(lines, excelArr);
+    const chainDisplayVals = calcSaisieChainDisplayValues(saisieMonth, saisieDate, lines);
     for (const line of lines) {
       applyMethRulesToLine(saisieMonth, saisieDate, line);
       const excel = (!line._added && excelArr) ? findExcelBlock(excelArr, line) : null;
@@ -12033,6 +12232,7 @@ function buildSaisieBody() {
       const c = computeBlock(line, excel, chainTotalSortie, saisieMonth, saisieDate);
       applyComputeBlockToRow(line, c);
       if (c.hlancLocked) c.hlancHeures = 0;
+      const displayVals = chainDisplayVals.get(saisieLineKey(line)) || {};
       const rowKey = (chainNo + '|' + (line.modele || ''));
       line._rowKey = rowKey;
       const chainMerge = { emitCh: lineIndexInChain === 0, chainRowspan: chainMetaRowspan };
@@ -12053,7 +12253,8 @@ function buildSaisieBody() {
         ${excelMethodesBlockCell(line, c)}
         <td class="lab-l"${entreLocked ? ' title="Qté prévue requise — renseignez le Catalogue modèles"' : ''}>Entre Chaine</td>
         ${excelHourCells('r0h', c.r0h, { locked: entreLocked })}
-        ${excelEcartXFusionCell(c)}
+        ${excelEcartXFusionCell(c, displayVals.ecart)}
+        ${excelHLancFusionCell(c, lines.length, displayVals.hl)}
         <td class="calc calc-moy" data-r="r0_moy">${fmtMoyCell(c.moyEntre)}</td>
         <td class="calc-2" data-r="r0_total">${fmtNumX(c.totalEntre)}</td>
         <td class="calc-2" data-r="r0_cumul">${fmtNumX(c.cumulEntre)}</td>
@@ -13194,6 +13395,7 @@ function refreshExcelRow(line) {
     l => Number(l.chain) === Number(line.chain) && (l.client || l._added || l.modele)
   );
   const chainTotalSortie = calcSumifSortieChain(chainLines, excelArr);
+  const chainDisplayVals = calcSaisieChainDisplayValues(saisieMonth, saisieDate, chainLines);
   const c = computeBlock(line, excel, chainTotalSortie, saisieMonth, saisieDate);
   applyComputeBlockToRow(line, c);
   if (c.hlancLocked) c.hlancHeures = 0;
@@ -13219,10 +13421,25 @@ function refreshExcelRow(line) {
   set('[data-r="r2_moy"]', fmtMoyCell(c.moyEff));
   const xCell = tbody.querySelector(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="ecart_x"]`);
   if (xCell) {
-    const v = c.ecartEffMoy;
+    const curDisplay = chainDisplayVals.get(saisieLineKey(line)) || {};
+    const v = curDisplay.ecart !== undefined ? curDisplay.ecart : c.ecartEffMoy;
     const neg = v != null && !isNaN(v) && Number(v) < 0;
     xCell.textContent = (v != null && !isNaN(v) && isFinite(v)) ? fmtNumFr(v) : '—';
     xCell.className = 'merge-cell trail-merge calc-x' + (neg ? ' calc-moy-neg' : '');
+  }
+  const hlCell = tbody.querySelector(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r0_hlanc"]`);
+  if (hlCell) {
+    const curDisplay = chainDisplayVals.get(saisieLineKey(line)) || {};
+    const hl = curDisplay.hl !== undefined ? curDisplay.hl : calcSaisieHL(c, chainLines.length, saisieDate);
+    hlCell.textContent = hl != null ? fmtNumFr(hl) : '';
+    hlCell.title = chainLines.length >= 2
+      ? 'HL chaîne multi-modèles — calcul avec OHL Méthodes et report de la veille'
+      : 'HL = heures de travail − (total sortie ÷ P/H), seulement si la chaîne a un seul modèle';
+  }
+  const hlCell2 = tbody.querySelector(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r0_hlanc_2"]`);
+  if (hlCell2) {
+    hlCell2.textContent = fmtMoyCell(calcSaisieHLBas(c, saisieDate));
+    hlCell2.title = 'HL bas = heures de travail − (total sortie ÷ P/H)';
   }
   set('[data-r="r3_moy"]', fmtMoyCell(c.moyStag));
   set('[data-r="r3_total"]', fmtNumX(c.totalStag));
@@ -13244,6 +13461,27 @@ function refreshExcelRow(line) {
     const co = computeBlock(other, excelArr ? findExcelBlock(excelArr, other) : null, chainTotalSortie, saisieMonth, saisieDate);
     tbody.querySelectorAll(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="r1_moy"]`)
       .forEach(el => { el.textContent = fmtMoyCell(co.moySortie); });
+    const otherDisplay = chainDisplayVals.get(saisieLineKey(other)) || {};
+    const ox = otherDisplay.ecart !== undefined ? otherDisplay.ecart : co.ecartEffMoy;
+    const xOther = tbody.querySelector(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="ecart_x"]`);
+    if (xOther) {
+      const neg = ox != null && !isNaN(ox) && Number(ox) < 0;
+      xOther.textContent = (ox != null && !isNaN(ox) && isFinite(ox)) ? fmtNumFr(ox) : '—';
+      xOther.className = 'merge-cell trail-merge calc-x' + (neg ? ' calc-moy-neg' : '');
+    }
+    const ohl = otherDisplay.hl !== undefined ? otherDisplay.hl : calcSaisieHL(co, chainLines.length, saisieDate);
+    const hlOther = tbody.querySelector(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="r0_hlanc"]`);
+    if (hlOther) {
+      hlOther.textContent = ohl != null ? fmtNumFr(ohl) : '';
+      hlOther.title = chainLines.length >= 2
+        ? 'HL chaîne multi-modèles — calcul avec OHL Méthodes et report de la veille'
+        : 'HL = heures de travail − (total sortie ÷ P/H), seulement si la chaîne a un seul modèle';
+    }
+    const hlOther2 = tbody.querySelector(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="r0_hlanc_2"]`);
+    if (hlOther2) {
+      hlOther2.textContent = fmtMoyCell(calcSaisieHLBas(co, saisieDate));
+      hlOther2.title = 'HL bas = heures de travail − (total sortie ÷ P/H)';
+    }
   });
   refreshModeleHeuresBadge(line);
 }
