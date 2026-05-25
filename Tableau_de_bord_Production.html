@@ -9646,8 +9646,14 @@ function buildMethRulesFlatRows(month, modeleFilter) {
     }
   }
   rows.sort((a, b) => {
-    const d = compareFrDate(a.dateDebut, b.dateDebut);
-    if (d !== 0) return d;
+    const m = (a.modele || '').localeCompare(b.modele || '', 'fr');
+    if (m !== 0) return m;
+    const d0 = compareFrDate(a.dateDebut, b.dateDebut);
+    if (d0 !== 0) return d0;
+    const d1 = compareFrDate(a.dateFin, b.dateFin);
+    if (d1 !== 0) return d1;
+    const r = String(a.ruleId || '').localeCompare(String(b.ruleId || ''), 'fr');
+    if (r !== 0) return r;
     return a.chain - b.chain;
   });
   return rows;
@@ -9809,6 +9815,7 @@ function mergeMethRulesFromProduction(month, replaceAll) {
       rules.push(nr);
     }
   }
+  clearMethRuleOverrideFields(month, methRulesForMonth(month));
   saveMethRulesForMonth(month, rules);
   applyMethRulesToMonth(month);
   syncMethRulesToOverrides(month);
@@ -9906,7 +9913,7 @@ function populateMethValueDatalists(month, modele) {
 }
 function updateMethRuleSaveBtnLabel() {
   const btn = document.getElementById('meth-rule-save-btn');
-  if (btn) btn.textContent = 'Enregistrer';
+  if (btn) btn.textContent = methRuleEditId ? 'Mettre à jour' : 'Enregistrer';
 }
 function populateMethChainsRangeSelects() {
   const from = document.getElementById('meth-chains-from');
@@ -10012,15 +10019,15 @@ function methRulesChainsConflict(chainsA, chainsB) {
   const setB = new Set(methRuleChainsWithValues(chainsB));
   return methRuleChainsWithValues(chainsA).some(ch => setB.has(ch));
 }
-/** Doublon strict : même modèle, mêmes dates et mêmes chaînes renseignées (utiliser Modifier). */
+/** Conflit : même modèle, dates qui se chevauchent et au moins une chaîne commune. */
 function findMethRuleSaveConflict(rules, modele, dateDebut, dateFin, chains, excludeRuleId) {
   const mk = normalizeModeleKey(modele);
   for (const r of rules) {
     if (excludeRuleId && r.id === excludeRuleId) continue;
     if (normalizeModeleKey(r.modele) !== mk) continue;
-    if (r.dateDebut !== dateDebut || r.dateFin !== dateFin) continue;
+    if (!methRuleDatesOverlap(dateDebut, dateFin, r.dateDebut, r.dateFin)) continue;
     if (!methRulesChainsConflict(chains, r.chains)) continue;
-    return { kind: 'duplicate', rule: r };
+    return { kind: 'overlap', rule: r };
   }
   return null;
 }
@@ -10031,12 +10038,23 @@ function findMethRuleValues(month, date, chain, modele) {
   if (!mod || !ch || isNaN(Number(ch))) return null;
   const rules = methRulesForMonth(month)
     .filter(r => normalizeModeleKey(r.modele) === mod && dateInFrRange(date, r.dateDebut, r.dateFin))
-    .sort((a, b) => compareFrDate(b.dateDebut, a.dateDebut));
+    .sort((a, b) => {
+      const d = compareFrDate(b.dateDebut, a.dateDebut);
+      if (d !== 0) return d;
+      return String(b.id || '').localeCompare(String(a.id || ''), 'fr');
+    });
   for (const rule of rules) {
     const ce = rule.chains && rule.chains[ch];
     if (methChainEntryHasValues(ce)) return ce;
   }
   return null;
+}
+function findMethRuleValuesForRow(month, date, chain, row) {
+  if (!row) return null;
+  const byModele = findMethRuleValues(month, date, chain, row.modele);
+  if (byModele) return byModele;
+  const imp = ((row.import || '') + '').trim();
+  return imp ? findMethRuleValues(month, date, chain, imp) : null;
 }
 function applyMethValuesToRow(row, vals, excel) {
   if (!vals) return;
@@ -10061,14 +10079,13 @@ function applyMethRulesToMonth(month) {
     const excelArr = getExcelDataForDate(date);
     for (const row of dayArr) {
       if (row.chain == null || !row.modele) continue;
-      const vals = findMethRuleValues(month, date, row.chain, row.modele);
       const excel = excelArr ? findExcelBlock(excelArr, row) : null;
-      applyMethValuesToRow(row, vals, excel);
+      applyMethValuesToRow(row, findMethRuleValuesForRow(month, date, row.chain, row), excel);
     }
     if (window.EXCEL_SAISIE_DATA && window.EXCEL_SAISIE_DATA[date]) {
       for (const block of window.EXCEL_SAISIE_DATA[date]) {
         if (!block.chain || !block.modele) continue;
-        const vals = findMethRuleValues(month, date, block.chain, block.modele);
+        const vals = findMethRuleValuesForRow(month, date, block.chain, block);
         if (!vals) continue;
         if (vals.vt != null && !isNaN(vals.vt)) block.r1_meth = Number(vals.vt);
         if (vals.ph != null && !isNaN(vals.ph)) block.r1_ph = Number(vals.ph);
@@ -10079,19 +10096,79 @@ function applyMethRulesToMonth(month) {
 }
 function applyMethRulesToLine(month, date, line) {
   if (!line || line.chain == null || !line.modele) return;
-  const vals = findMethRuleValues(month, date, line.chain, line.modele);
+  const vals = findMethRuleValuesForRow(month, date, line.chain, line);
   if (!vals) return;
   const excelArr = getExcelDataForDate(date);
   const excel = excelArr ? findExcelBlock(excelArr, line) : null;
   applyMethValuesToRow(line, vals, excel);
 }
 function methRuleBlocksField(month, date, line, field) {
-  const vals = findMethRuleValues(month, date, line.chain, line.modele);
+  const vals = findMethRuleValuesForRow(month, date, line.chain, line);
   if (!vals) return false;
   if (field === 'methodes') return vals.vt != null && vals.vt !== '' && !isNaN(vals.vt);
   if (field === 'ph') return vals.ph != null && vals.ph !== '' && !isNaN(vals.ph);
   if (field === 'effectifs') return vals.eff != null && vals.eff !== '' && !isNaN(vals.eff);
   return false;
+}
+function methRuleModeleMatchesRow(ruleModele, row) {
+  const mk = normalizeModeleKey(ruleModele);
+  if (!mk || !row) return false;
+  if (normalizeModeleKey(row.modele) === mk) return true;
+  return ((row.import || '') + '').trim().toUpperCase() === mk;
+}
+function methRuleCoversRow(rule, date, row) {
+  if (!rule || !row || row.chain == null) return false;
+  if (!dateInFrRange(date, rule.dateDebut, rule.dateFin)) return false;
+  if (!methRuleModeleMatchesRow(rule.modele, row)) return false;
+  const ch = String(Number(row.chain));
+  const ce = rule.chains && rule.chains[ch];
+  return methChainEntryHasValues(ce);
+}
+function methRuleSetCoversRow(rules, date, row) {
+  return (rules || []).some(rule => methRuleCoversRow(rule, date, row));
+}
+function clearMethRuleOverrideFields(month, rules) {
+  const all = saisieOverrides();
+  const monthOv = all[month];
+  const info = PRODUCTION[month];
+  if (!monthOv || !info) return;
+  let touched = false;
+  for (const [date, dayOv] of Object.entries(monthOv)) {
+    const dayArr = info.daily?.[date] || [];
+    for (const [key, ov] of Object.entries(dayOv || {})) {
+      if (key === '__added' || !ov || typeof ov !== 'object') continue;
+      const [chainPart, modelePart = ''] = key.split('|');
+      const ch = Number(chainPart);
+      let row = dayArr.find(r => Number(r.chain) === ch && ((r.modele || '') + '').trim() === modelePart.trim());
+      if (!row) row = { chain: ch, modele: ov.modele || modelePart, import: ov.import };
+      const covered = methRuleSetCoversRow(rules, date, row);
+      const tagged = (ov.__methRuleFields && typeof ov.__methRuleFields === 'object') ? ov.__methRuleFields : {};
+      ['methodes', 'ph', 'effectifs'].forEach(field => {
+        if ((covered || tagged[field]) && ov[field] !== undefined) {
+          delete ov[field];
+          touched = true;
+        }
+        if (tagged[field]) {
+          delete tagged[field];
+          touched = true;
+        }
+      });
+      if (Object.keys(tagged).length) ov.__methRuleFields = tagged;
+      else if (ov.__methRuleFields) {
+        delete ov.__methRuleFields;
+        touched = true;
+      }
+      if (!Object.keys(ov).length) {
+        delete dayOv[key];
+        touched = true;
+      }
+    }
+    if (!Object.keys(dayOv).length) {
+      delete monthOv[date];
+      touched = true;
+    }
+  }
+  if (touched) saveSaisieOverrides(all);
 }
 function syncMethRulesToOverrides(month) {
   const info = PRODUCTION[month];
@@ -10102,7 +10179,7 @@ function syncMethRulesToOverrides(month) {
     const dayArr = info.daily[date] || [];
     for (const row of dayArr) {
       if (row.chain == null || !row.modele) continue;
-      const vals = findMethRuleValues(month, date, row.chain, row.modele);
+      const vals = findMethRuleValuesForRow(month, date, row.chain, row);
       if (!vals) continue;
       const hasAppliedMethValue =
         (vals.vt != null && !isNaN(vals.vt)) ||
@@ -10113,9 +10190,20 @@ function syncMethRulesToOverrides(month) {
       if (!all[month][date]) all[month][date] = {};
       if (!all[month][date][rk]) all[month][date][rk] = {};
       const ov = all[month][date][rk];
-      if (vals.vt != null && !isNaN(vals.vt)) ov.methodes = Number(vals.vt);
-      if (vals.ph != null && !isNaN(vals.ph)) ov.ph = Number(vals.ph);
-      if (vals.eff != null && !isNaN(vals.eff)) ov.effectifs = Number(vals.eff);
+      if (!ov.__methRuleFields || typeof ov.__methRuleFields !== 'object') ov.__methRuleFields = {};
+      if (vals.vt != null && !isNaN(vals.vt)) {
+        ov.methodes = Number(vals.vt);
+        ov.__methRuleFields.methodes = true;
+      }
+      if (vals.ph != null && !isNaN(vals.ph)) {
+        ov.ph = Number(vals.ph);
+        ov.__methRuleFields.ph = true;
+      }
+      if (vals.eff != null && !isNaN(vals.eff)) {
+        ov.effectifs = Number(vals.eff);
+        ov.__methRuleFields.effectifs = true;
+      }
+      if (!Object.keys(ov.__methRuleFields).length) delete ov.__methRuleFields;
     }
   }
   saveSaisieOverrides(all);
@@ -10253,7 +10341,6 @@ function saveMethRuleFromForm(month) {
   const rules = methRulesForMonth(month).slice();
   const payload = { modele, dateDebut, dateFin, chains };
   const wasEdit = !!methRuleEditId;
-  const mk = normalizeModeleKey(modele);
   const conflict = findMethRuleSaveConflict(
     rules, modele, dateDebut, dateFin, chains, wasEdit ? methRuleEditId : null
   );
@@ -10262,8 +10349,9 @@ function saveMethRuleFromForm(month) {
       methRuleChainsWithValues(conflict.rule.chains).includes(ch)
     ).join(', ');
     toast(
-      'Une période identique existe déjà (même modèle, dates ' + dateDebut + ' → ' + dateFin
-      + (chs ? ', chaînes ' + chs : '') + ') — cliquez « Modifier » sur la fiche existante.',
+      'Conflit Méthodes : une période chevauche déjà ce modèle'
+      + (chs ? ' sur chaîne(s) ' + chs : '')
+      + ' (' + conflict.rule.dateDebut + ' → ' + conflict.rule.dateFin + '). Modifiez la fiche existante ou changez les dates.',
       true
     );
     return;
@@ -10276,6 +10364,7 @@ function saveMethRuleFromForm(month) {
     rules.push({ id: newMethRuleId(), ...payload });
     methRuleEditId = null;
   }
+  clearMethRuleOverrideFields(month, methRulesForMonth(month));
   saveMethRulesForMonth(month, rules);
   /* Reset depuis snapshot puis ré-application : indispensable en mode édition
      pour purger les anciennes valeurs si on a réduit la portée (retiré une
@@ -10308,7 +10397,10 @@ function saveMethRuleFromForm(month) {
 }
 function deleteMethRule(month, ruleId) {
   if (!confirm('Supprimer cette période Méthodes ?')) return;
-  const rules = methRulesForMonth(month).filter(r => r.id !== ruleId);
+  const currentRules = methRulesForMonth(month);
+  const removed = currentRules.filter(r => r.id === ruleId);
+  clearMethRuleOverrideFields(month, removed);
+  const rules = currentRules.filter(r => r.id !== ruleId);
   saveMethRulesForMonth(month, rules);
   if (methRuleEditId === ruleId) {
     methRuleEditId = null;
@@ -10646,6 +10738,11 @@ function fillSaisieFromYesterday() {
       stagiaire_hours: (c.stagiaire_hours || []).slice(),
       formation_hours: (c.formation_hours || []).slice(),
     };
+    const methRuleFields = {};
+    if (methRuleBlocksField(saisieMonth, saisieDate, c, 'methodes')) methRuleFields.methodes = true;
+    if (methRuleBlocksField(saisieMonth, saisieDate, c, 'ph')) methRuleFields.ph = true;
+    if (methRuleBlocksField(saisieMonth, saisieDate, c, 'effectifs')) methRuleFields.effectifs = true;
+    if (Object.keys(methRuleFields).length) dayOv[rk].__methRuleFields = methRuleFields;
   }
   const addedSnaps = PRODUCTION[saisieMonth].daily[saisieDate].filter(c => c._added).map(snapshotAddedLine);
   if (addedSnaps.length) dayOv.__added = addedSnaps;
@@ -11340,6 +11437,16 @@ function calcHeuresJourFromSaisie(hours, dateStr) {
   return total;
 }
 
+/** Heures HL : on prend la position de la dernière case remplie, pas le nombre de cases remplies. */
+function calcHeuresHLFromSaisie(hours, dateStr) {
+  const idx = lastFilledHourIndex(hours);
+  if (idx < 0) return 0;
+  const partial = Number(getPartialHeureForDate(dateStr)) || 0.25;
+  const partIdx = getPartialColIndex(dateStr);
+  if (idx < partIdx) return idx + 1;
+  return partIdx + partial + Math.max(0, idx - partIdx);
+}
+
 function heuresSortieRecapTitle(dateStr) {
   const p = fmtOffsetFr(getPartialHeureForDate(dateStr) || 0.25);
   if (isSaturdayDate(dateStr)) {
@@ -11639,7 +11746,7 @@ function calcHLancHeures(r1h, totalSortie, ph, line, excel, dateStr, month) {
 
 function calcSaisieHL(c, chainModelCount, dateStr) {
   if (Number(chainModelCount) !== 1 || !c) return null;
-  const h = calcHeuresJourFromSaisie(c.r1h, dateStr);
+  const h = calcHeuresHLFromSaisie(c.r1h, dateStr);
   const ph = Number(c.ph) || 0;
   const sortie = Number(c.totalSortie) || 0;
   if (!h || !ph) return null;
@@ -11649,7 +11756,7 @@ function calcSaisieHL(c, chainModelCount, dateStr) {
 
 function calcSaisieHLBas(c, dateStr) {
   if (!c) return null;
-  const h = calcHeuresJourFromSaisie(c.r1h, dateStr);
+  const h = calcHeuresHLFromSaisie(c.r1h, dateStr);
   const ph = Number(c.ph) || 0;
   const sortie = Number(c.totalSortie) || 0;
   if (!h || !ph) return null;
@@ -11662,7 +11769,7 @@ function saisieLineKey(line) {
 }
 
 function getMethOhlForLine(month, date, line) {
-  const vals = findMethRuleValues(month, date, line?.chain, line?.modele);
+  const vals = findMethRuleValuesForRow(month, date, line?.chain, line);
   const v = vals && vals.ohl;
   return v != null && v !== '' && !isNaN(v) ? Number(v) : null;
 }
@@ -11670,7 +11777,7 @@ function getMethOhlForLine(month, date, line) {
 function calcChainWorkHoursFromBlocks(blocks, dateStr) {
   let h = 0;
   for (const item of blocks || []) {
-    const v = calcHeuresJourFromSaisie(item?.c?.r1h || [], dateStr);
+    const v = calcHeuresHLFromSaisie(item?.c?.r1h || [], dateStr);
     if (v != null && !isNaN(v) && v > 0) h += Number(v);
   }
   if (h > 0) return h;
@@ -13699,6 +13806,11 @@ function saveSaisie() {
       stagiaire_hours: (c.stagiaire_hours || []).slice(),
       formation_hours: (c.formation_hours || []).slice(),
     };
+    const methRuleFields = {};
+    if (methRuleBlocksField(saisieMonth, saisieDate, c, 'methodes')) methRuleFields.methodes = true;
+    if (methRuleBlocksField(saisieMonth, saisieDate, c, 'ph')) methRuleFields.ph = true;
+    if (methRuleBlocksField(saisieMonth, saisieDate, c, 'effectifs')) methRuleFields.effectifs = true;
+    if (Object.keys(methRuleFields).length) dayOv[rk].__methRuleFields = methRuleFields;
   }
   const addedSnaps = chains.filter(c => c._added).map(snapshotAddedLine);
   if (addedSnaps.length) dayOv.__added = addedSnaps;
