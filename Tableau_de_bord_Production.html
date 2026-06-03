@@ -3700,6 +3700,125 @@ header.topbar {
 /* === Méthodes — vue tableau unique === */
 #page-methodes .page-head { margin-bottom: 18px; }
 .meth-page { max-width: 100%; }
+.meth-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(56,189,248,0.08) 0%, var(--surface) 50%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+.meth-search {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 180px;
+  max-width: 420px;
+}
+.meth-search::before {
+  content: "⌕";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+.meth-search input {
+  width: 100%;
+  padding: 10px 14px 10px 34px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+.meth-search input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+}
+.meth-bar-count {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: rgba(56,189,248,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(56,189,248,0.28);
+  white-space: nowrap;
+}
+.meth-bar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.meth-bar-actions .btn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+.meth-bar-actions .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.meth-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.meth-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-2);
+  background: var(--surface-2);
+}
+.meth-panel-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.meth-panel-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.meth-table-scroll {
+  overflow: auto;
+  max-height: min(560px, calc(100vh - 280px));
+}
+.meth-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.5;
+}
+@media (max-width: 640px) {
+  .meth-bar { flex-direction: column; align-items: stretch; }
+  .meth-search { max-width: none; }
+  .meth-bar-actions { margin-left: 0; width: 100%; }
+  .meth-bar-actions .btn { flex: 1; justify-content: center; }
+}
 .meth-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -3953,6 +4072,28 @@ table.meth-rules-flat tbody tr.meth-flat-active td {
   background: rgba(56, 189, 248, 0.14) !important;
   box-shadow: inset 3px 0 0 var(--accent);
 }
+table.meth-rules-periods thead th.col-date { width: 96px; }
+table.meth-rules-periods td.col-modele[rowspan],
+table.meth-rules-periods td.col-date[rowspan] {
+  vertical-align: top;
+  padding-top: 11px;
+  border-right: 1px solid var(--border-2);
+}
+table.meth-rules-periods tbody tr.meth-flat-period-start td.col-ch,
+table.meth-rules-periods tbody tr.meth-flat-period-start td.col-val {
+  border-top: 2px solid rgba(56,189,248,0.28);
+}
+table.meth-rules-periods tbody tr.meth-flat-period-start td.col-modele[rowspan],
+table.meth-rules-periods tbody tr.meth-flat-period-start td.col-date[rowspan] {
+  border-top: 2px solid rgba(56,189,248,0.28);
+}
+table.meth-rules-periods tbody tr:first-child td { border-top: none; }
+table.meth-rules-periods td.col-modele {
+  font-weight: 700;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 table.meth-rules-flat td.col-ch {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-weight: 800;
@@ -3992,10 +4133,12 @@ table.meth-rules-flat td.col-date .meth-au-today {
 #meth-edit-modal.pin-modal-backdrop {
   align-items: center;
   padding: 16px 12px;
-  overflow-y: auto;
+  overflow: hidden;
+  z-index: 1100;
 }
+body.meth-modal-open { overflow: hidden; }
 #meth-edit-modal .pin-modal.meth-edit-modal {
-  width: min(520px, 96vw);
+  width: min(720px, 96vw);
   max-height: calc(100dvh - 32px);
   padding: 0;
   overflow: hidden;
@@ -4006,6 +4149,8 @@ table.meth-rules-flat td.col-date .meth-au-today {
   flex-direction: column;
   margin: auto;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 .meth-modal-head {
   flex-shrink: 0;
@@ -4078,30 +4223,90 @@ table.meth-rules-flat td.col-date .meth-au-today {
 .meth-edit-dates input[type="date"] { color-scheme: dark; }
 :root[data-theme="light"] .meth-edit-dates input[type="date"] { color-scheme: light; }
 .meth-chains-modal-wrap {
-  max-height: min(220px, 32dvh);
+  max-height: min(360px, 42dvh);
   margin: 0;
   border-radius: 10px;
   border: 1px solid var(--border);
   overflow: auto;
+  background: var(--surface);
 }
-table.meth-chains-compact { font-size: 12px; }
-table.meth-chains-compact thead th { padding: 8px 10px; }
-table.meth-chains-compact tbody td { padding: 5px 8px; }
+table.meth-chains-compact { font-size: 12px; width: 100%; border-collapse: collapse; }
+table.meth-chains-compact thead th {
+  padding: 8px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border-2);
+}
+table.meth-chains-compact tbody td { padding: 5px 8px; border-bottom: 1px solid var(--border-2); }
 table.meth-chains-compact td.chain-lab {
   width: 48px;
   font-size: 11px;
+  font-weight: 800;
   text-align: center;
   padding-left: 8px;
+  color: var(--accent);
+  background: var(--surface-2);
 }
-table.meth-chains-compact input { width: 100%; min-width: 64px; }
+table.meth-chains-compact input {
+  width: 100%;
+  min-width: 64px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  text-align: center;
+  box-sizing: border-box;
+}
+table.meth-chains-compact input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(56,189,248,0.2);
+}
+.meth-modal-close {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.meth-modal-close:hover { color: var(--text); border-color: var(--accent); }
+.meth-modal-head-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.meth-modal-head-text { flex: 1; min-width: 0; }
 #meth-edit-modal .pin-actions {
   flex-shrink: 0;
   margin: 0;
   padding: 14px 22px 18px;
   border-top: 1px solid var(--border-2);
   background: var(--surface-2);
+  position: relative;
+  z-index: 5;
 }
-#meth-edit-modal .pin-actions .btn { padding: 10px 16px; border-radius: 10px; font-weight: 700; }
+#meth-edit-modal .pin-actions .btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
 #meth-edit-modal .pin-actions .btn.primary {
   background: var(--grad-a);
   color: #fff;
@@ -4752,115 +4957,51 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     <div class="page-head">
       <div class="left">
         <h2><span class="accent">Méthodes</span></h2>
-        <div class="sub">Filtrez par modèle (saisie libre), chaîne ou dates — double-clic ou « Modifier » pour éditer une période.</div>
+        <div class="sub">Périodes regroupées par modèle et dates — VT, EFF, P/H et OHL visibles par chaîne. Double-clic pour modifier.</div>
       </div>
       <div class="pill-meta"><span class="dot"></span><span id="meth-rules-month-pill">—</span></div>
     </div>
 
     <div class="meth-page">
-      <div class="meth-toolbar">
-        <div class="meth-toolbar-left">
-          <div class="field meth-field-modele">
-            <label for="meth-filter-modele">Modèle</label>
-            <input type="text" id="meth-filter-modele" list="meth-filter-modele-dl" autocomplete="off"
-              placeholder="Saisir ou rechercher…" title="Saisie libre ou suggestion depuis les données du mois">
-            <datalist id="meth-filter-modele-dl"></datalist>
-          </div>
-          <div class="field meth-field-chain">
-            <label for="meth-filter-chain">Chaîne</label>
-            <input type="number" id="meth-filter-chain" min="1" max="20" placeholder="Toutes"
-              title="Filtrer par n° de chaîne (1–20)" autocomplete="off">
-          </div>
-          <div class="field meth-field-date">
-            <label for="meth-filter-debut">Du</label>
-            <input type="date" id="meth-filter-debut" class="meth-rule-date" title="Calendrier — filtre date début">
-          </div>
-          <div class="field meth-field-date">
-            <label for="meth-filter-fin">Au</label>
-            <input type="date" id="meth-filter-fin" class="meth-rule-date" title="Calendrier — filtre date fin">
-          </div>
-          <span class="meth-count-pill" id="meth-toolbar-count">—</span>
+      <div class="meth-bar">
+        <div class="meth-search">
+          <input type="search" id="meth-filter-modele" list="meth-filter-modele-dl"
+            placeholder="Rechercher un modèle ou une chaîne (ex. 2843, Ch04)…" autocomplete="off">
+          <datalist id="meth-filter-modele-dl"></datalist>
         </div>
-        <div class="meth-toolbar-actions">
+        <span class="meth-bar-count" id="meth-toolbar-count">—</span>
+        <div class="meth-bar-actions">
           <button type="button" class="btn" id="meth-row-edit-btn" disabled title="Modifier la période sélectionnée">Modifier</button>
           <button type="button" class="btn danger" id="meth-row-del-btn" disabled title="Supprimer la période">Supprimer</button>
           <button type="button" class="btn primary" id="meth-rule-new-btn">+ Période</button>
         </div>
       </div>
 
-      <div class="meth-body">
-        <div class="meth-empty" id="meth-rules-flat-empty">Saisissez un <strong>modèle</strong>, une <strong>chaîne</strong> ou des <strong>dates</strong> pour afficher les périodes.</div>
-        <div class="meth-table-card" id="meth-rules-flat-wrap" style="display:none">
-          <div class="meth-table-card-head">
-            <span class="meth-table-title" id="meth-table-title">Périodes</span>
-            <span class="meth-table-hint">Clic = sélectionner · Double-clic = modifier</span>
-          </div>
-          <div class="meth-rules-table-wrap meth-main-table-wrap">
-            <table class="meth-rules-grid meth-rules-flat" id="meth-rules-flat-table">
-              <thead>
-                <tr id="meth-flat-head-row">
-                  <th class="col-modele">Modèle</th>
-                  <th class="col-ch">Ch</th>
-                  <th class="col-val">VT</th>
-                  <th class="col-val">EFF</th>
-                  <th class="col-val">P/H</th>
-                  <th class="col-val">OHL</th>
-                  <th class="col-date">Du</th>
-                  <th class="col-date">Au</th>
-                </tr>
-              </thead>
-              <tbody id="meth-rules-flat-body"></tbody>
-            </table>
-          </div>
+      <div class="meth-panel" id="meth-rules-flat-wrap">
+        <div class="meth-panel-head">
+          <span class="meth-panel-title" id="meth-table-title">Périodes du mois</span>
+          <span class="meth-panel-hint">Clic = sélectionner la période · Double-clic = modifier</span>
         </div>
-      </div>
-    </div>
-
-    <!-- Édition période (modale) -->
-    <div class="pin-modal-backdrop" id="meth-edit-modal">
-      <div class="pin-modal meth-edit-modal wide" role="dialog" aria-labelledby="meth-edit-modal-title">
-        <div class="meth-modal-head">
-          <h3 id="meth-edit-modal-title">Période</h3>
-          <p id="meth-edit-modal-sub">Chaînes et valeurs pour la période sélectionnée.</p>
+        <div class="meth-empty-state" id="meth-rules-flat-empty" style="display:none">
+          <div>Aucune période pour ce mois.</div>
+          <button type="button" class="btn primary" id="meth-empty-new-btn">+ Créer une période</button>
         </div>
-        <div class="meth-edit-body">
-          <div class="meth-edit-section">
-            <span class="meth-section-label">Dates &amp; modèle</span>
-            <div class="meth-edit-dates">
-              <div class="field">
-                <label for="meth-rule-modele">Modèle</label>
-                <input type="text" id="meth-rule-modele" list="meth-rule-modele-datalist" autocomplete="off"
-                  placeholder="Référence modèle (nouveau ou existant)" title="Saisie libre — le modèle n'a pas besoin d'exister dans la Saisie">
-                <datalist id="meth-rule-modele-datalist"></datalist>
-              </div>
-              <div class="field">
-                <label for="meth-rule-debut">Du</label>
-                <input type="date" id="meth-rule-debut" class="meth-rule-date" title="Calendrier — date de début">
-              </div>
-              <div class="field">
-                <label for="meth-rule-fin">Au</label>
-                <input type="date" id="meth-rule-fin" class="meth-rule-date" title="Calendrier — date de fin">
-              </div>
-            </div>
-          </div>
-          <datalist id="meth-datalist-vt"></datalist>
-          <datalist id="meth-datalist-ph"></datalist>
-          <datalist id="meth-datalist-eff"></datalist>
-          <div class="meth-edit-section">
-            <span class="meth-section-label">Chaînes · VT · EFF · P/H · OHL</span>
-            <div class="meth-rules-table-wrap meth-chains-modal-wrap">
-              <table class="meth-rules-grid meth-chains-compact">
-                <thead>
-                  <tr><th>Ch</th><th>VT</th><th>EFF</th><th>P/H</th><th>OHL</th></tr>
-                </thead>
-                <tbody id="meth-rules-chains-body"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="pin-actions">
-          <button type="button" class="btn" id="meth-edit-cancel">Annuler</button>
-          <button type="button" class="btn primary" id="meth-rule-save-btn">Enregistrer</button>
+        <div class="meth-table-scroll meth-main-table-wrap">
+          <table class="meth-rules-grid meth-rules-flat meth-rules-periods" id="meth-rules-flat-table">
+            <thead>
+              <tr>
+                <th class="col-modele">Modèle</th>
+                <th class="col-date">Du</th>
+                <th class="col-date">Au</th>
+                <th class="col-ch">Ch</th>
+                <th class="col-val">VT</th>
+                <th class="col-val">EFF</th>
+                <th class="col-val">P/H</th>
+                <th class="col-val">OHL</th>
+              </tr>
+            </thead>
+            <tbody id="meth-rules-flat-body"></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -4975,6 +5116,60 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       </div>
     </div>
   </section>
+
+  <!-- Édition période Méthodes (hors .page pour position:fixed correct) -->
+  <div class="pin-modal-backdrop" id="meth-edit-modal">
+    <div class="pin-modal meth-edit-modal wide" role="dialog" aria-modal="true" aria-labelledby="meth-edit-modal-title">
+      <div class="meth-modal-head">
+        <div class="meth-modal-head-row">
+          <div class="meth-modal-head-text">
+            <h3 id="meth-edit-modal-title">Période</h3>
+            <p id="meth-edit-modal-sub">Chaînes et valeurs pour la période sélectionnée.</p>
+          </div>
+          <button type="button" class="meth-modal-close" id="meth-edit-close" title="Fermer" aria-label="Fermer">×</button>
+        </div>
+      </div>
+      <div class="meth-edit-body">
+        <div class="meth-edit-section">
+          <span class="meth-section-label">Dates &amp; modèle</span>
+          <div class="meth-edit-dates">
+            <div class="field">
+              <label for="meth-rule-modele">Modèle</label>
+              <input type="text" id="meth-rule-modele" list="meth-rule-modele-datalist" autocomplete="off"
+                placeholder="Référence modèle (nouveau ou existant)" title="Saisie libre — le modèle n'a pas besoin d'exister dans la Saisie">
+              <datalist id="meth-rule-modele-datalist"></datalist>
+            </div>
+            <div class="field">
+              <label for="meth-rule-debut">Du</label>
+              <input type="date" id="meth-rule-debut" class="meth-rule-date" title="Calendrier — date de début">
+            </div>
+            <div class="field">
+              <label for="meth-rule-fin">Au</label>
+              <input type="date" id="meth-rule-fin" class="meth-rule-date" title="Calendrier — date de fin">
+            </div>
+          </div>
+        </div>
+        <datalist id="meth-datalist-vt"></datalist>
+        <datalist id="meth-datalist-ph"></datalist>
+        <datalist id="meth-datalist-eff"></datalist>
+        <div class="meth-edit-section">
+          <span class="meth-section-label">Chaînes · VT · EFF · P/H · OHL</span>
+          <div class="meth-rules-table-wrap meth-chains-modal-wrap">
+            <table class="meth-rules-grid meth-chains-compact">
+              <thead>
+                <tr><th>Ch</th><th>VT</th><th>EFF</th><th>P/H</th><th>OHL</th></tr>
+              </thead>
+              <tbody id="meth-rules-chains-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="pin-actions">
+        <button type="button" class="btn" id="meth-edit-cancel">Annuler</button>
+        <button type="button" class="btn primary" id="meth-rule-save-btn">Enregistrer</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Ajout chaîne / modèle (catalogue) -->
   <div class="pin-modal-backdrop" id="saisie-add-modal">
@@ -9417,6 +9612,7 @@ const METH_CHAIN_COUNT = 20;
 const METH_DEFAULT_OHL = 1;
 const METH_OLD_DEFAULT_OHL = 6.5;
 let methRuleEditId = null;
+let methRuleFormMode = 'create'; // 'create' | 'edit' — évite d'écraser une période existante par erreur
 /** Jour affiché sur Plan de préparation (par mois). */
 const prepPlanDates = {};
 const PIN_CODE = '1234';
@@ -9517,25 +9713,108 @@ function getMethRuleModeleValue() {
   if (inp) return inp;
   return (document.getElementById('meth-filter-modele')?.value || '').trim();
 }
+function getMethSearchQuery() {
+  return (document.getElementById('meth-filter-modele')?.value || '').trim().toLowerCase();
+}
+function methRowMatchesSearch(row, q) {
+  if (!q) return true;
+  const mod = String(row.modele || '').toLowerCase();
+  const ch = String(row.chain || '');
+  if (mod.includes(q)) return true;
+  if (ch === q) return true;
+  if (('ch' + ch.padStart(2, '0')).includes(q)) return true;
+  if (('ch' + ch).includes(q)) return true;
+  if (/^\d+$/.test(q) && Number(ch) === Number(q)) return true;
+  return false;
+}
+function methPeriodMatchesSearch(period, q) {
+  if (!q) return true;
+  if (String(period.modele || '').toLowerCase().includes(q)) return true;
+  for (const ce of period.chains || []) {
+    const ch = String(ce.chain || '');
+    if (ch === q) return true;
+    if (('ch' + ch.padStart(2, '0')).includes(q)) return true;
+    if (/^\d+$/.test(q) && Number(ch) === Number(q)) return true;
+  }
+  return false;
+}
+function buildMethRulesPeriodRows(month, modeleFilter) {
+  let rules = methRulesForMonth(month);
+  if (modeleFilter) rules = rules.filter(r => methModeleMatchesFilter(r.modele, modeleFilter));
+  const rows = [];
+  for (const rule of rules) {
+    const chainEntries = [];
+    const chains = rule.chains || {};
+    for (const ch of Object.keys(chains).map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b)) {
+      const ce = chains[String(ch)];
+      if (!ce || !methChainEntryHasValues(ce)) continue;
+      chainEntries.push({ chain: ch, vt: ce.vt, eff: ce.eff, ph: ce.ph, ohl: ce.ohl });
+    }
+    if (!chainEntries.length) continue;
+    rows.push({
+      ruleId: rule.id,
+      modele: rule.modele,
+      dateDebut: rule.dateDebut,
+      dateFin: rule.dateFin,
+      chains: chainEntries,
+      chainCount: chainEntries.length,
+    });
+  }
+  rows.sort((a, b) => {
+    const m = (a.modele || '').localeCompare(b.modele || '', 'fr');
+    if (m !== 0) return m;
+    const d0 = compareFrDate(a.dateDebut, b.dateDebut);
+    if (d0 !== 0) return d0;
+    const d1 = compareFrDate(a.dateFin, b.dateFin);
+    if (d1 !== 0) return d1;
+    return String(a.ruleId || '').localeCompare(String(b.ruleId || ''), 'fr');
+  });
+  return rows;
+}
+function getMethFilteredPeriodRows(month) {
+  const all = buildMethRulesPeriodRows(month, null);
+  const q = getMethSearchQuery();
+  return q ? all.filter(p => methPeriodMatchesSearch(p, q)) : all;
+}
+function methFormatChainChips(chains, maxShow) {
+  const limit = maxShow || 8;
+  const labels = (chains || []).map(c => 'Ch' + String(c.chain).padStart(2, '0'));
+  if (!labels.length) return '<span class="meth-chain-chip meth-chain-chip-more">—</span>';
+  if (labels.length <= limit) {
+    return labels.map(l => `<span class="meth-chain-chip">${l}</span>`).join('');
+  }
+  const shown = labels.slice(0, limit).map(l => `<span class="meth-chain-chip">${l}</span>`).join('');
+  return shown + `<span class="meth-chain-chip meth-chain-chip-more">+${labels.length - limit}</span>`;
+}
+function getMethFilteredFlatRows(month) {
+  return getMethFilteredPeriodRows(month);
+}
+function buildMethRulesFlatRows(month, modeleFilter) {
+  const periods = buildMethRulesPeriodRows(month, modeleFilter);
+  const rows = [];
+  for (const p of periods) {
+    for (const ce of p.chains) {
+      rows.push({
+        ruleId: p.ruleId,
+        modele: p.modele,
+        chain: ce.chain,
+        vt: ce.vt,
+        eff: ce.eff,
+        ph: ce.ph,
+        ohl: ce.ohl,
+        dateDebut: p.dateDebut,
+        dateFin: p.dateFin,
+      });
+    }
+  }
+  return rows;
+}
 function getMethRulesDisplayModele() {
   return (document.getElementById('meth-filter-modele')?.value || '').trim();
 }
 function setMethFilterModeleValue(modele) {
   const inp = document.getElementById('meth-filter-modele');
   if (inp) inp.value = (modele || '').trim();
-}
-function getMethFilterChain() {
-  const v = Number(document.getElementById('meth-filter-chain')?.value);
-  return v && !isNaN(v) ? v : null;
-}
-function getMethFilterDateFr(which) {
-  const el = document.getElementById(which === 'fin' ? 'meth-filter-fin' : 'meth-filter-debut');
-  if (!el?.value) return '';
-  return _isoToFr(el.value);
-}
-function methHasActiveFilters() {
-  return !!(getMethRulesDisplayModele() || getMethFilterChain()
-    || getMethFilterDateFr('debut') || getMethFilterDateFr('fin'));
 }
 function methModeleMatchesFilter(modele, filter) {
   const q = (filter || '').trim();
@@ -9568,22 +9847,38 @@ function formatMethDisplayDate(fr) {
   if (!m) return fr;
   return String(m[1]).padStart(2, '0') + '-' + String(m[2]).padStart(2, '0') + '-' + m[3];
 }
+function ensureMethEditModalInBody() {
+  const modal = document.getElementById('meth-edit-modal');
+  if (modal && modal.parentElement !== document.body) document.body.appendChild(modal);
+}
 function openMethEditModal() {
-  document.getElementById('meth-edit-modal')?.classList.add('open');
+  ensureMethEditModalInBody();
+  if (!document.getElementById('meth-rules-chains-body')?.children.length) buildMethRulesChainsTable();
+  const modal = document.getElementById('meth-edit-modal');
+  if (modal) {
+    modal.scrollTop = 0;
+    modal.classList.add('open');
+  }
+  document.body.classList.add('meth-modal-open');
+  updateMethRuleSaveBtnLabel();
   updateMethEditModalTitle();
 }
 function closeMethEditModal() {
   document.getElementById('meth-edit-modal')?.classList.remove('open');
+  document.body.classList.remove('meth-modal-open');
 }
 function updateMethEditModalTitle() {
   const t = document.getElementById('meth-edit-modal-title');
   const sub = document.getElementById('meth-edit-modal-sub');
   const mod = getMethRuleModeleValue();
-  if (t) t.textContent = methRuleEditId ? 'Modifier la période' : 'Nouvelle période';
+  const editing = methRuleFormMode === 'edit';
+  if (t) t.textContent = editing ? 'Modifier la période' : 'Nouvelle période';
   if (sub) {
-    sub.textContent = methRuleEditId
+    sub.textContent = editing
       ? (mod ? mod + ' — dates et valeurs par chaîne.' : 'Dates et valeurs par chaîne.')
-      : (mod ? 'Nouvelle fiche pour « ' + mod + ' ».' : 'Saisissez un modèle (nouveau ou existant), les dates et au moins une valeur par chaîne.');
+      : (mod
+        ? 'Nouvelle fiche pour « ' + mod + ' » — les autres périodes du même modèle seront conservées.'
+        : 'Saisissez un modèle, les dates et au moins une valeur par chaîne. Plusieurs périodes par modèle sont possibles.');
   }
 }
 function updateMethToolbarActions() {
@@ -9594,24 +9889,28 @@ function updateMethToolbarActions() {
   if (delBtn) delBtn.disabled = !on;
 }
 function countMethFilteredFlatRows(month) {
-  const modele = getMethRulesDisplayModele();
-  const chainF = getMethFilterChain();
-  const fDeb = getMethFilterDateFr('debut');
-  const fFin = getMethFilterDateFr('fin');
-  let rows = buildMethRulesFlatRows(month, modele || null);
-  if (chainF) rows = rows.filter(r => r.chain === chainF);
-  if (fDeb || fFin) rows = rows.filter(r => methPeriodMatchesDateFilter(r.dateDebut, r.dateFin, fDeb, fFin));
-  return rows;
+  return getMethFilteredFlatRows(month);
 }
 function updateMethToolbarCountForModele(month) {
   const el = document.getElementById('meth-toolbar-count');
   if (!el) return;
-  if (!methHasActiveFilters()) { el.textContent = '—'; return; }
-  const rows = countMethFilteredFlatRows(month);
-  const nPer = new Set(rows.map(r => r.ruleId)).size;
-  if (!rows.length) el.textContent = 'Aucune ligne';
-  else if (!nPer) el.textContent = rows.length + ' ligne(s)';
-  else el.textContent = nPer + ' période(s) · ' + rows.length + ' ligne(s)';
+  const periods = getMethFilteredPeriodRows(month);
+  const allPeriods = buildMethRulesPeriodRows(month, null);
+  const q = getMethSearchQuery();
+  const nChains = periods.reduce((s, p) => s + p.chainCount, 0);
+  if (!allPeriods.length) {
+    el.textContent = 'Aucune période';
+    return;
+  }
+  if (!periods.length && q) {
+    el.textContent = 'Aucun résultat';
+    return;
+  }
+  if (!periods.length) {
+    el.textContent = 'Aucune période';
+    return;
+  }
+  el.textContent = periods.length + ' période(s) · ' + nChains + ' chaîne(s)';
 }
 function methRuleAuLabel(month, dateFin) {
   if (!dateFin) return '—';
@@ -9621,43 +9920,6 @@ function methRuleAuLabel(month, dateFin) {
   const today = todayFrString();
   if (dateFin === last || dateFin === today) return 'Aujourd\'hui';
   return dateFin;
-}
-function buildMethRulesFlatRows(month, modeleFilter) {
-  const rows = [];
-  let rules = methRulesForMonth(month);
-  if (modeleFilter) rules = rules.filter(r => methModeleMatchesFilter(r.modele, modeleFilter));
-  for (const rule of rules) {
-    const chains = rule.chains || {};
-    const chKeys = Object.keys(chains).map(Number).filter(n => !isNaN(n)).sort((a, b) => a - b);
-    for (const ch of chKeys) {
-      const ce = chains[String(ch)];
-      if (!ce) continue;
-      if (ce.vt == null && ce.ph == null && ce.eff == null && ce.ohl == null) continue;
-      rows.push({
-        ruleId: rule.id,
-        modele: rule.modele,
-        chain: ch,
-        vt: ce.vt,
-        eff: ce.eff,
-        ph: ce.ph,
-        ohl: ce.ohl,
-        dateDebut: rule.dateDebut,
-        dateFin: rule.dateFin,
-      });
-    }
-  }
-  rows.sort((a, b) => {
-    const m = (a.modele || '').localeCompare(b.modele || '', 'fr');
-    if (m !== 0) return m;
-    const d0 = compareFrDate(a.dateDebut, b.dateDebut);
-    if (d0 !== 0) return d0;
-    const d1 = compareFrDate(a.dateFin, b.dateFin);
-    if (d1 !== 0) return d1;
-    const r = String(a.ruleId || '').localeCompare(String(b.ruleId || ''), 'fr');
-    if (r !== 0) return r;
-    return a.chain - b.chain;
-  });
-  return rows;
 }
 function methEscHtml(s) {
   return String(s ?? '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -9671,74 +9933,80 @@ function updateMethTableTitle(modele) {
   const el = document.getElementById('meth-table-title');
   if (!el) return;
   if (!modele) {
-    el.textContent = 'Périodes';
+    el.textContent = 'Périodes du mois';
     return;
   }
-  el.innerHTML = 'Périodes <span class="meth-model-tag">' + methEscHtml(modele) + '</span>';
+  el.innerHTML = 'Résultats <span class="meth-model-tag">' + methEscHtml(modele) + '</span>';
 }
-function setMethEmptyState(html) {
+function setMethEmptyState(html, showCreateBtn) {
   const empty = document.getElementById('meth-rules-flat-empty');
+  const scroll = document.querySelector('#meth-rules-flat-wrap .meth-table-scroll');
   if (!empty) return;
   empty.style.display = 'flex';
-  empty.innerHTML = html;
+  if (scroll) scroll.style.display = 'none';
+  const btn = document.getElementById('meth-empty-new-btn');
+  if (btn) btn.style.display = showCreateBtn ? '' : 'none';
+  const msg = empty.querySelector('div');
+  if (msg) msg.innerHTML = html;
 }
 function renderMethRulesFlatTable(month) {
   const tbody = document.getElementById('meth-rules-flat-body');
   const wrap = document.getElementById('meth-rules-flat-wrap');
   const empty = document.getElementById('meth-rules-flat-empty');
   const table = document.getElementById('meth-rules-flat-table');
+  const scroll = document.querySelector('#meth-rules-flat-wrap .meth-table-scroll');
   if (!tbody || !wrap || !empty) return;
-  const modele = getMethRulesDisplayModele();
-  const chainF = getMethFilterChain();
-  const fDeb = getMethFilterDateFr('debut');
-  const fFin = getMethFilterDateFr('fin');
-  updateMethTableTitle(modele);
-  if (!methHasActiveFilters()) {
-    wrap.style.display = 'none';
-    setMethEmptyState('Saisissez un <strong>modèle</strong>, une <strong>chaîne</strong> ou des <strong>dates</strong> pour afficher les périodes.');
+  const q = getMethSearchQuery();
+  const allPeriods = buildMethRulesPeriodRows(month, null);
+  const periods = getMethFilteredPeriodRows(month);
+  updateMethTableTitle(q ? getMethRulesDisplayModele() : '');
+  updateMethToolbarCountForModele(month);
+  if (!allPeriods.length) {
+    setMethEmptyState('Aucune période pour ce mois.', true);
     tbody.innerHTML = '';
     if (table) table.classList.remove('hide-col-modele');
+    updateMethToolbarActions();
     return;
   }
-  let rows = buildMethRulesFlatRows(month, modele || null);
-  if (chainF) rows = rows.filter(r => r.chain === chainF);
-  if (fDeb || fFin) rows = rows.filter(r => methPeriodMatchesDateFilter(r.dateDebut, r.dateFin, fDeb, fFin));
-  if (!rows.length) {
-    wrap.style.display = 'none';
-    const hint = modele ? (' pour « ' + methEscHtml(modele) + ' »') : '';
-    setMethEmptyState('Aucune période' + hint + ' avec ces filtres.<br>Cliquez <strong>+ Période</strong> pour en créer une.');
+  if (!periods.length) {
+    setMethEmptyState('Aucun résultat pour « <strong>' + methEscHtml(getMethRulesDisplayModele()) + '</strong> ».', false);
     tbody.innerHTML = '';
+    if (table) table.classList.remove('hide-col-modele');
+    updateMethToolbarActions();
     return;
   }
-  wrap.style.display = '';
   empty.style.display = 'none';
-  if (table) table.classList.toggle('hide-col-modele', !!modele);
-  let prevRuleId = null;
-  let periodIdx = -1;
-  tbody.innerHTML = rows.map(r => {
-    const periodStart = r.ruleId !== prevRuleId;
-    if (periodStart) { periodIdx++; prevRuleId = r.ruleId; }
-    const active = r.ruleId === methRuleEditId ? ' meth-flat-active' : '';
-    const band = periodIdx % 2 === 0 ? ' meth-flat-period-a' : ' meth-flat-period-b';
-    const pCls = periodStart ? ' meth-flat-period-start' : '';
-    const auLbl = methRuleAuLabel(month, r.dateFin);
-    const auHtml = periodStart
-      ? (auLbl === 'Aujourd\'hui'
-        ? '<span class="meth-au-today">Aujourd\'hui</span>'
-        : methEscHtml(formatMethDisplayDate(auLbl)))
-      : '';
-    const duHtml = periodStart ? methEscHtml(formatMethDisplayDate(r.dateDebut)) : '';
-    return `<tr class="meth-flat-row${active}${band}${pCls}" data-rule-id="${methEscHtml(r.ruleId)}" data-chain="${r.chain}">
-      <td class="col-modele">${methEscHtml(r.modele)}</td>
-      <td class="col-ch">${r.chain}</td>
-      ${methFmtValCell(r.vt, false)}
-      ${methFmtValCell(r.eff, false)}
-      ${methFmtValCell(r.ph, true)}
-      ${methFmtValCell(r.ohl, false)}
-      <td class="col-date col-date-du">${duHtml}</td>
-      <td class="col-date col-date-au">${auHtml}</td>
-    </tr>`;
-  }).join('');
+  if (scroll) scroll.style.display = '';
+  if (table) table.classList.toggle('hide-col-modele', false);
+  const htmlParts = [];
+  periods.forEach((p, pIdx) => {
+    const active = p.ruleId === methRuleEditId ? ' meth-flat-active' : '';
+    const band = pIdx % 2 === 0 ? ' meth-flat-period-a' : ' meth-flat-period-b';
+    const auLbl = methRuleAuLabel(month, p.dateFin);
+    const auHtml = auLbl === 'Aujourd\'hui'
+      ? '<span class="meth-au-today">Aujourd\'hui</span>'
+      : methEscHtml(formatMethDisplayDate(auLbl));
+    const duHtml = methEscHtml(formatMethDisplayDate(p.dateDebut));
+    const n = p.chains.length;
+    p.chains.forEach((ce, ci) => {
+      const isFirst = ci === 0;
+      const startCls = isFirst && pIdx > 0 ? ' meth-flat-period-start' : '';
+      let row = `<tr class="meth-flat-row${active}${band}${startCls}" data-rule-id="${methEscHtml(p.ruleId)}">`;
+      if (isFirst) {
+        row += `<td class="col-modele" rowspan="${n}">${methEscHtml(p.modele)}</td>`;
+        row += `<td class="col-date col-date-du" rowspan="${n}">${duHtml}</td>`;
+        row += `<td class="col-date col-date-au" rowspan="${n}">${auHtml}</td>`;
+      }
+      row += `<td class="col-ch">${ce.chain}</td>`;
+      row += methFmtValCell(ce.vt, false);
+      row += methFmtValCell(ce.eff, false);
+      row += methFmtValCell(ce.ph, true);
+      row += methFmtValCell(ce.ohl, false);
+      row += '</tr>';
+      htmlParts.push(row);
+    });
+  });
+  tbody.innerHTML = htmlParts.join('');
   tbody.querySelectorAll('.meth-flat-row').forEach(tr => {
     tr.addEventListener('click', () => {
       methRuleEditId = tr.dataset.ruleId;
@@ -9753,8 +10021,7 @@ function renderMethRulesFlatTable(month) {
   updateMethToolbarActions();
 }
 function toggleMethRulesViews(month) {
-  const modele = getMethRulesDisplayModele();
-  updateMethToolbarCountForModele(month, modele);
+  updateMethToolbarCountForModele(month);
   renderMethRulesFlatTable(month);
 }
 function rowMatchesMethModele(row, modele) {
@@ -9807,22 +10074,32 @@ function mergeMethRulesFromProduction(month, replaceAll) {
   const built = buildMethRulesFromProductionData(month);
   if (!built.length) return 0;
   let rules = replaceAll ? [] : methRulesForMonth(month).slice();
+  let merged = 0;
   for (const nr of built) {
     const nk = normalizeModeleKey(nr.modele);
+    if (!replaceAll) {
+      /* Ne jamais remplacer des périodes saisies à la main — ajouter seulement les modèles absents. */
+      if (rules.some(r => normalizeModeleKey(r.modele) === nk)) continue;
+      rules.push(nr);
+      merged++;
+      continue;
+    }
     const idx = rules.findIndex(r => normalizeModeleKey(r.modele) === nk);
     if (idx >= 0) {
       rules[idx] = { ...rules[idx], modele: nr.modele, dateDebut: nr.dateDebut, dateFin: nr.dateFin, chains: nr.chains };
     } else {
       rules.push(nr);
     }
+    merged++;
   }
+  if (!merged) return 0;
   clearMethRuleOverrideFields(month, methRulesForMonth(month));
   saveMethRulesForMonth(month, rules);
   applyMethRulesToMonth(month);
   syncMethRulesToOverrides(month);
   syncMonthProductionMetrics(month);
   if (saisieMonth === month && saisieDate) { buildSaisieBody(); refreshSummaryStrip(); }
-  return built.length;
+  return merged;
 }
 function ensureMethRulesImportedFromData(month) {
   if (methRulesForMonth(month).length) return false;
@@ -9851,7 +10128,7 @@ function setMethRuleDateFr(which, frDate) {
 function syncMethRuleDatePickerBounds(month) {
   const info = PRODUCTION[month];
   const sheets = info?.daily_sheets || [];
-  const ids = ['meth-rule-debut', 'meth-rule-fin', 'meth-filter-debut', 'meth-filter-fin'];
+  const ids = ['meth-rule-debut', 'meth-rule-fin'];
   const els = ids.map(id => document.getElementById(id)).filter(Boolean);
   if (!sheets.length) return;
   const min = _frToIso(sheets[0]);
@@ -9914,7 +10191,29 @@ function populateMethValueDatalists(month, modele) {
 }
 function updateMethRuleSaveBtnLabel() {
   const btn = document.getElementById('meth-rule-save-btn');
-  if (btn) btn.textContent = methRuleEditId ? 'Mettre à jour' : 'Enregistrer';
+  if (btn) btn.textContent = methRuleFormMode === 'edit' ? 'Mettre à jour' : 'Enregistrer';
+}
+function nextMethSheetDayAfter(month, frDate) {
+  const sheets = PRODUCTION[month]?.daily_sheets || [];
+  for (const d of sheets) {
+    if (compareFrDate(d, frDate) > 0) return d;
+  }
+  return sheets[sheets.length - 1] || '';
+}
+function suggestMethRuleDatesForNewPeriod(month, modele) {
+  const sheets = PRODUCTION[month]?.daily_sheets || [];
+  if (!sheets.length) return { debut: '', fin: '' };
+  const mk = normalizeModeleKey(modele);
+  const existing = methRulesForMonth(month).filter(r => normalizeModeleKey(r.modele) === mk);
+  if (!existing.length) {
+    return { debut: sheets[0], fin: sheets[sheets.length - 1] };
+  }
+  let latestFin = existing[0].dateFin;
+  for (const r of existing) {
+    if (compareFrDate(r.dateFin, latestFin) > 0) latestFin = r.dateFin;
+  }
+  const debut = nextMethSheetDayAfter(month, latestFin);
+  return { debut, fin: sheets[sheets.length - 1] };
 }
 function populateMethChainsRangeSelects() {
   const from = document.getElementById('meth-chains-from');
@@ -9990,6 +10289,7 @@ function populateMethFilterModeleDatalist(month) {
     .map(m => `<option value="${m.replace(/"/g, '&quot;')}"></option>`).join('');
 }
 function onMethFiltersChanged() {
+  if (document.getElementById('meth-edit-modal')?.classList.contains('open')) return;
   const month = currentMonth;
   methRuleEditId = null;
   toggleMethRulesViews(month);
@@ -10268,41 +10568,45 @@ function buildMethRulesChainsTable() {
   applyMethChainsTableFilter();
 }
 function renderMethRulesList(month) {
-  updateMethToolbarCountForModele(month, getMethRulesDisplayModele());
+  updateMethToolbarCountForModele(month);
 }
 function loadMethRuleIntoForm(month, ruleId) {
   const rule = methRulesForMonth(month).find(r => r.id === ruleId);
   if (!rule) return;
+  methRuleFormMode = 'edit';
   methRuleEditId = rule.id;
   const modInp = document.getElementById('meth-rule-modele');
   if (modInp) modInp.value = rule.modele || '';
-  if (rule.modele) setMethFilterModeleValue(rule.modele);
   setMethRuleDateFr('debut', rule.dateDebut || '');
   setMethRuleDateFr('fin', rule.dateFin || '');
   fillMethRuleChainsForm(rule.chains || {});
   populateMethValueDatalists(month, rule.modele);
   updateMethRuleSaveBtnLabel();
   updateMethEditModalTitle();
-  applyMethChainsTableFilter();
   openMethEditModal();
   renderMethRulesFlatTable(month);
+  updateMethToolbarActions();
 }
 function resetMethRuleForm(month, openModal) {
+  methRuleFormMode = 'create';
   methRuleEditId = null;
   const info = PRODUCTION[month];
   const sheets = info?.daily_sheets || [];
   const modInp = document.getElementById('meth-rule-modele');
   const keepMod = (document.getElementById('meth-filter-modele')?.value || '').trim();
   if (modInp) modInp.value = keepMod;
-  if (sheets.length) {
+  if (keepMod) {
+    const suggested = suggestMethRuleDatesForNewPeriod(month, keepMod);
+    setMethRuleDateFr('debut', suggested.debut || '');
+    setMethRuleDateFr('fin', suggested.fin || '');
+  } else if (sheets.length) {
     setMethRuleDateFr('debut', sheets[0]);
     setMethRuleDateFr('fin', sheets[sheets.length - 1]);
   } else {
     setMethRuleDateFr('debut', '');
     setMethRuleDateFr('fin', '');
   }
-  if (keepMod) fillMethRuleFormFromProductionForModele(month, keepMod);
-  else fillMethRuleChainsForm({});
+  fillMethRuleChainsForm({});
   populateMethValueDatalists(month, keepMod || null);
   updateMethRuleSaveBtnLabel();
   updateMethEditModalTitle();
@@ -10341,7 +10645,7 @@ function saveMethRuleFromForm(month) {
   if (!Object.keys(chains).length) { toast('Saisissez au moins une valeur sur une chaîne.', true); return; }
   const rules = methRulesForMonth(month).slice();
   const payload = { modele, dateDebut, dateFin, chains };
-  const wasEdit = !!methRuleEditId;
+  const wasEdit = methRuleFormMode === 'edit' && !!methRuleEditId;
   const conflict = findMethRuleSaveConflict(
     rules, modele, dateDebut, dateFin, chains, wasEdit ? methRuleEditId : null
   );
@@ -10383,6 +10687,7 @@ function saveMethRuleFromForm(month) {
   }
   populateMethFilterModeleDatalist(month);
   setMethFilterModeleValue(modele);
+  methRuleFormMode = 'create';
   methRuleEditId = null;
   closeMethEditModal();
   updateMethRuleSaveBtnLabel();
@@ -10404,6 +10709,7 @@ function deleteMethRule(month, ruleId) {
   const rules = currentRules.filter(r => r.id !== ruleId);
   saveMethRulesForMonth(month, rules);
   if (methRuleEditId === ruleId) {
+    methRuleFormMode = 'create';
     methRuleEditId = null;
     closeMethEditModal();
   }
@@ -10425,6 +10731,7 @@ function renderMethodesPage() {
   const month = currentMonth;
   const info = PRODUCTION[month];
   if (!info) return;
+  ensureMethEditModalInBody();
   ensureMethRulesImportedFromData(month);
   const pill = document.getElementById('meth-rules-month-pill');
   if (pill) pill.textContent = info.label || month;
@@ -10434,6 +10741,7 @@ function renderMethodesPage() {
   if (!document.getElementById('meth-rules-chains-body')?.children.length) buildMethRulesChainsTable();
   initMethFilterControls(month);
   closeMethEditModal();
+  methRuleFormMode = 'create';
   methRuleEditId = null;
   updateMethToolbarActions();
   toggleMethRulesViews(month);
@@ -10444,7 +10752,7 @@ function onMethRuleModeleInput() {
   populateMethValueDatalists(month, modele || null);
   updateMethEditModalTitle();
   applyMethChainsTableFilter();
-  if (methRuleEditId) return;
+  if (methRuleFormMode === 'edit') return;
   if (modele) fillMethRuleFormFromProductionForModele(month, modele);
 }
 // Apply saved overrides over the in-memory PRODUCTION model
@@ -11539,7 +11847,160 @@ function excelMoyColHeaderTitle(dateStr) {
 }
 function excelXColHeaderTitle(dateStr) {
   const h = fmtOffsetFr(getJourHeuresConfig(dateStr).h);
-  return 'X = Total sortie − P/H × heures du jour (' + h + ' h) — fusionné sur les 5 lignes du modèle';
+  return 'En (pcs) : objectif HL du plan de préparation − Σ HL jours précédents · Pn=sortie · Hn=heures jour (' + h + ' h)';
+}
+
+/** Objectif HL : colonne « obj EnCours plan/j » (plan de préparation), sinon OHL Méthodes. */
+function getObjectifHLForLine(month, date, line) {
+  const prep = getPrepPlanObjEnc(month, line.chain, line.modele);
+  if (prep != null && !isNaN(prep)) return Number(prep);
+  const ohl = getMethOhlForLine(month, date, line);
+  if (ohl != null && !isNaN(ohl)) return Number(ohl);
+  return null;
+}
+
+/** Blocs calculés pour toutes les lignes d'une chaîne à une date. */
+function buildSaisieChainBlocks(month, date, chainLines) {
+  const lines = (chainLines || []).filter(l => l && (l.client || l._added || l.modele));
+  const excelArr = getExcelDataForDate(date);
+  const chainTotalSortie = calcSumifSortieChain(lines, excelArr);
+  const blocks = lines.map(line => {
+    applyMethRulesToLine(month, date, line);
+    const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+    const c = computeBlock(line, excel, chainTotalSortie, month, date);
+    return { line, c };
+  });
+  return { lines, blocks, blocksByKey: new Map(blocks.map(b => [saisieLineKey(b.line), b])) };
+}
+
+/**
+ * HLn (jour n, valeur du haut) = Hn − Σ(productionᵢ / P/Hᵢ) sur la chaîne ce jour
+ * (modèle A terminé + modèle E nouveau, ou un seul modèle E).
+ * Modèle intermédiaire (A) le même jour : HL = 0.
+ */
+function calcHLDailyTop(month, date, line, chainLines, blocksByKey) {
+  const lines = (chainLines || []).filter(l => l && (l.client || l._added || l.modele));
+  const key = saisieLineKey(line);
+  const idx = lines.findIndex(l => saisieLineKey(l) === key);
+  if (idx < 0) return null;
+  if (lines.length >= 2 && idx < lines.length - 1) return 0;
+
+  const blockItems = Array.from(blocksByKey.values());
+  const h = calcChainWorkHoursFromBlocks(blockItems.map(b => ({ c: b.c })), date);
+  if (!h) return null;
+
+  let consumed = 0;
+  for (const b of blockItems) {
+    const ph = Number(b.c.ph) || 0;
+    const sortie = Number(b.c.totalSortie) || 0;
+    if (!ph) return null;
+    consumed += sortie / ph;
+  }
+  const v = h - consumed;
+  return isFinite(v) ? v : null;
+}
+
+/** HLi enregistré pour le cumul : 0 si fin de modèle, sinon HLn du jour. */
+function getHLStoredForLineOnDay(month, date, line, chainLines) {
+  if (isSaisieLineFinishedOnDay(line, month, date)) return 0;
+  const { blocksByKey } = buildSaisieChainBlocks(month, date, chainLines);
+  const daily = calcHLDailyTop(month, date, line, chainLines, blocksByKey);
+  return daily != null && !isNaN(daily) ? Number(daily) : 0;
+}
+
+/** Σ HLᵢ stockés (i = 1 … n−1) — affiché en bas et utilisé pour l'écart. */
+function sumHLStoredPriorDays(month, date, line) {
+  const info = PRODUCTION[month];
+  if (!info || !date) return 0;
+  const sheets = info.daily_sheets || [];
+  const idx = sheets.indexOf(date);
+  if (idx <= 0) return 0;
+  const targetKey = saisieLineKey(line);
+  let sum = 0;
+  for (let i = 0; i < idx; i++) {
+    const d = sheets[i];
+    const dayLines = (info.daily[d] || []).filter(l =>
+      Number(l.chain) === Number(line.chain) && (l.client || l._added || l.modele)
+    );
+    const target = dayLines.find(l => saisieLineKey(l) === targetKey);
+    if (!target) continue;
+    sum += getHLStoredForLineOnDay(month, d, target, dayLines);
+  }
+  return sum;
+}
+
+/**
+ * Colonne HL — haut : HLn · bas : Σ HL(1…n−1).
+ * Fin de modèle : HLi=0, HLn (haut) = Σ HL(1…n−1).
+ */
+function calcHLPairForLine(month, date, line, chainLines, blocksByKey) {
+  const sumPrev = sumHLStoredPriorDays(month, date, line);
+  if (isSaisieLineFinishedOnDay(line, month, date)) {
+    return { hlTop: sumPrev, hlCumul: sumPrev, hlStored: 0 };
+  }
+  const daily = calcHLDailyTop(month, date, line, chainLines, blocksByKey);
+  const stored = daily != null && !isNaN(daily) ? Number(daily) : 0;
+  return { hlTop: daily, hlCumul: sumPrev, hlStored: stored };
+}
+
+/** @deprecated alias — Σ HL jours précédents (valeurs stockées). */
+function sumHLPriorDaysForModel(month, date, line) {
+  return sumHLStoredPriorDays(month, date, line);
+}
+
+/**
+ * Écart (pcs) jour n :
+ * Pn=production, Hn=heures travaillées, objectif HL=plan de préparation (obj EnCours plan/j).
+ * reste = objectif HL − Σ HL(1…n−1)
+ * si modèle terminé → En=0
+ * si reste ≥ 0 → En = Pn − (Hn − reste) × P/H
+ * si reste < 0  → En = Pn − Hn × P/H
+ * Sur une chaîne multi-modèles le même jour : En=0 pour les modèles précédents (fin de modèle).
+ */
+function calcEcartPcsForLine(month, date, line, chainLines, blocksByKey) {
+  const lines = (chainLines || []).filter(l => l && (l.client || l._added || l.modele));
+  const key = saisieLineKey(line);
+  const idx = lines.findIndex(l => saisieLineKey(l) === key);
+  if (idx < 0) return null;
+  if (lines.length >= 2 && idx < lines.length - 1) return 0;
+  if (isSaisieLineFinishedOnDay(line, month, date)) return 0;
+
+  const block = blocksByKey?.get(key);
+  const c = block?.c;
+  if (!c) return null;
+
+  const Pn = Number(c.totalSortie) || 0;
+  const PH = Number(c.ph) || 0;
+  const Hn = calcHeuresJourFromSaisie(c.r1h, date);
+  if (!PH || !Hn) return null;
+
+  const objectifHL = getObjectifHLForLine(month, date, line);
+  if (objectifHL == null) return Pn - PH * Hn;
+
+  const sumHLPrev = sumHLPriorDaysForModel(month, date, line);
+  const reste = objectifHL - sumHLPrev;
+
+  if (reste >= 0) {
+    const v = Pn - (Hn - reste) * PH;
+    return isFinite(v) ? v : null;
+  }
+  const v = Pn - Hn * PH;
+  return isFinite(v) ? v : null;
+}
+
+function calcSaisieChainDisplayValues(month, date, chainLines) {
+  const out = new Map();
+  const { lines, blocks, blocksByKey } = buildSaisieChainBlocks(month, date, chainLines);
+  for (const item of blocks) {
+    const k = saisieLineKey(item.line);
+    const hl = calcHLPairForLine(month, date, item.line, lines, blocksByKey);
+    out.set(k, {
+      ecart: calcEcartPcsForLine(month, date, item.line, lines, blocksByKey),
+      hl: hl.hlTop,
+      hlCumul: hl.hlCumul,
+    });
+  }
+  return out;
 }
 
 /** Total AB ligne Sortie : somme des heures sortie M…W (=SUM(L:W) en Excel) */
@@ -11799,72 +12260,6 @@ function getPreviousSaisieChainDisplay(month, date, chain, modele) {
   return vals.get(Number(chain) + '|' + ((modele || '') + '').trim().toUpperCase()) || null;
 }
 
-function calcSaisieChainDisplayValues(month, date, chainLines) {
-  const out = new Map();
-  const lines = (chainLines || []).filter(l => l && (l.client || l._added || l.modele));
-  const excelArr = getExcelDataForDate(date);
-  const chainTotalSortie = calcSumifSortieChain(lines, excelArr);
-  const blocks = lines.map(line => {
-    applyMethRulesToLine(month, date, line);
-    const excel = excelArr ? findExcelBlock(excelArr, line) : null;
-    const c = computeBlock(line, excel, chainTotalSortie, month, date);
-    return { line, excel, c };
-  });
-  if (blocks.length < 2) {
-    for (const item of blocks) {
-      out.set(saisieLineKey(item.line), {
-        ecart: item.c.ecartEffMoy,
-        hl: blocks.length === 1 ? calcSaisieHL(item.c, 1, date) : null,
-      });
-    }
-    return out;
-  }
-
-  const previous = blocks.slice(0, -1);
-  const current = blocks[blocks.length - 1];
-  const h = calcChainWorkHoursFromBlocks(blocks, date);
-  const phCurrent = Number(current.c.ph) || 0;
-  const sortieCurrent = Number(current.c.totalSortie) || 0;
-  let timeConsumed = 0;
-  let allPhOk = !!h;
-  for (const item of blocks) {
-    const ph = Number(item.c.ph) || 0;
-    const sortie = Number(item.c.totalSortie) || 0;
-    if (!ph) { allPhOk = false; break; }
-    timeConsumed += sortie / ph;
-  }
-  const previousFinished = previous.every(item => {
-    const ph = Number(item.c.ph) || 0;
-    const qteEcart = item.c.qtePrevu != null && !isNaN(item.c.qtePrevu)
-      ? item.c.cumulEntre - Number(item.c.qtePrevu)
-      : null;
-    const chargeFin = qteEcart != null ? (-qteEcart + (Number(item.c.encours) || 0)) : null;
-    return chargeFin != null && ph && h && chargeFin < (ph * h);
-  });
-  const baseD = allPhOk ? h - timeConsumed : null;
-  const prev = getPreviousSaisieChainDisplay(month, date, current.line.chain, current.line.modele);
-  const prevD = prev && prev.hl != null && !isNaN(prev.hl) ? Number(prev.hl) : 0;
-  const prevC = prev && prev.ecart != null && !isNaN(prev.ecart) ? Number(prev.ecart) : 0;
-  const d1 = baseD == null ? null : (previousFinished ? baseD : prevD + baseD);
-  const ohl = getMethOhlForLine(month, date, current.line);
-  let c1 = null;
-  if (d1 != null && ohl != null && phCurrent) {
-    if (d1 <= ohl) {
-      c1 = 0;
-    } else if (previousFinished) {
-      c1 = sortieCurrent - ((d1 - ohl) * phCurrent);
-    } else if (Math.abs(prevC) < 0.0001) {
-      c1 = sortieCurrent - ((d1 - ohl) * phCurrent);
-    } else {
-      c1 = sortieCurrent - (phCurrent * (h - (sortieCurrent / phCurrent)));
-    }
-  }
-
-  for (const item of previous) out.set(saisieLineKey(item.line), { ecart: 0, hl: 0 });
-  out.set(saisieLineKey(current.line), { ecart: c1, hl: d1 });
-  return out;
-}
-
 function fmtHlancCell(v) {
   if (v == null || v === '' || (typeof v === 'number' && isNaN(v))) return '';
   return fmtNumFr(v);
@@ -12119,7 +12514,7 @@ function buildSaisieHeader() {
 
   const trailHdr = `
     <th style="min-width:78px" class="trail-x" title="${excelXColHeaderTitle(saisieDate)}">Ecart (pcs)</th>
-    <th style="min-width:52px" title="H.Lancement = Sortie ÷ P/H − heures jour">HL</th>
+    <th style="min-width:52px" title="Haut : HLn = Hn − Σ(prod/P/H) · Bas : Σ HL(1…n−1)">HL</th>
     <th style="min-width:60px" class="trail-moy" title="${excelMoyColHeaderTitle(saisieDate)}">Moy</th>
     <th style="min-width:60px" title="Sortie : somme heures M…W · Bandeau : SUMIF(L;Sortie Chaine;AB)">Total</th>
     <th style="min-width:70px">Cumul</th>
@@ -12263,30 +12658,35 @@ function excelHourCells(field, hours, opts) {
   }).join('');
 }
 
-/** H.Lancement — fusion rowspan 5, valeur H.MANQ CEGID. */
-function excelHLancFusionCell(c, chainModelCount, hlOverride) {
+/** HL — fusion rowspan 5 : haut = HLn · bas = Σ HL(1…n−1) */
+function excelHLancFusionCell(c, chainModelCount, hlTop, hlCumul, line) {
   const rs = EXCEL_ROWS_PER_BLOCK;
-  const title = chainModelCount >= 2
-    ? 'HL chaîne multi-modèles — calcul avec OHL Méthodes et report de la veille'
-    : 'HL = heures de travail − (total sortie ÷ P/H), seulement si la chaîne a un seul modèle';
-  const v = hlOverride !== undefined ? hlOverride : calcSaisieHL(c, chainModelCount, saisieDate);
+  const topTitle = chainModelCount >= 2
+    ? 'HLn = Hn − (prod A/P/H A + prod E/P/H E) — modèle intermédiaire → 0'
+    : 'HLn = Hn − (production ÷ P/H)';
+  const botTitle = 'Σ HL(1…n−1) — fin modèle : HLi=0, haut = cumul';
+  const top = hlTop !== undefined ? hlTop : calcSaisieHL(c, chainModelCount, saisieDate);
+  let bot = hlCumul;
+  if (bot === undefined && line && saisieMonth && saisieDate) {
+    bot = sumHLStoredPriorDays(saisieMonth, saisieDate, line);
+  }
+  if (bot === undefined) bot = null;
   return `<td rowspan="${rs}" class="merge-cell trail-merge hlanc-merge">
     <div class="trail-merge-stack hlanc-split-stack">
-      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc" title="${title}">${v != null ? fmtNumFr(v) : ''}</div>
-      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc_2" title="HL bas = heures de travail − (total sortie ÷ P/H)">${fmtMoyCell(calcSaisieHLBas(c, saisieDate))}</div>
+      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc" title="${topTitle}">${top != null && !isNaN(top) ? fmtNumFr(top) : ''}</div>
+      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc_2" title="${botTitle}">${bot != null && !isNaN(bot) ? fmtNumFr(bot) : ''}</div>
     </div>
   </td>`;
 }
 
-/** X — fusion rowspan 5 : total sortie − P/H × heures jour */
+/** X — fusion rowspan 5 : écart pcs (formule plan de préparation) */
 function excelEcartXFusionCell(c, ecartOverride) {
   const rs = EXCEL_ROWS_PER_BLOCK;
   const v = ecartOverride !== undefined ? ecartOverride : c.ecartEffMoy;
   const neg = v != null && !isNaN(v) && Number(v) < 0;
   const txt = (v != null && !isNaN(v) && isFinite(v)) ? fmtNumFr(v) : '—';
-  const h = fmtOffsetFr(calcHeuresJourFromSaisie(c.r1h, saisieDate) || getExpectedHeuresJour(saisieDate));
   return `<td rowspan="${rs}" class="merge-cell trail-merge calc-x${neg ? ' calc-moy-neg' : ''}" data-r="ecart_x"
-    title="Total sortie − P/H × ${h} h (heures jour auto)">${txt}</td>`;
+    title="En : reste HL ≥ 0 → Pn−(Hn−reste)×P/H · sinon Pn−Hn×P/H · fin modèle → 0">${txt}</td>`;
 }
 
 /** Encours — fusion rowspan 5 : AC entrée − AC sortie, puis AG/(P/H×heures jour) */
@@ -12414,7 +12814,7 @@ function buildSaisieBody() {
         <td class="lab-l"${entreLocked ? ' title="Qté prévue requise — renseignez le Catalogue modèles"' : ''}>Entre Chaine</td>
         ${excelHourCells('r0h', c.r0h, { locked: entreLocked })}
         ${excelEcartXFusionCell(c, displayVals.ecart)}
-        ${excelHLancFusionCell(c, lines.length, displayVals.hl)}
+        ${excelHLancFusionCell(c, lines.length, displayVals.hl, displayVals.hlCumul, line)}
         <td class="calc calc-moy" data-r="r0_moy">${fmtMoyCell(c.moyEntre)}</td>
         <td class="calc-2" data-r="r0_total">${fmtNumX(c.totalEntre)}</td>
         <td class="calc-2" data-r="r0_cumul">${fmtNumX(c.cumulEntre)}</td>
@@ -13591,15 +13991,19 @@ function refreshExcelRow(line) {
   if (hlCell) {
     const curDisplay = chainDisplayVals.get(saisieLineKey(line)) || {};
     const hl = curDisplay.hl !== undefined ? curDisplay.hl : calcSaisieHL(c, chainLines.length, saisieDate);
-    hlCell.textContent = hl != null ? fmtNumFr(hl) : '';
+    hlCell.textContent = hl != null && !isNaN(hl) ? fmtNumFr(hl) : '';
     hlCell.title = chainLines.length >= 2
-      ? 'HL chaîne multi-modèles — calcul avec OHL Méthodes et report de la veille'
-      : 'HL = heures de travail − (total sortie ÷ P/H), seulement si la chaîne a un seul modèle';
+      ? 'HLn = Hn − (prod A/P/H A + prod E/P/H E)'
+      : 'HLn = Hn − (production ÷ P/H)';
   }
   const hlCell2 = tbody.querySelector(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r0_hlanc_2"]`);
   if (hlCell2) {
-    hlCell2.textContent = fmtMoyCell(calcSaisieHLBas(c, saisieDate));
-    hlCell2.title = 'HL bas = heures de travail − (total sortie ÷ P/H)';
+    const curDisplay = chainDisplayVals.get(saisieLineKey(line)) || {};
+    const cum = curDisplay.hlCumul !== undefined
+      ? curDisplay.hlCumul
+      : sumHLStoredPriorDays(saisieMonth, saisieDate, line);
+    hlCell2.textContent = cum != null && !isNaN(cum) ? fmtNumFr(cum) : '';
+    hlCell2.title = 'Σ HL(1…n−1)';
   }
   set('[data-r="r3_moy"]', fmtMoyCell(c.moyStag));
   set('[data-r="r3_total"]', fmtNumX(c.totalStag));
@@ -13632,15 +14036,18 @@ function refreshExcelRow(line) {
     const ohl = otherDisplay.hl !== undefined ? otherDisplay.hl : calcSaisieHL(co, chainLines.length, saisieDate);
     const hlOther = tbody.querySelector(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="r0_hlanc"]`);
     if (hlOther) {
-      hlOther.textContent = ohl != null ? fmtNumFr(ohl) : '';
+      hlOther.textContent = ohl != null && !isNaN(ohl) ? fmtNumFr(ohl) : '';
       hlOther.title = chainLines.length >= 2
-        ? 'HL chaîne multi-modèles — calcul avec OHL Méthodes et report de la veille'
-        : 'HL = heures de travail − (total sortie ÷ P/H), seulement si la chaîne a un seul modèle';
+        ? 'HLn = Hn − (prod A/P/H A + prod E/P/H E)'
+        : 'HLn = Hn − (production ÷ P/H)';
     }
+    const ocum = otherDisplay.hlCumul !== undefined
+      ? otherDisplay.hlCumul
+      : sumHLStoredPriorDays(saisieMonth, saisieDate, other);
     const hlOther2 = tbody.querySelector(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="r0_hlanc_2"]`);
     if (hlOther2) {
-      hlOther2.textContent = fmtMoyCell(calcSaisieHLBas(co, saisieDate));
-      hlOther2.title = 'HL bas = heures de travail − (total sortie ÷ P/H)';
+      hlOther2.textContent = ocum != null && !isNaN(ocum) ? fmtNumFr(ocum) : '';
+      hlOther2.title = 'Σ HL(1…n−1)';
     }
   });
   refreshModeleHeuresBadge(line);
@@ -13869,9 +14276,11 @@ function toast(msg, isError) {
       borderRadius:'10px', padding:'10px 16px', fontWeight:'700', fontSize:'12.5px',
       boxShadow:'0 10px 30px rgba(0,0,0,0.4)', zIndex:'2000',
       opacity:'0', transition:'opacity .2s ease, transform .2s ease',
+      pointerEvents:'none',
     });
     document.body.appendChild(t);
   }
+  t.style.pointerEvents = 'none';
   t.style.borderColor = isError ? 'var(--red)' : 'var(--border-2)';
   t.style.color = isError ? 'var(--red)' : 'var(--text)';
   t.textContent = msg;
@@ -13981,12 +14390,33 @@ document.getElementById('saisie-added-lines-list')?.addEventListener('click', (e
   const row = getAddedLinesForDay()[Number(btn.getAttribute('data-saisie-rm-idx'))];
   if (row) removeAddedSaisieLine(row.chain, row.modele);
 });
-document.getElementById('meth-rule-save-btn')?.addEventListener('click', () => saveMethRuleFromForm(currentMonth));
+document.getElementById('meth-rule-save-btn')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  saveMethRuleFromForm(currentMonth);
+});
 document.getElementById('meth-rule-new-btn')?.addEventListener('click', () => {
   resetMethRuleForm(currentMonth, true);
 });
-document.getElementById('meth-edit-cancel')?.addEventListener('click', closeMethEditModal);
-document.getElementById('meth-edit-modal')?.addEventListener('click', (e) => { if (e.target.id === 'meth-edit-modal') closeMethEditModal(); });
+document.getElementById('meth-empty-new-btn')?.addEventListener('click', () => {
+  resetMethRuleForm(currentMonth, true);
+});
+document.getElementById('meth-edit-cancel')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  closeMethEditModal();
+});
+document.getElementById('meth-edit-close')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  closeMethEditModal();
+});
+document.querySelector('#meth-edit-modal .pin-modal')?.addEventListener('click', (e) => e.stopPropagation());
+document.getElementById('meth-edit-modal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'meth-edit-modal') closeMethEditModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('meth-edit-modal')?.classList.contains('open')) closeMethEditModal();
+});
 document.getElementById('meth-row-edit-btn')?.addEventListener('click', () => {
   if (methRuleEditId) loadMethRuleIntoForm(currentMonth, methRuleEditId);
 });
@@ -13997,10 +14427,6 @@ document.getElementById('meth-rule-modele')?.addEventListener('input', onMethRul
 document.getElementById('meth-rule-modele')?.addEventListener('change', onMethRuleModeleInput);
 document.getElementById('meth-filter-modele')?.addEventListener('input', onMethFiltersChanged);
 document.getElementById('meth-filter-modele')?.addEventListener('change', onMethFiltersChanged);
-document.getElementById('meth-filter-chain')?.addEventListener('input', onMethFiltersChanged);
-document.getElementById('meth-filter-chain')?.addEventListener('change', onMethFiltersChanged);
-document.getElementById('meth-filter-debut')?.addEventListener('change', onMethFiltersChanged);
-document.getElementById('meth-filter-fin')?.addEventListener('change', onMethFiltersChanged);
 document.getElementById('prep-table')?.addEventListener('change', onPrepPlanObjInput);
 document.getElementById('prep-table')?.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
