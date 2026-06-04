@@ -11906,7 +11906,7 @@ function getHLStoredForLineOnDay(month, date, line, chainLines) {
   return daily != null && !isNaN(daily) ? Number(daily) : 0;
 }
 
-/** Σ HLᵢ stockés (i = 1 … n−1) — affiché en bas et utilisé pour l'écart. */
+/** Σ HLᵢ stockés (i = 1 … n−1) — utilisé pour l'écart (pcs) et le reste OHL. */
 function sumHLStoredPriorDays(month, date, line) {
   const info = PRODUCTION[month];
   if (!info || !date) return 0;
@@ -11928,8 +11928,8 @@ function sumHLStoredPriorDays(month, date, line) {
 }
 
 /**
- * Colonne HL — haut : HLn · bas : Σ HL(1…n−1).
- * Fin de modèle : HLi=0, HLn (haut) = Σ HL(1…n−1).
+ * Colonne HL — haut : HLn · bas : Σ HL(1…n).
+ * Fin de modèle au jour n : HLi=0, haut = Σ HL(1…n−1), bas = Σ HL(1…n−1).
  */
 function calcHLPairForLine(month, date, line, chainLines, blocksByKey) {
   const sumPrev = sumHLStoredPriorDays(month, date, line);
@@ -11938,7 +11938,8 @@ function calcHLPairForLine(month, date, line, chainLines, blocksByKey) {
   }
   const daily = calcHLDailyTop(month, date, line, chainLines, blocksByKey);
   const stored = daily != null && !isNaN(daily) ? Number(daily) : 0;
-  return { hlTop: daily, hlCumul: sumPrev, hlStored: stored };
+  const sumThroughN = sumPrev + stored;
+  return { hlTop: daily, hlCumul: sumThroughN, hlStored: stored };
 }
 
 /** @deprecated alias — Σ HL jours précédents (valeurs stockées). */
@@ -12513,7 +12514,7 @@ function buildSaisieHeader() {
 
   const trailHdr = `
     <th style="min-width:78px" class="trail-x" title="${excelXColHeaderTitle(saisieDate)}">Ecart (pcs)</th>
-    <th style="min-width:52px" title="Haut : HLn = Hn − Σ(prod/P/H) · Bas : Σ HL(1…n−1)">HL</th>
+    <th style="min-width:52px" title="Haut : HLn = Hn − Σ(prod/P/H) · Bas : Σ HL(1…n) — fin modèle : Σ HL(1…n−1)">HL</th>
     <th style="min-width:60px" class="trail-moy" title="${excelMoyColHeaderTitle(saisieDate)}">Moy</th>
     <th style="min-width:60px" title="Sortie : somme heures M…W · Bandeau : SUMIF(L;Sortie Chaine;AB)">Total</th>
     <th style="min-width:70px">Cumul</th>
@@ -12657,17 +12658,25 @@ function excelHourCells(field, hours, opts) {
   }).join('');
 }
 
-/** HL — fusion rowspan 5 : haut = HLn · bas = Σ HL(1…n−1) */
+/** HL — fusion rowspan 5 : haut = HLn · bas = Σ HL(1…n) (fin modèle : Σ HL(1…n−1)) */
 function excelHLancFusionCell(c, chainModelCount, hlTop, hlCumul, line) {
   const rs = EXCEL_ROWS_PER_BLOCK;
   const topTitle = chainModelCount >= 2
     ? 'HLn = Hn − (prod A/P/H A + prod E/P/H E) — modèle intermédiaire → 0'
     : 'HLn = Hn − (production ÷ P/H)';
-  const botTitle = 'Σ HL(1…n−1) — fin modèle : HLi=0, haut = cumul';
+  const finModele = line && saisieMonth && saisieDate && isSaisieLineFinishedOnDay(line, saisieMonth, saisieDate);
+  const botTitle = finModele
+    ? 'Σ HL(1…n−1) — modèle terminé'
+    : 'Σ HL(1…n) = Σ HL(1…n−1) + HLn';
   const top = hlTop !== undefined ? hlTop : calcSaisieHL(c, chainModelCount, saisieDate);
   let bot = hlCumul;
   if (bot === undefined && line && saisieMonth && saisieDate) {
-    bot = sumHLStoredPriorDays(saisieMonth, saisieDate, line);
+    const sumPrev = sumHLStoredPriorDays(saisieMonth, saisieDate, line);
+    if (finModele) bot = sumPrev;
+    else {
+      const t = top != null && !isNaN(top) ? Number(top) : 0;
+      bot = sumPrev + t;
+    }
   }
   if (bot === undefined) bot = null;
   return `<td rowspan="${rs}" class="merge-cell trail-merge hlanc-merge">
@@ -13998,11 +14007,18 @@ function refreshExcelRow(line) {
   const hlCell2 = tbody.querySelector(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r0_hlanc_2"]`);
   if (hlCell2) {
     const curDisplay = chainDisplayVals.get(saisieLineKey(line)) || {};
-    const cum = curDisplay.hlCumul !== undefined
-      ? curDisplay.hlCumul
-      : sumHLStoredPriorDays(saisieMonth, saisieDate, line);
+    const finMod = isSaisieLineFinishedOnDay(line, saisieMonth, saisieDate);
+    let cum = curDisplay.hlCumul;
+    if (cum === undefined) {
+      const sumPrev = sumHLStoredPriorDays(saisieMonth, saisieDate, line);
+      if (finMod) cum = sumPrev;
+      else {
+        const hlTop = curDisplay.hl !== undefined ? curDisplay.hl : calcSaisieHL(c, chainLines.length, saisieDate);
+        cum = sumPrev + (hlTop != null && !isNaN(hlTop) ? Number(hlTop) : 0);
+      }
+    }
     hlCell2.textContent = cum != null && !isNaN(cum) ? fmtNumFr(cum) : '';
-    hlCell2.title = 'Σ HL(1…n−1)';
+    hlCell2.title = finMod ? 'Σ HL(1…n−1) — modèle terminé' : 'Σ HL(1…n)';
   }
   set('[data-r="r3_moy"]', fmtMoyCell(c.moyStag));
   set('[data-r="r3_total"]', fmtNumX(c.totalStag));
@@ -14040,13 +14056,20 @@ function refreshExcelRow(line) {
         ? 'HLn = Hn − (prod A/P/H A + prod E/P/H E)'
         : 'HLn = Hn − (production ÷ P/H)';
     }
-    const ocum = otherDisplay.hlCumul !== undefined
-      ? otherDisplay.hlCumul
-      : sumHLStoredPriorDays(saisieMonth, saisieDate, other);
+    const finOther = isSaisieLineFinishedOnDay(other, saisieMonth, saisieDate);
+    let ocum = otherDisplay.hlCumul;
+    if (ocum === undefined) {
+      const sumPrev = sumHLStoredPriorDays(saisieMonth, saisieDate, other);
+      if (finOther) ocum = sumPrev;
+      else {
+        const ohlTop = otherDisplay.hl !== undefined ? otherDisplay.hl : calcSaisieHL(co, chainLines.length, saisieDate);
+        ocum = sumPrev + (ohlTop != null && !isNaN(ohlTop) ? Number(ohlTop) : 0);
+      }
+    }
     const hlOther2 = tbody.querySelector(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="r0_hlanc_2"]`);
     if (hlOther2) {
       hlOther2.textContent = ocum != null && !isNaN(ocum) ? fmtNumFr(ocum) : '';
-      hlOther2.title = 'Σ HL(1…n−1)';
+      hlOther2.title = finOther ? 'Σ HL(1…n−1) — modèle terminé' : 'Σ HL(1…n)';
     }
   });
   refreshModeleHeuresBadge(line);
