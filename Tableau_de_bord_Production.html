@@ -12321,10 +12321,10 @@ function fmtPctX(v) {
   if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '';
   return fmtDecFr(v * 100, 2) + '%';
 }
-/** Rend équilibrage (colonne METHODES) — sans symbole % (ex. 87,43) */
+/** Rend équilibrage (colonne METHODES, sous VT) — ex. 87,43 % */
 function fmtRendEquil(v) {
   if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '—';
-  return fmtDecFr(v * 100, 2);
+  return fmtDecFr(v * 100, 2) + '%';
 }
 function _sumArr(arr) { if (!Array.isArray(arr)) return 0; return arr.reduce((s,v)=> s + (v == null || isNaN(v) ? 0 : Number(v)), 0); }
 function _countA(arr) { if (!Array.isArray(arr)) return 0; return arr.reduce((c,v)=> c + (v == null || v === '' ? 0 : 1), 0); }
