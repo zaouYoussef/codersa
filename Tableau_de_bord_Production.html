@@ -1516,7 +1516,7 @@ footer {
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   gap: 0;
   align-items: stretch;
   justify-content: stretch;
@@ -12038,6 +12038,7 @@ function calcSaisieChainDisplayValues(month, date, chainLines) {
       ecart: calcEcartPcsForLine(month, date, item.line, lines, blocksByKey),
       hl: hl.hlTop,
       hlCumul: hl.hlCumul,
+      hlLaunchSum: calcHLancLaunchSumForLine(month, date, item.line),
     });
   }
   return out;
@@ -12244,6 +12245,57 @@ function calcHLancHeures(r1h, totalSortie, ph, line, excel, dateStr, month) {
   if (!h || !phNum) return null;
   const v = (sortie / phNum) - h;
   return isFinite(v) ? v : null;
+}
+
+/** H.Manq (CEGID) pour une ligne à une date — même formule que le rapport H. Lancement. */
+function calcHLancManqForLineOnDay(month, date, line) {
+  if (!line || !date) return null;
+  const excelArr = getExcelDataForDate(date);
+  const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+  const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit
+    : ((excel && excel.r1_hours) || []);
+  const ph = (line.ph != null && !isNaN(line.ph)) ? Number(line.ph)
+    : ((excel && excel.r1_ph != null) ? Number(excel.r1_ph) : 0);
+  const sortie = calcTotalSortieRow(r1h);
+  let v = calcHLancHeures(r1h, sortie, ph, line, excel, date, month);
+  if (v != null && isFinite(v) && Math.abs(v) < 0.0001) v = 0;
+  return v;
+}
+
+/**
+ * Σ H de lancement (colonne rapport) jusqu'au jour n :
+ * somme des H.Manq tant que H.Manq ≠ 0, puis le jour où H.Manq = 0 (inclus) ; figé ensuite.
+ */
+function calcHLancLaunchSumForLine(month, date, line) {
+  const info = PRODUCTION[month];
+  if (!info || !date || !line) return null;
+  const sheets = info.daily_sheets || [];
+  const idx = sheets.indexOf(date);
+  if (idx < 0) return null;
+  const targetKey = saisieLineKey(line);
+  let sum = 0;
+  let pastZero = false;
+  let hasVal = false;
+  for (let i = 0; i <= idx; i++) {
+    const d = sheets[i];
+    const dayLines = (info.daily[d] || []).filter(l =>
+      Number(l.chain) === Number(line.chain) && (l.client || l._added || l.modele)
+    );
+    const target = dayLines.find(l => saisieLineKey(l) === targetKey);
+    if (!target) continue;
+    if (pastZero) continue;
+    const hLanc = calcHLancManqForLineOnDay(month, d, target);
+    if (hLanc == null || !isFinite(hLanc)) continue;
+    if (Math.abs(hLanc) < 0.0001) {
+      sum += 0;
+      pastZero = true;
+      hasVal = true;
+    } else {
+      sum += hLanc;
+      hasVal = true;
+    }
+  }
+  return hasVal ? sum : null;
 }
 
 function calcSaisieHL(c, chainModelCount, dateStr) {
@@ -12554,7 +12606,7 @@ function buildSaisieHeader() {
 
   const trailHdr = `
     <th style="min-width:78px" class="trail-x" title="${excelXColHeaderTitle(saisieDate)}">Ecart (pcs)</th>
-    <th style="min-width:52px" title="Haut : HLn = Hn − Σ(prod/P/H) · Bas : Σ HL(1…n) — fin modèle : Σ HL(1…n−1)">HL</th>
+    <th style="min-width:52px" title="Haut : HLn · Milieu : Σ HL(1…n) · Bas : Σ H de lancement (H.Manq jusqu'au 1er 0)">HL</th>
     <th style="min-width:60px" class="trail-moy" title="${excelMoyColHeaderTitle(saisieDate)}">Moy</th>
     <th style="min-width:60px" title="Sortie : somme heures M…W · Bandeau : SUMIF(L;Sortie Chaine;AB)">Total</th>
     <th style="min-width:70px">Cumul</th>
@@ -12698,31 +12750,37 @@ function excelHourCells(field, hours, opts) {
   }).join('');
 }
 
-/** HL — fusion rowspan 5 : haut = HLn · bas = Σ HL(1…n) (fin modèle : Σ HL(1…n−1)) */
-function excelHLancFusionCell(c, chainModelCount, hlTop, hlCumul, line) {
+/** HL — fusion rowspan 5 : haut = HLn · milieu = Σ HL · bas = Σ H de lancement */
+function excelHLancFusionCell(c, chainModelCount, hlTop, hlCumul, hlLaunchSum, line) {
   const rs = EXCEL_ROWS_PER_BLOCK;
   const topTitle = chainModelCount >= 2
     ? 'HLn = Hn − (prod A/P/H A + prod E/P/H E) — modèle intermédiaire → 0'
     : 'HLn = Hn − (production ÷ P/H)';
   const finModele = line && saisieMonth && saisieDate && isSaisieLineFinishedOnDay(line, saisieMonth, saisieDate);
-  const botTitle = finModele
+  const midTitle = finModele
     ? 'Σ HL(1…n−1) — modèle terminé'
     : 'Σ HL(1…n) = Σ HL(1…n−1) + HLn';
+  const botTitle = 'Σ H de lancement — somme H.Manq jusqu\'au 1er jour à 0 (inclus)';
   const top = hlTop !== undefined ? hlTop : calcSaisieHL(c, chainModelCount, saisieDate);
-  let bot = hlCumul;
-  if (bot === undefined && line && saisieMonth && saisieDate) {
+  let mid = hlCumul;
+  if (mid === undefined && line && saisieMonth && saisieDate) {
     const sumPrev = sumHLStoredPriorDays(saisieMonth, saisieDate, line);
-    if (finModele) bot = sumPrev;
+    if (finModele) mid = sumPrev;
     else {
       const t = top != null && !isNaN(top) ? Number(top) : 0;
-      bot = sumPrev + t;
+      mid = sumPrev + t;
     }
   }
-  if (bot === undefined) bot = null;
+  if (mid === undefined) mid = null;
+  let bot = hlLaunchSum;
+  if (bot === undefined && line && saisieMonth && saisieDate) {
+    bot = calcHLancLaunchSumForLine(saisieMonth, saisieDate, line);
+  }
   return `<td rowspan="${rs}" class="merge-cell trail-merge hlanc-merge">
     <div class="trail-merge-stack hlanc-split-stack">
       <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc" title="${topTitle}">${top != null && !isNaN(top) ? fmtNumFr(top) : ''}</div>
-      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc_2" title="${botTitle}">${bot != null && !isNaN(bot) ? fmtNumFr(bot) : ''}</div>
+      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc_2" title="${midTitle}">${mid != null && !isNaN(mid) ? fmtNumFr(mid) : ''}</div>
+      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc_3" title="${botTitle}">${bot != null && !isNaN(bot) ? fmtNumFr(bot) : ''}</div>
     </div>
   </td>`;
 }
@@ -12862,7 +12920,7 @@ function buildSaisieBody() {
         <td class="lab-l"${entreLocked ? ' title="Qté prévue requise — renseignez le Catalogue modèles"' : ''}>Entre Chaine</td>
         ${excelHourCells('r0h', c.r0h, { locked: entreLocked })}
         ${excelEcartXFusionCell(c, displayVals.ecart)}
-        ${excelHLancFusionCell(c, lines.length, displayVals.hl, displayVals.hlCumul, line)}
+        ${excelHLancFusionCell(c, lines.length, displayVals.hl, displayVals.hlCumul, displayVals.hlLaunchSum, line)}
         <td class="calc calc-moy" data-r="r0_moy">${fmtMoyCell(c.moyEntre)}</td>
         <td class="calc-2" data-r="r0_total">${fmtNumX(c.totalEntre)}</td>
         <td class="calc-2" data-r="r0_cumul">${fmtNumX(c.cumulEntre)}</td>
@@ -14060,6 +14118,14 @@ function refreshExcelRow(line) {
     hlCell2.textContent = cum != null && !isNaN(cum) ? fmtNumFr(cum) : '';
     hlCell2.title = finMod ? 'Σ HL(1…n−1) — modèle terminé' : 'Σ HL(1…n)';
   }
+  const hlCell3 = tbody.querySelector(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r0_hlanc_3"]`);
+  if (hlCell3) {
+    const curDisplay = chainDisplayVals.get(saisieLineKey(line)) || {};
+    let launchSum = curDisplay.hlLaunchSum;
+    if (launchSum === undefined) launchSum = calcHLancLaunchSumForLine(saisieMonth, saisieDate, line);
+    hlCell3.textContent = launchSum != null && !isNaN(launchSum) ? fmtNumFr(launchSum) : '';
+    hlCell3.title = 'Σ H de lancement — somme H.Manq jusqu\'au 1er jour à 0 (inclus)';
+  }
   set('[data-r="r3_moy"]', fmtMoyCell(c.moyStag));
   set('[data-r="r3_total"]', fmtNumX(c.totalStag));
   set('[data-r="r4_moy"]', fmtMoyCell(c.moyForm));
@@ -14110,6 +14176,13 @@ function refreshExcelRow(line) {
     if (hlOther2) {
       hlOther2.textContent = ocum != null && !isNaN(ocum) ? fmtNumFr(ocum) : '';
       hlOther2.title = finOther ? 'Σ HL(1…n−1) — modèle terminé' : 'Σ HL(1…n)';
+    }
+    let oLaunch = otherDisplay.hlLaunchSum;
+    if (oLaunch === undefined) oLaunch = calcHLancLaunchSumForLine(saisieMonth, saisieDate, other);
+    const hlOther3 = tbody.querySelector(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="r0_hlanc_3"]`);
+    if (hlOther3) {
+      hlOther3.textContent = oLaunch != null && !isNaN(oLaunch) ? fmtNumFr(oLaunch) : '';
+      hlOther3.title = 'Σ H de lancement — somme H.Manq jusqu\'au 1er jour à 0 (inclus)';
     }
   });
   refreshModeleHeuresBadge(line);
