@@ -9393,7 +9393,40 @@ function hlancBuildRows(month, dates) {
     }
   }
   rows.sort((a, b) => _rapFrToTs(a.date) - _rapFrToTs(b.date) || (Number(a.ch) || 0) - (Number(b.ch) || 0));
-  return { rows, tot: { hManq: totHManq, hManqAbs: totHManqAbs, hrsJ: totHrsJ, sortie: totSortie } };
+  hlancApplyLaunchCol(rows);
+  let totHLaunch = 0;
+  for (const r of rows) {
+    if (r.hLancLaunch != null && isFinite(Number(r.hLancLaunch))) totHLaunch += Number(r.hLancLaunch);
+  }
+  return { rows, tot: { hManq: totHManq, hManqAbs: totHManqAbs, hrsJ: totHrsJ, sortie: totSortie, hLaunch: totHLaunch } };
+}
+
+/** Colonne « H de lancement » : H.Manq jusqu'au jour où H.Manq = 0 (inclus), puis « — ». */
+function hlancApplyLaunchCol(rows) {
+  const byKey = new Map();
+  for (const r of rows) {
+    const k = String(Number(r.ch)) + '|' + String(r.modele || '').trim().toUpperCase();
+    if (!byKey.has(k)) byKey.set(k, []);
+    byKey.get(k).push(r);
+  }
+  for (const group of byKey.values()) {
+    let pastZero = false;
+    for (const r of group) {
+      if (pastZero) {
+        r.hLancLaunch = null;
+        continue;
+      }
+      const n = Number(r.hLanc);
+      if (r.hLanc != null && isFinite(n) && Math.abs(n) < 0.0001) {
+        r.hLancLaunch = 0;
+        pastZero = true;
+      } else if (r.hLanc != null && isFinite(n)) {
+        r.hLancLaunch = n;
+      } else {
+        r.hLancLaunch = null;
+      }
+    }
+  }
 }
 
 function hlancHtmlTable(month, dates, data) {
@@ -9424,10 +9457,18 @@ function hlancHtmlTable(month, dates, data) {
     + '<th class="right">HRS/J</th>'
     + '<th class="right">PROD.</th>'
     + '<th class="right">H . MANQ</th>'
+    + '<th class="right">H de lancement</th>'
     + '</tr></thead><tbody>';
   for (const r of data.rows) {
     const n = Number(r.hLanc);
     const cls = r.hLanc != null && isFinite(n) ? (n < 0 ? 'neg' : (n > 0 ? 'pos' : '')) : '';
+    let launchTxt = '—';
+    let launchCls = '';
+    if (r.hLancLaunch != null && isFinite(Number(r.hLancLaunch))) {
+      launchTxt = rapFmtSigned(r.hLancLaunch);
+      const ln = Number(r.hLancLaunch);
+      launchCls = ln < 0 ? 'neg' : (ln > 0 ? 'pos' : '');
+    }
     html += '<tr>'
       + `<td class="center">${rapChShort(r.ch)}</td>`
       + `<td class="center">${rapFmtDate(r.date)}</td>`
@@ -9439,16 +9480,15 @@ function hlancHtmlTable(month, dates, data) {
       + `<td class="num">${r.hJour ? rapFmtHrs(r.hJour) : ''}</td>`
       + `<td class="num">${r.sortie ? rapFmtInt(r.sortie) : ''}</td>`
       + `<td class="num ${cls}">${r.hLanc != null && isFinite(r.hLanc) ? rapFmtSigned(r.hLanc) : ''}</td>`
+      + `<td class="num ${launchCls}">${launchTxt}</td>`
       + '</tr>';
   }
   html += '</tbody><tfoot><tr class="totalg">'
-    + '<td colspan="7" class="left strong">Cumul</td>'
+    + '<td colspan="8" class="left strong">Cumul</td>'
     + `<td class="num">${rapFmtInt(data.tot.sortie)}</td>`
     + `<td class="num">${rapFmtSigned(data.tot.hManq)}</td>`
-    + '</tr>'
-    + '<tr><td colspan="10" class="right strong">'
-    + `Heures manquantes Net : ${rapFmtSigned(data.tot.hManq)} h &nbsp;(Σ |H.MANQ| = ${rapFmtSigned(data.tot.hManqAbs)} h)`
-    + '</td></tr></tfoot></table>';
+    + `<td class="num">${rapFmtSigned(data.tot.hLaunch)}</td>`
+    + '</tr></tfoot></table>';
   return html;
 }
 
