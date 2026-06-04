@@ -11847,13 +11847,11 @@ function excelMoyColHeaderTitle(dateStr) {
 }
 function excelXColHeaderTitle(dateStr) {
   const h = fmtOffsetFr(getJourHeuresConfig(dateStr).h);
-  return 'En (pcs) : objectif HL du plan de préparation − Σ HL jours précédents · Pn=sortie · Hn=heures jour (' + h + ' h)';
+  return 'En (pcs) : OHL (Méthodes) − Σ HL jours précédents · Pn=sortie · Hn=heures jour (' + h + ' h)';
 }
 
-/** Objectif HL : colonne « obj EnCours plan/j » (plan de préparation), sinon OHL Méthodes. */
+/** Objectif HL pour l'écart (pcs) : OHL du tableau Méthodes (période active). */
 function getObjectifHLForLine(month, date, line) {
-  const prep = getPrepPlanObjEnc(month, line.chain, line.modele);
-  if (prep != null && !isNaN(prep)) return Number(prep);
   const ohl = getMethOhlForLine(month, date, line);
   if (ohl != null && !isNaN(ohl)) return Number(ohl);
   return null;
@@ -11950,8 +11948,8 @@ function sumHLPriorDaysForModel(month, date, line) {
 
 /**
  * Écart (pcs) jour n :
- * Pn=production, Hn=heures travaillées, objectif HL=plan de préparation (obj EnCours plan/j).
- * reste = objectif HL − Σ HL(1…n−1)
+ * Pn=production, Hn=heures travaillées, objectif HL=OHL (Méthodes).
+ * reste = OHL − Σ HL(1…n−1)
  * si modèle terminé → En=0
  * si reste ≥ 0 → En = Pn − (Hn − reste) × P/H
  * si reste < 0  → En = Pn − Hn × P/H
@@ -12679,14 +12677,14 @@ function excelHLancFusionCell(c, chainModelCount, hlTop, hlCumul, line) {
   </td>`;
 }
 
-/** X — fusion rowspan 5 : écart pcs (formule plan de préparation) */
+/** X — fusion rowspan 5 : écart pcs (OHL Méthodes) */
 function excelEcartXFusionCell(c, ecartOverride) {
   const rs = EXCEL_ROWS_PER_BLOCK;
   const v = ecartOverride !== undefined ? ecartOverride : c.ecartEffMoy;
   const neg = v != null && !isNaN(v) && Number(v) < 0;
   const txt = (v != null && !isNaN(v) && isFinite(v)) ? fmtNumFr(v) : '—';
   return `<td rowspan="${rs}" class="merge-cell trail-merge calc-x${neg ? ' calc-moy-neg' : ''}" data-r="ecart_x"
-    title="En : reste HL ≥ 0 → Pn−(Hn−reste)×P/H · sinon Pn−Hn×P/H · fin modèle → 0">${txt}</td>`;
+    title="En : reste = OHL (Méthodes) − Σ HL préc. · reste ≥ 0 → Pn−(Hn−reste)×P/H · sinon Pn−Hn×P/H · fin modèle → 0">${txt}</td>`;
 }
 
 /** Encours — fusion rowspan 5 : AC entrée − AC sortie, puis AG/(P/H×heures jour) */
