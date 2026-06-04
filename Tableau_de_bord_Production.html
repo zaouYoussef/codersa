@@ -1206,7 +1206,8 @@ footer {
   padding: 0 !important;
   vertical-align: middle;
   background: rgba(56, 189, 248, 0.08);
-  font-size: 15px;
+  font-size: 14px;
+  min-width: 118px;
 }
 .excel-saisie table.meth-inner {
   width: 100%;
@@ -1223,7 +1224,7 @@ footer {
   box-sizing: border-box;
   background: rgba(56, 189, 248, 0.08);
   width: 50%;
-  min-width: 64px;
+  min-width: 56px;
 }
 .excel-saisie table.meth-inner td.meth-lab {
   font-size: 11px;
@@ -1238,6 +1239,41 @@ footer {
 }
 .excel-saisie table.meth-inner td.meth-ph-val {
   background: rgba(251, 146, 60, 0.28);
+}
+.excel-saisie table.meth-inner td.meth-vt-val {
+  background: rgba(56, 189, 248, 0.12);
+}
+.excel-saisie table.meth-inner td.meth-pct-row {
+  border-top: 1px dashed var(--border-2);
+  background: rgba(56, 189, 248, 0.1);
+}
+.excel-saisie table.meth-inner td.meth-ohl-lab-row {
+  border-top: 1px dashed var(--border-2);
+  padding: 0 2px;
+}
+.excel-saisie table.meth-inner td.meth-ohl-row {
+  background: rgba(74, 222, 128, 0.12);
+}
+/* Valeurs Méthodes — même taille partout (VT, P/H, %, OHL, EFF) */
+.excel-saisie table.meth-inner .meth-readonly,
+.excel-saisie table.meth-inner .meth-vt-pct,
+.excel-saisie table.meth-inner .meth-ohl-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.excel-saisie table.meth-inner .meth-vt-pct {
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.excel-saisie table.meth-inner .meth-ohl-num {
+  color: var(--green);
 }
 .excel-saisie table.meth-inner .meth-c {
   display: flex;
@@ -1267,19 +1303,6 @@ footer {
 .excel-saisie table.meth-inner td.meth-ph-val .meth-c .xs-inp.meth-num {
   font-size: 15px !important;
   font-weight: 800;
-}
-.excel-saisie table.meth-inner .meth-c .meth-vt-pct {
-  display: block;
-  width: 100%;
-  text-align: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--accent);
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .excel-saisie tr.block-sep-chain td {
   border-top: 3px solid var(--accent);
@@ -12629,7 +12652,7 @@ function buildSaisieHeader() {
     <th style="min-width:82px;width:82px">CHEF</th>
     <th style="min-width:68px;width:68px">QTE PRÉVU</th>
     <th style="min-width:72px;width:72px">DESIGN</th>
-    <th colspan="2" class="meth-group-h" style="min-width:128px">Méthodes</th>
+    <th colspan="2" class="meth-group-h" style="min-width:118px">Méthodes</th>
     <th style="min-width:90px"></th>
     ${hourHdr}
     ${trailHdr}
@@ -12704,6 +12727,8 @@ function excelMethodesBlockCell(line, c) {
   const vtVal = (line.methodes != null && line.methodes !== '' && !isNaN(line.methodes)) ? fmtNumFr(line.methodes) : '—';
   const phVal = (line.ph != null && line.ph !== '' && !isNaN(line.ph)) ? fmtPh(line.ph) : '—';
   const effVal = (line.effectifs != null && line.effectifs !== '' && !isNaN(line.effectifs)) ? fmtNumFr(line.effectifs) : '—';
+  const ohlRaw = getMethOhlForLine(saisieMonth, saisieDate, line);
+  const ohlVal = ohlRaw != null && !isNaN(ohlRaw) ? fmtNumFr(ohlRaw) : '—';
   const hint = 'Onglet Méthodes';
   const pct = c.objRend != null ? fmtRendEquil(c.objRend) : '—';
   return `
@@ -12715,21 +12740,26 @@ function excelMethodesBlockCell(line, c) {
           <td class="meth-lab">P/H</td>
         </tr>
         <tr>
-          <td rowspan="2" class="meth-vt-val">
+          <td class="meth-vt-val">
             <div class="meth-c"><span class="meth-readonly" data-r="meth_vt" title="${hint}">${vtVal}</span></div>
           </td>
           <td rowspan="2" class="meth-ph-val">
             <div class="meth-c"><span class="meth-readonly" data-r="meth_ph" title="${hint}">${phVal}</span></div>
           </td>
         </tr>
-        <tr></tr>
         <tr>
-          <td rowspan="2" class="meth-pct">
-            <div class="meth-c"><span class="meth-vt-pct" data-r="rend_equil" title="Rend équilibrage">${pct}</span></div>
+          <td class="meth-pct-row">
+            <span class="meth-vt-pct" data-r="rend_equil" title="Rend équilibrage">${pct}</span>
           </td>
+        </tr>
+        <tr>
+          <td class="meth-lab meth-ohl-lab-row">OHL</td>
           <td class="meth-lab">EFF</td>
         </tr>
         <tr>
+          <td class="meth-ohl-row">
+            <span class="meth-readonly meth-ohl-num" data-r="meth_ohl" title="${hint}">${ohlVal}</span>
+          </td>
           <td class="meth-ph-eff">
             <div class="meth-c"><span class="meth-readonly" data-r="meth_eff" title="${hint}">${effVal}</span></div>
           </td>
@@ -14141,6 +14171,8 @@ function refreshExcelRow(line) {
   set('[data-r="meth_vt"]', (line.methodes != null && line.methodes !== '' && !isNaN(line.methodes)) ? fmtNumFr(line.methodes) : '—');
   set('[data-r="meth_ph"]', (line.ph != null && line.ph !== '' && !isNaN(line.ph)) ? fmtPh(line.ph) : '—');
   set('[data-r="meth_eff"]', (line.effectifs != null && line.effectifs !== '' && !isNaN(line.effectifs)) ? fmtNumFr(line.effectifs) : '—');
+  const ohlR = getMethOhlForLine(saisieMonth, saisieDate, line);
+  set('[data-r="meth_ohl"]', ohlR != null && !isNaN(ohlR) ? fmtNumFr(ohlR) : '—');
 
   applyComputeBlockToRow(line, c);
   line.cumul = c.cumulSortie;
