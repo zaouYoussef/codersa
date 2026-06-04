@@ -11951,8 +11951,8 @@ function sumHLPriorDaysForModel(month, date, line) {
  * Pn=production, Hn=heures travaillées, objectif HL=OHL (Méthodes).
  * reste = OHL − Σ HL(1…n−1)
  * si modèle terminé → En=0
- * si reste ≥ 0 → En = Pn − (Hn − reste) × P/H
- * si reste < 0  → En = Pn − Hn × P/H
+ * si 0 < reste ≤ OHL → En = Pn − (Hn − reste) × P/H
+ * si reste ≤ 0 (ou reste > OHL) → En = Pn − Hn × P/H
  * Sur une chaîne multi-modèles le même jour : En=0 pour les modèles précédents (fin de modèle).
  */
 function calcEcartPcsForLine(month, date, line, chainLines, blocksByKey) {
@@ -11977,8 +11977,9 @@ function calcEcartPcsForLine(month, date, line, chainLines, blocksByKey) {
 
   const sumHLPrev = sumHLPriorDaysForModel(month, date, line);
   const reste = objectifHL - sumHLPrev;
+  const ohl = Number(objectifHL);
 
-  if (reste >= 0) {
+  if (reste > 0 && reste <= ohl) {
     const v = Pn - (Hn - reste) * PH;
     return isFinite(v) ? v : null;
   }
@@ -12684,7 +12685,7 @@ function excelEcartXFusionCell(c, ecartOverride) {
   const neg = v != null && !isNaN(v) && Number(v) < 0;
   const txt = (v != null && !isNaN(v) && isFinite(v)) ? fmtNumFr(v) : '—';
   return `<td rowspan="${rs}" class="merge-cell trail-merge calc-x${neg ? ' calc-moy-neg' : ''}" data-r="ecart_x"
-    title="En : reste = OHL (Méthodes) − Σ HL préc. · reste ≥ 0 → Pn−(Hn−reste)×P/H · sinon Pn−Hn×P/H · fin modèle → 0">${txt}</td>`;
+    title="En : reste = OHL − Σ HL préc. · 0&lt;reste≤OHL → Pn−(Hn−reste)×P/H · reste≤0 → Pn−Hn×P/H · fin modèle → 0">${txt}</td>`;
 }
 
 /** Encours — fusion rowspan 5 : AC entrée − AC sortie, puis AG/(P/H×heures jour) */
