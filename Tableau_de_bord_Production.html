@@ -9378,41 +9378,72 @@ function hlancSyncOptions(month) {
   if (modInp) modInp.value = HLANC_STATE.modele || '';
 }
 
+function hlancLineKey(line) {
+  return String(Number(line.chain)) + '|' + String(line.modele || '').trim().toUpperCase();
+}
+
+function hlancSeedLineBlankHours(seed) {
+  const n = typeof excelTotalHourCount === 'function' ? excelTotalHourCount() : 11;
+  return { ...seed, hours_exit: new Array(n).fill(null), hours_entry: new Array(n).fill(null) };
+}
+
+function hlancBuildRowFromLine(month, d, line) {
+  const excelArr = getExcelDataForDate(d);
+  const excel = excelArr ? findExcelBlock(excelArr, line) : null;
+  const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
+  const vt = (line.methodes != null && !isNaN(line.methodes)) ? Number(line.methodes)
+    : ((excel && excel.r1_meth != null) ? Number(excel.r1_meth) : null);
+  const ph = (line.ph != null && !isNaN(line.ph)) ? Number(line.ph)
+    : ((excel && excel.r1_ph != null) ? Number(excel.r1_ph) : 0);
+  const sortie = calcTotalSortieRow(r1h);
+  const hJour = calcHeuresJourFromSaisie(r1h, d);
+  const hManqRaw = calcHLancHeures(r1h, sortie, ph, line, excel, d, month);
+  let hLanc = hManqRaw;
+  if (hLanc != null && isFinite(hLanc) && Math.abs(hLanc) < 0.0001) hLanc = 0;
+  return {
+    ch: line.chain, date: d, imp: line.import, modele: String(line.modele || ''),
+    desig: line.desig, vt, ph, hJour, sortie, hLanc,
+  };
+}
+
 function hlancBuildRows(month, dates) {
   const info = PRODUCTION[month];
   const chFilter = HLANC_STATE.chain != null ? Number(HLANC_STATE.chain) : null;
   const modFilter = (HLANC_STATE.modele || '').trim().toLowerCase();
+  const allSheets = info?.daily_sheets || [];
+  const rangeEnd = dates.length ? dates[dates.length - 1] : (allSheets[allSheets.length - 1] || '');
+  const spans = new Map();
+
+  for (const d of allSheets) {
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line) || !line.modele) continue;
+      if (chFilter != null && Number(line.chain) !== chFilter) continue;
+      if (modFilter && !String(line.modele).toLowerCase().includes(modFilter)) continue;
+      const k = hlancLineKey(line);
+      if (!spans.has(k)) spans.set(k, { first: d, seed: line, modKey: String(line.modele).trim().toUpperCase(), ch: Number(line.chain) });
+      else if (_rapFrToTs(d) < _rapFrToTs(spans.get(k).first)) spans.get(k).first = d;
+    }
+  }
+
   const rows = [];
   let totHManq = 0, totHManqAbs = 0, totHrsJ = 0, totSortie = 0;
-  for (const d of dates) {
-    const excelArr = getExcelDataForDate(d);
-    for (const line of info.daily[d] || []) {
-      if (!isActiveProductionRow(line)) continue;
-      if (chFilter != null && Number(line.chain) !== chFilter) continue;
-      const mod = String(line.modele || '');
-      if (modFilter && !mod.toLowerCase().includes(modFilter)) continue;
-      const excel = excelArr ? findExcelBlock(excelArr, line) : null;
-      const r1h = (line.hours_exit && line.hours_exit.length) ? line.hours_exit : ((excel && excel.r1_hours) || []);
-      const vt = (line.methodes != null && !isNaN(line.methodes)) ? Number(line.methodes)
-        : ((excel && excel.r1_meth != null) ? Number(excel.r1_meth) : null);
-      const ph = (line.ph != null && !isNaN(line.ph)) ? Number(line.ph)
-        : ((excel && excel.r1_ph != null) ? Number(excel.r1_ph) : 0);
-      const sortie = calcTotalSortieRow(r1h);
-      const hJour = calcHeuresJourFromSaisie(r1h, d);
-      const hManqRaw = calcHLancHeures(r1h, sortie, ph, line, excel, d, month);
-      let hLanc = hManqRaw;
-      if (hLanc != null && isFinite(hLanc) && Math.abs(hLanc) < 0.0001) hLanc = 0;
-      if (!hJour && !sortie && (hLanc == null || hLanc === 0)) continue;
-      rows.push({
-        ch: line.chain, date: d, imp: line.import, modele: mod,
-        desig: line.desig, vt, ph, hJour, sortie, hLanc,
-      });
-      if (hLanc != null && isFinite(hLanc)) {
-        totHManq += hLanc;
-        totHManqAbs += Math.abs(hLanc);
+  for (const span of spans.values()) {
+    for (const d of allSheets) {
+      if (_rapFrToTs(d) < _rapFrToTs(span.first)) continue;
+      if (rangeEnd && _rapFrToTs(d) > _rapFrToTs(rangeEnd)) continue;
+      let line = (info.daily[d] || []).find(l =>
+        Number(l.chain) === span.ch && isActiveProductionRow(l) &&
+        String(l.modele || '').trim().toUpperCase() === span.modKey
+      );
+      if (!line) line = hlancSeedLineBlankHours(span.seed);
+      const row = hlancBuildRowFromLine(month, d, line);
+      rows.push(row);
+      if (row.hLanc != null && isFinite(row.hLanc)) {
+        totHManq += row.hLanc;
+        totHManqAbs += Math.abs(row.hLanc);
       }
-      totHrsJ += hJour || 0;
-      totSortie += sortie || 0;
+      totHrsJ += row.hJour || 0;
+      totSortie += row.sortie || 0;
     }
   }
   rows.sort((a, b) => _rapFrToTs(a.date) - _rapFrToTs(b.date) || (Number(a.ch) || 0) - (Number(b.ch) || 0));
@@ -12420,6 +12451,12 @@ function fmtNumFr(v) {
   if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '';
   return fmtDecFr(v, 2);
 }
+/** Colonne Ecart — tiret si nul ou vide. */
+function fmtEcartCell(v) {
+  if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '—';
+  if (Math.abs(Number(v)) < 0.0001) return '—';
+  return fmtNumFr(v);
+}
 /** Σ H de lancement — affichée en valeur absolue (sans signe −). */
 function fmtHLancLaunchSum(v) {
   if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '';
@@ -12824,8 +12861,8 @@ function excelHLancFusionCell(c, chainModelCount, hlTop, hlCumul, hlLaunchSum, l
 function excelEcartXFusionCell(c, ecartOverride) {
   const rs = EXCEL_ROWS_PER_BLOCK;
   const v = ecartOverride !== undefined ? ecartOverride : c.ecartEffMoy;
-  const neg = v != null && !isNaN(v) && Number(v) < 0;
-  const txt = (v != null && !isNaN(v) && isFinite(v)) ? fmtNumFr(v) : '—';
+  const neg = v != null && !isNaN(v) && Number(v) < -0.0001;
+  const txt = fmtEcartCell(v);
   return `<td rowspan="${rs}" class="merge-cell trail-merge calc-x${neg ? ' calc-moy-neg' : ''}" data-r="ecart_x"
     title="En : reste = OHL − Σ HL préc. · 0&lt;reste≤OHL → Pn−(Hn−reste)×P/H · reste≤0 → Pn−Hn×P/H · fin modèle → 0">${txt}</td>`;
 }
@@ -14124,8 +14161,8 @@ function refreshExcelRow(line) {
   if (xCell) {
     const curDisplay = chainDisplayVals.get(saisieLineKey(line)) || {};
     const v = curDisplay.ecart !== undefined ? curDisplay.ecart : c.ecartEffMoy;
-    const neg = v != null && !isNaN(v) && Number(v) < 0;
-    xCell.textContent = (v != null && !isNaN(v) && isFinite(v)) ? fmtNumFr(v) : '—';
+    const neg = v != null && !isNaN(v) && Number(v) < -0.0001;
+    xCell.textContent = fmtEcartCell(v);
     xCell.className = 'merge-cell trail-merge calc-x' + (neg ? ' calc-moy-neg' : '');
   }
   const hlCell = tbody.querySelector(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r0_hlanc"]`);
@@ -14187,8 +14224,8 @@ function refreshExcelRow(line) {
     const ox = otherDisplay.ecart !== undefined ? otherDisplay.ecart : co.ecartEffMoy;
     const xOther = tbody.querySelector(`tr[data-rk="${CSS.escape(String(other._rowKey))}"] [data-r="ecart_x"]`);
     if (xOther) {
-      const neg = ox != null && !isNaN(ox) && Number(ox) < 0;
-      xOther.textContent = (ox != null && !isNaN(ox) && isFinite(ox)) ? fmtNumFr(ox) : '—';
+      const neg = ox != null && !isNaN(ox) && Number(ox) < -0.0001;
+      xOther.textContent = fmtEcartCell(ox);
       xOther.className = 'merge-cell trail-merge calc-x' + (neg ? ' calc-moy-neg' : '');
     }
     const ohl = otherDisplay.hl !== undefined ? otherDisplay.hl : calcSaisieHL(co, chainLines.length, saisieDate);
