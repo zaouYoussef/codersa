@@ -11940,8 +11940,7 @@ function excelMoyColHeaderTitle(dateStr) {
   return 'Somme des créneaux M…W ÷ heures du jour (auto ; col. U → +' + p + ' h)';
 }
 function excelXColHeaderTitle(dateStr) {
-  const h = fmtOffsetFr(getJourHeuresConfig(dateStr).h);
-  return 'En (pcs) : OHL (Méthodes) − Σ HL jours précédents · Pn=sortie · Hn=heures jour (' + h + ' h)';
+  return 'Écart (pcs) · X = OHL − Σ H lancement(1…n−1) · 1 modèle ou 2 modèles (A/N) : règles B/OBJ si 2 modèles · Hn = calcHeuresHL (dernière case)';
 }
 
 /** Objectif HL pour l'écart (pcs) : OHL du tableau Méthodes (période active). */
@@ -11965,31 +11964,178 @@ function buildSaisieChainBlocks(month, date, chainLines) {
   return { lines, blocks, blocksByKey: new Map(blocks.map(b => [saisieLineKey(b.line), b])) };
 }
 
-/**
- * HLn (jour n, valeur du haut) = Hn − Σ(productionᵢ / P/Hᵢ) sur la chaîne ce jour
- * (modèle A terminé + modèle E nouveau, ou un seul modèle E).
- * Modèle intermédiaire (A) le même jour : HL = 0.
- */
-function calcHLDailyTop(month, date, line, chainLines, blocksByKey) {
+/** Contexte chaîne/jour : A = 1er modèle, N = dernier modèle. */
+function getSaisieChainModelContext(chainLines, blocksByKey) {
   const lines = (chainLines || []).filter(l => l && (l.client || l._added || l.modele));
-  const key = saisieLineKey(line);
-  const idx = lines.findIndex(l => saisieLineKey(l) === key);
-  if (idx < 0) return null;
-  if (lines.length >= 2 && idx < lines.length - 1) return 0;
+  const blockA = lines.length ? blocksByKey?.get(saisieLineKey(lines[0])) : null;
+  const blockN = lines.length ? blocksByKey?.get(saisieLineKey(lines[lines.length - 1])) : null;
+  return { lines, blockA, blockN, modelCount: lines.length };
+}
 
-  const blockItems = Array.from(blocksByKey.values());
-  const h = calcChainWorkHoursFromBlocks(blockItems.map(b => ({ c: b.c })), date);
-  if (!h) return null;
+/** B = encours(A) + (commande modèle 1 − cumul entrée modèle 1). */
+function calcBModelA(month, blockA) {
+  if (!blockA?.c || !blockA.line) return null;
+  const c = blockA.c;
+  const commande = resolveLineQtePrevu(month, blockA.line);
+  if (commande == null || isNaN(commande)) return null;
+  const encours = Number(c.encours) || 0;
+  const cumulEntre = Number(c.cumulEntre) || 0;
+  return encours + (Number(commande) - cumulEntre);
+}
 
+/** OBJ = P/H(A) × heures HL modèle A (dernière case remplie). */
+function calcOBJModelA(blockA, dateStr) {
+  if (!blockA?.c) return null;
+  const ph = Number(blockA.c.ph) || 0;
+  const h = calcHeuresHLFromSaisie(blockA.c.r1h, dateStr);
+  if (!ph || !h) return null;
+  return ph * h;
+}
+
+/** Heures de travail chaîne (2 modèles) : max calcHeuresHL sur les blocs du jour. */
+function calcChainHLWorkHours(blockItems, dateStr) {
+  return calcChainWorkHoursFromBlocks(blockItems, dateStr);
+}
+
+/** Σ H de lancement jours 1…n−1 (exclut le jour courant). */
+function calcHLancLaunchSumPriorDays(month, date, line) {
+  const info = PRODUCTION[month];
+  if (!info || !date || !line) return 0;
+  const sheets = info.daily_sheets || [];
+  const idx = sheets.indexOf(date);
+  if (idx <= 0) return 0;
+  const targetKey = saisieLineKey(line);
+  let sum = 0;
+  let pastZero = false;
+  for (let i = 0; i < idx; i++) {
+    const d = sheets[i];
+    const dayLines = (info.daily[d] || []).filter(l =>
+      Number(l.chain) === Number(line.chain) && (l.client || l._added || l.modele)
+    );
+    const target = dayLines.find(l => saisieLineKey(l) === targetKey);
+    if (!target) continue;
+    if (pastZero) continue;
+    const hLanc = calcHLancManqForLineOnDay(month, d, target);
+    if (hLanc == null || !isFinite(hLanc)) continue;
+    if (Math.abs(hLanc) < 0.0001) {
+      pastZero = true;
+    } else {
+      sum += hLanc;
+    }
+  }
+  return sum;
+}
+
+/** X = OHL − Σ H lancement(1…n−1). */
+function calcXForEcartLine(month, date, line) {
+  const ohl = getMethOhlForLine(month, date, line);
+  if (ohl == null || isNaN(ohl)) return null;
+  return Number(ohl) - calcHLancLaunchSumPriorDays(month, date, line);
+}
+
+/** Arrondi métier saisie : 2 décimales, artefacts ~0 → 0 (ex. 8,25−479/58 → −0,01). */
+function snapSaisieMetric(v) {
+  if (v == null || v === '' || isNaN(v) || !isFinite(v)) return null;
+  const r = Math.round(Number(v) * 100) / 100;
+  return Math.abs(r) < 0.015 ? 0 : r;
+}
+
+/** Écart pcs à partir de X : X≤0 → Pn−Hn×P/H · 0<X≤OHL → Pn−(Hn−X)×P/H. */
+function calcEcartFromXValue(Pn, PH, Hn, X, OHL) {
+  if (!PH || Hn == null || isNaN(Hn)) return null;
+  let v;
+  if (OHL == null || isNaN(OHL) || X == null || isNaN(X) || X <= 0) {
+    v = Pn - PH * Hn;
+  } else if (X > 0 && X <= Number(OHL)) {
+    v = Pn - (Hn - X) * PH;
+  } else {
+    v = Pn - PH * Hn;
+  }
+  return snapSaisieMetric(v);
+}
+
+function calcHLConsumedChain(blockItems) {
   let consumed = 0;
-  for (const b of blockItems) {
-    const ph = Number(b.c.ph) || 0;
-    const sortie = Number(b.c.totalSortie) || 0;
+  for (const b of blockItems || []) {
+    const ph = Number(b?.c?.ph) || 0;
+    const sortie = Number(b?.c?.totalSortie) || 0;
     if (!ph) return null;
     consumed += sortie / ph;
   }
-  const v = h - consumed;
-  return isFinite(v) ? v : null;
+  return consumed;
+}
+
+/**
+ * HLn (haut colonne HL) — 1 modèle A ou 2 modèles A+N même jour.
+ * 1 modèle : HL = H − prod/P/H (H = calcHeuresHL).
+ * 2 modèles, B<OBJ : HL(A)=0 · HL(N)=H−(prodA/P/H A+prodN/P/H N).
+ * 2 modèles, B≥OBJ : HL(A)=H−prodA/P/H A · HL(N)=0 ou −prodN/P/H N si prodN>0.
+ */
+function calcHLDailyTop(month, date, line, chainLines, blocksByKey) {
+  const { lines, blockA, blockN, modelCount } = getSaisieChainModelContext(chainLines, blocksByKey);
+  const key = saisieLineKey(line);
+  const idx = lines.findIndex(l => saisieLineKey(l) === key);
+  if (idx < 0) return null;
+
+  const block = blocksByKey?.get(key);
+  if (!block?.c) return null;
+
+  if (modelCount === 1) {
+    const h = calcHeuresHLFromSaisie(block.c.r1h, date);
+    const ph = Number(block.c.ph) || 0;
+    const sortie = Number(block.c.totalSortie) || 0;
+    if (!h || !ph) return null;
+    return snapSaisieMetric(h - sortie / ph);
+  }
+
+  const blockItems = lines.map(l => blocksByKey.get(saisieLineKey(l))).filter(Boolean);
+  const h = calcChainHLWorkHours(blockItems, date);
+  if (!h) return null;
+
+  if (idx > 0 && idx < lines.length - 1) return 0;
+
+  const cA = blockA?.c;
+  const cN = blockN?.c;
+  const phA = Number(cA?.ph) || 0;
+  const phN = Number(cN?.ph) || 0;
+  const prodA = Number(cA?.totalSortie) || 0;
+  const prodN = Number(cN?.totalSortie) || 0;
+
+  /** Modèle N sans sortie du jour : HL = 0 (pas d'artefact H − prodA/P/H). */
+  if (idx === lines.length - 1 && prodN <= 0) return 0;
+
+  const B = calcBModelA(month, blockA);
+  const OBJ = calcOBJModelA(blockA, date);
+
+  if (B == null || OBJ == null) {
+    if (idx === 0) return 0;
+    if (idx === lines.length - 1) {
+      const consumed = calcHLConsumedChain(blockItems);
+      if (consumed == null) return null;
+      return snapSaisieMetric(h - consumed);
+    }
+    return 0;
+  }
+
+  if (B < OBJ) {
+    if (idx === 0) return 0;
+    if (idx === lines.length - 1) {
+      const consumed = calcHLConsumedChain(blockItems);
+      if (consumed == null) return null;
+      return snapSaisieMetric(h - consumed);
+    }
+    return 0;
+  }
+
+  if (idx === 0) {
+    if (!phA) return null;
+    return snapSaisieMetric(h - prodA / phA);
+  }
+  if (idx === lines.length - 1) {
+    if (!phN) return null;
+    return snapSaisieMetric(-prodN / phN);
+  }
+  return 0;
 }
 
 /** HLi enregistré pour le cumul : 0 si fin de modèle, sinon HLn du jour. */
@@ -12042,20 +12188,15 @@ function sumHLPriorDaysForModel(month, date, line) {
 }
 
 /**
- * Écart (pcs) jour n :
- * Pn=production, Hn=heures travaillées, objectif HL=OHL (Méthodes).
- * reste = OHL − Σ HL(1…n−1)
- * si modèle terminé → En=0
- * si 0 < reste ≤ OHL → En = Pn − (Hn − reste) × P/H
- * si reste ≤ 0 (ou reste > OHL) → En = Pn − Hn × P/H
- * Sur une chaîne multi-modèles le même jour : En=0 pour les modèles précédents (fin de modèle).
+ * Écart (pcs) — 1 modèle A ou 2 modèles A+N même jour.
+ * X = OHL − Σ H lancement(1…n−1) · Hn = calcHeuresHL (2 modèles : max chaîne).
+ * 1 modèle : écart via X. 2 modèles : B/OBJ puis cas A et N décrits métier.
  */
 function calcEcartPcsForLine(month, date, line, chainLines, blocksByKey) {
-  const lines = (chainLines || []).filter(l => l && (l.client || l._added || l.modele));
+  const { lines, blockA, blockN, modelCount } = getSaisieChainModelContext(chainLines, blocksByKey);
   const key = saisieLineKey(line);
   const idx = lines.findIndex(l => saisieLineKey(l) === key);
   if (idx < 0) return null;
-  if (lines.length >= 2 && idx < lines.length - 1) return 0;
   if (isSaisieLineFinishedOnDay(line, month, date)) return 0;
 
   const block = blocksByKey?.get(key);
@@ -12064,22 +12205,59 @@ function calcEcartPcsForLine(month, date, line, chainLines, blocksByKey) {
 
   const Pn = Number(c.totalSortie) || 0;
   const PH = Number(c.ph) || 0;
-  const Hn = calcHeuresJourFromSaisie(c.r1h, date);
-  if (!PH || !Hn) return null;
 
-  const objectifHL = getObjectifHLForLine(month, date, line);
-  if (objectifHL == null) return Pn - PH * Hn;
-
-  const sumHLPrev = sumHLPriorDaysForModel(month, date, line);
-  const reste = objectifHL - sumHLPrev;
-  const ohl = Number(objectifHL);
-
-  if (reste > 0 && reste <= ohl) {
-    const v = Pn - (Hn - reste) * PH;
-    return isFinite(v) ? v : null;
+  if (modelCount === 1) {
+    const Hn = calcHeuresHLFromSaisie(c.r1h, date);
+    if (!PH || !Hn) return null;
+    const OHL = getMethOhlForLine(month, date, line);
+    const X = calcXForEcartLine(month, date, line);
+    return calcEcartFromXValue(Pn, PH, Hn, X, OHL);
   }
-  const v = Pn - Hn * PH;
-  return isFinite(v) ? v : null;
+
+  if (idx > 0 && idx < lines.length - 1) return 0;
+
+  const blockItems = lines.map(l => blocksByKey.get(saisieLineKey(l))).filter(Boolean);
+  const Hn = calcChainHLWorkHours(blockItems, date);
+  if (!Hn) return null;
+
+  const cA = blockA?.c;
+  const cN = blockN?.c;
+  const phA = Number(cA?.ph) || 0;
+  const phN = Number(cN?.ph) || 0;
+  const prodN = Number(cN?.totalSortie) || 0;
+
+  /** Modèle N sans production du jour : écart = 0 (pas −P/H×Hn). */
+  if (idx === lines.length - 1 && prodN <= 0) return 0;
+
+  const B = calcBModelA(month, blockA);
+  const OBJ = calcOBJModelA(blockA, date);
+
+  if (B == null || OBJ == null) {
+    if (idx === 0) return 0;
+    if (idx === lines.length - 1) {
+      const OHL = getMethOhlForLine(month, date, line);
+      const X = calcXForEcartLine(month, date, line);
+      return calcEcartFromXValue(Pn, phN || PH, Hn, X, OHL);
+    }
+    return 0;
+  }
+
+  if (B < OBJ) {
+    if (idx === 0) return 0;
+    if (idx === lines.length - 1) {
+      const OHL = getMethOhlForLine(month, date, line);
+      const X = calcXForEcartLine(month, date, line);
+      return calcEcartFromXValue(Pn, phN || PH, Hn, X, OHL);
+    }
+    return 0;
+  }
+
+  if (idx === 0) {
+    if (!phA) return null;
+    return snapSaisieMetric(Pn - phA * Hn);
+  }
+  if (idx === lines.length - 1) return 0;
+  return 0;
 }
 
 function calcSaisieChainDisplayValues(month, date, chainLines) {
@@ -12457,6 +12635,12 @@ function fmtEcartCell(v) {
   if (Math.abs(Number(v)) < 0.0001) return '—';
   return fmtNumFr(v);
 }
+/** Colonne HL (haut / Σ) — vide si nul ou artefact ~0. */
+function fmtHLCell(v) {
+  if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '';
+  if (Math.abs(Number(v)) < 0.015) return '';
+  return fmtNumFr(v);
+}
 /** Σ H de lancement — affichée en valeur absolue (sans signe −). */
 function fmtHLancLaunchSum(v) {
   if (v == null || v === '' || isNaN(v) || !isFinite(v)) return '';
@@ -12826,8 +13010,8 @@ function excelHourCells(field, hours, opts) {
 function excelHLancFusionCell(c, chainModelCount, hlTop, hlCumul, hlLaunchSum, line) {
   const rs = EXCEL_ROWS_PER_BLOCK;
   const topTitle = chainModelCount >= 2
-    ? 'HLn = Hn − (prod A/P/H A + prod E/P/H E) — modèle intermédiaire → 0'
-    : 'HLn = Hn − (production ÷ P/H)';
+    ? '2 modèles A+N : B<OBJ → HL(A)=0 · HL(N)=H−(prodA/P/H A+prodN/P/H N) · B≥OBJ → HL(A)=H−prodA/P/H A · HL(N)=0 ou −prodN/P/H N'
+    : '1 modèle A : HL = H − prod/P/H (H = calcHeuresHL, dernière case)';
   const finModele = line && saisieMonth && saisieDate && isSaisieLineFinishedOnDay(line, saisieMonth, saisieDate);
   const midTitle = finModele
     ? 'Σ HL(1…n−1) — modèle terminé'
@@ -12850,8 +13034,8 @@ function excelHLancFusionCell(c, chainModelCount, hlTop, hlCumul, hlLaunchSum, l
   }
   return `<td rowspan="${rs}" class="merge-cell trail-merge hlanc-merge">
     <div class="trail-merge-stack hlanc-split-stack">
-      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc" title="${topTitle}">${top != null && !isNaN(top) ? fmtNumFr(top) : ''}</div>
-      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc_2" title="${midTitle}">${mid != null && !isNaN(mid) ? fmtNumFr(mid) : ''}</div>
+      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc" title="${topTitle}">${fmtHLCell(top)}</div>
+      <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc_2" title="${midTitle}">${fmtHLCell(mid)}</div>
       <div class="trail-merge-line hlanc-row hlanc-half" data-r="r0_hlanc_3" title="${botTitle}">${bot != null && !isNaN(bot) ? fmtHLancLaunchSum(bot) : ''}</div>
     </div>
   </td>`;
@@ -12864,7 +13048,7 @@ function excelEcartXFusionCell(c, ecartOverride) {
   const neg = v != null && !isNaN(v) && Number(v) < -0.0001;
   const txt = fmtEcartCell(v);
   return `<td rowspan="${rs}" class="merge-cell trail-merge calc-x${neg ? ' calc-moy-neg' : ''}" data-r="ecart_x"
-    title="En : reste = OHL − Σ HL préc. · 0&lt;reste≤OHL → Pn−(Hn−reste)×P/H · reste≤0 → Pn−Hn×P/H · fin modèle → 0">${txt}</td>`;
+    title="Écart pcs · X=OHL−Σ H lanc.(1…n−1) · 1 modèle : via X · 2 modèles : B/OBJ (A/N)">${txt}</td>`;
 }
 
 /** Encours — fusion rowspan 5 : AC entrée − AC sortie, puis AG/(P/H×heures jour) */
@@ -14169,10 +14353,10 @@ function refreshExcelRow(line) {
   if (hlCell) {
     const curDisplay = chainDisplayVals.get(saisieLineKey(line)) || {};
     const hl = curDisplay.hl !== undefined ? curDisplay.hl : calcSaisieHL(c, chainLines.length, saisieDate);
-    hlCell.textContent = hl != null && !isNaN(hl) ? fmtNumFr(hl) : '';
+    hlCell.textContent = fmtHLCell(hl);
     hlCell.title = chainLines.length >= 2
-      ? 'HLn = Hn − (prod A/P/H A + prod E/P/H E)'
-      : 'HLn = Hn − (production ÷ P/H)';
+      ? 'HL — 2 modèles A+N (B/OBJ) · Hn = calcHeuresHL max chaîne'
+      : 'HL = H − prod/P/H · H = calcHeuresHL (dernière case)';
   }
   const hlCell2 = tbody.querySelector(`tr[data-rk="${CSS.escape(String(rk))}"] [data-r="r0_hlanc_2"]`);
   if (hlCell2) {
@@ -14233,8 +14417,8 @@ function refreshExcelRow(line) {
     if (hlOther) {
       hlOther.textContent = ohl != null && !isNaN(ohl) ? fmtNumFr(ohl) : '';
       hlOther.title = chainLines.length >= 2
-        ? 'HLn = Hn − (prod A/P/H A + prod E/P/H E)'
-        : 'HLn = Hn − (production ÷ P/H)';
+        ? 'HL — 2 modèles A+N (B/OBJ) · Hn = calcHeuresHL max chaîne'
+        : 'HL = H − prod/P/H · H = calcHeuresHL (dernière case)';
     }
     const finOther = isSaisieLineFinishedOnDay(other, saisieMonth, saisieDate);
     let ocum = otherDisplay.hlCumul;
@@ -15003,4 +15187,3 @@ setPage('overview');
 </script>
 </body>
 </html>
-              
