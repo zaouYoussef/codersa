@@ -12499,10 +12499,11 @@ function calcHLancManqForLineOnDay(month, date, line) {
 }
 
 /**
- * Yi (3ème valeur colonne HL) :
- * - Si HLi > 0 → Yi = CHLi (cumul du jour i)
- * - Si HLi ≤ 0 → Yi = CHL(j-1) où j est le dernier jour avant i avec HLj > 0
- * = le dernier cumul HL enregistré avant que HL devienne ≤ 0.
+ * Yi (3ème valeur colonne HL) — 3 cas :
+ * 1. HLi > 0 et aucun HLj<=0 avant → Yi = CHLi
+ * 2. HLi <= 0 → Yi = CHL(i-1) (cumul du jour juste avant i)
+ * 3. HLi > 0 mais un HLj<=0 existe avant → Yi = CHL(j-1) (cumul juste avant le premier j<=0)
+ * = le cumul HL juste avant le premier jour où HL est devenu ≤ 0.
  */
 function calcHLancLaunchSumForLine(month, date, line) {
   const info = PRODUCTION[month];
@@ -12514,7 +12515,9 @@ function calcHLancLaunchSumForLine(month, date, line) {
 
   // Reconstruit HLi et CHLi jour par jour jusqu'au jour i (inclus)
   let cumul = 0;
-  let lastPositiveCumul = null;
+  let prevCumul = 0; // CHLi-1 (cumul avant le jour courant)
+  let firstNegIdx = -1; // index du premier jour où HLi <= 0
+  let cumulBeforeFirstNeg = null; // cumul juste avant ce premier jour
   let hasVal = false;
 
   for (let i = 0; i <= idx; i++) {
@@ -12525,27 +12528,31 @@ function calcHLancLaunchSumForLine(month, date, line) {
     const target = dayLines.find(l => saisieLineKey(l) === targetKey);
     if (!target) continue;
 
-    // HLi = Hn - prod/ph (valeur HL affichée)
     const Hn = calcHeuresHLFromSaisie(target.hours_exit, d);
     const ph = Number(target.ph) || 0;
     const sortie = (target.hours_exit || [])
       .reduce((s, v) => s + (v != null ? Number(v) : 0), 0);
     if (!Hn || !ph) continue;
 
+    prevCumul = cumul;
     const HLi = Math.round((Hn - sortie / ph) * 100) / 100;
     cumul = Math.round((cumul + HLi) * 100) / 100;
     hasVal = true;
 
-    if (HLi > 0) {
-      lastPositiveCumul = cumul; // CHLi quand HLi > 0
+    // Mémorise le premier jour où HLi <= 0
+    if (firstNegIdx < 0 && HLi <= 0) {
+      firstNegIdx = i;
+      cumulBeforeFirstNeg = prevCumul; // CHL(j-1)
     }
-    // Si HLi <= 0 : lastPositiveCumul reste inchangé (on garde le dernier bon)
   }
 
   if (!hasVal) return null;
-  // Si HLi du jour courant > 0 → Yi = CHLi (= cumul)
-  // Sinon → Yi = dernier CHLj-1 avant que HL soit devenu ≤ 0
-  return lastPositiveCumul;
+
+  // Cas 2 ou 3 : un jour <= 0 existe → Yi = CHL(j-1)
+  if (firstNegIdx >= 0) return cumulBeforeFirstNeg;
+
+  // Cas 1 : tous les jours > 0 → Yi = CHLi
+  return cumul;
 }
 
 function calcSaisieHL(c, chainModelCount, dateStr) {
