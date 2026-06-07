@@ -11998,6 +11998,7 @@ function calcChainHLWorkHours(blockItems, dateStr) {
 }
 
 /** Σ H de lancement jours 1…n−1 (exclut le jour courant). */
+/** Σ HL affiché (Hn − prod/P/H) des jours 1…n−1 (exclut le jour courant). */
 function calcHLancLaunchSumPriorDays(month, date, line) {
   const info = PRODUCTION[month];
   if (!info || !date || !line) return 0;
@@ -12006,7 +12007,6 @@ function calcHLancLaunchSumPriorDays(month, date, line) {
   if (idx <= 0) return 0;
   const targetKey = saisieLineKey(line);
   let sum = 0;
-  let pastZero = false;
   for (let i = 0; i < idx; i++) {
     const d = sheets[i];
     const dayLines = (info.daily[d] || []).filter(l =>
@@ -12014,36 +12014,37 @@ function calcHLancLaunchSumPriorDays(month, date, line) {
     );
     const target = dayLines.find(l => saisieLineKey(l) === targetKey);
     if (!target) continue;
-    if (pastZero) continue;
-    const hLanc = calcHLancManqForLineOnDay(month, d, target);
-    if (hLanc == null || !isFinite(hLanc)) continue;
-    if (Math.abs(hLanc) < 0.0001) {
-      pastZero = true;
-    } else {
-      sum += hLanc;
-    }
+    // HL affiché = Hn − prod/ph (même formule que la colonne HL)
+    const Hn = calcHeuresHLFromSaisie(target.hours_exit, d);
+    const ph = Number(target.ph) || 0;
+    const sortie = target.hours_exit
+      ? target.hours_exit.reduce((s, v) => s + (v != null ? Number(v) : 0), 0)
+      : 0;
+    if (!Hn || !ph) continue;
+    const hl = Hn - sortie / ph;
+    if (!isFinite(hl)) continue;
+    sum += hl;
   }
   return sum;
 }
 
-/** X = OHL − Σ H lancement(1…n−1). */
+/** X = OHL − Σ HL affiché(jours 1…n−1). */
 function calcXForEcartLine(month, date, line) {
   const ohl = getMethOhlForLine(month, date, line);
   if (ohl == null || isNaN(ohl)) return null;
   return Number(ohl) - calcHLancLaunchSumPriorDays(month, date, line);
 }
 
-/** Écart pcs à partir de X : X≤0 → Pn−Hn×P/H · 0<X≤OHL → Pn−(Hn−X)×P/H. */
+
+/** Écart pcs à partir de X : X≤0 → Pn−Hn×P/H · 0<X → Pn−(Hn−X)×P/H. */
 function calcEcartFromXValue(Pn, PH, Hn, X, OHL) {
   const r2 = v => (isFinite(v) ? Math.round(v * 100) / 100 : null);
   if (!PH || Hn == null || isNaN(Hn)) return null;
-  if (OHL == null || isNaN(OHL) || X == null || isNaN(X) || X <= 0) {
+  if (X == null || isNaN(X) || X <= 0) {
     return r2(Pn - PH * Hn);
   }
-  if (X > 0 && X <= Number(OHL)) {
-    return r2(Pn - (Hn - X) * PH);
-  }
-  return r2(Pn - PH * Hn);
+  // X > 0 (que X soit ≤ OHL ou > OHL, même formule)
+  return r2(Pn - (Hn - X) * PH);
 }
 
 function calcHLConsumedChain(blockItems) {
