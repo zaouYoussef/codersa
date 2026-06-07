@@ -12499,8 +12499,10 @@ function calcHLancManqForLineOnDay(month, date, line) {
 }
 
 /**
- * Σ H de lancement (colonne rapport) jusqu'au jour n :
- * somme des H.Manq tant que H.Manq ≠ 0, puis le jour où H.Manq = 0 (inclus) ; figé ensuite.
+ * Yi (3ème valeur colonne HL) :
+ * - Si HLi > 0 → Yi = CHLi (cumul du jour i)
+ * - Si HLi ≤ 0 → Yi = CHL(j-1) où j est le dernier jour avant i avec HLj > 0
+ * = le dernier cumul HL enregistré avant que HL devienne ≤ 0.
  */
 function calcHLancLaunchSumForLine(month, date, line) {
   const info = PRODUCTION[month];
@@ -12509,9 +12511,12 @@ function calcHLancLaunchSumForLine(month, date, line) {
   const idx = sheets.indexOf(date);
   if (idx < 0) return null;
   const targetKey = saisieLineKey(line);
-  let sum = 0;
-  let pastZero = false;
+
+  // Reconstruit HLi et CHLi jour par jour jusqu'au jour i (inclus)
+  let cumul = 0;
+  let lastPositiveCumul = null;
   let hasVal = false;
+
   for (let i = 0; i <= idx; i++) {
     const d = sheets[i];
     const dayLines = (info.daily[d] || []).filter(l =>
@@ -12519,19 +12524,28 @@ function calcHLancLaunchSumForLine(month, date, line) {
     );
     const target = dayLines.find(l => saisieLineKey(l) === targetKey);
     if (!target) continue;
-    if (pastZero) continue;
-    const hLanc = calcHLancManqForLineOnDay(month, d, target);
-    if (hLanc == null || !isFinite(hLanc)) continue;
-    if (Math.abs(hLanc) < 0.0001) {
-      sum += 0;
-      pastZero = true;
-      hasVal = true;
-    } else {
-      sum += hLanc;
-      hasVal = true;
+
+    // HLi = Hn - prod/ph (valeur HL affichée)
+    const Hn = calcHeuresHLFromSaisie(target.hours_exit, d);
+    const ph = Number(target.ph) || 0;
+    const sortie = (target.hours_exit || [])
+      .reduce((s, v) => s + (v != null ? Number(v) : 0), 0);
+    if (!Hn || !ph) continue;
+
+    const HLi = Math.round((Hn - sortie / ph) * 100) / 100;
+    cumul = Math.round((cumul + HLi) * 100) / 100;
+    hasVal = true;
+
+    if (HLi > 0) {
+      lastPositiveCumul = cumul; // CHLi quand HLi > 0
     }
+    // Si HLi <= 0 : lastPositiveCumul reste inchangé (on garde le dernier bon)
   }
-  return hasVal ? sum : null;
+
+  if (!hasVal) return null;
+  // Si HLi du jour courant > 0 → Yi = CHLi (= cumul)
+  // Sinon → Yi = dernier CHLj-1 avant que HL soit devenu ≤ 0
+  return lastPositiveCumul;
 }
 
 function calcSaisieHL(c, chainModelCount, dateStr) {
