@@ -3324,11 +3324,16 @@ header.topbar {
   border-radius: 8px;
   border: 1px solid var(--border);
 }
-#page-hlanc .hlanc-charts { margin-bottom: 14px; }
-#page-hlanc .hlanc-charts .card-sub { font-size: 11px; color: var(--text-dim); }
-#page-hlanc .hlanc-charts .g3 { margin-bottom: 0; }
+#page-hlanc .hlanc-analytics { margin-bottom: 14px; display: flex; flex-direction: column; gap: 14px; }
+#page-hlanc .hlanc-analytics .card-sub { font-size: 11px; color: var(--text-dim); }
+#page-hlanc .hlanc-analytics .g3 { margin-bottom: 0; }
+#page-hlanc .hlanc-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 @media (max-width: 1100px) {
-  #page-hlanc .hlanc-charts .g3 { grid-template-columns: 1fr; }
+  #page-hlanc .hlanc-analytics .g3 { grid-template-columns: 1fr; }
+  #page-hlanc .hlanc-kpis { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  #page-hlanc .hlanc-kpis { grid-template-columns: 1fr; }
 }
 
 /* Document imprimable façon CEGID (sobre, monochrome) */
@@ -5151,7 +5156,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     <div class="page-head no-print">
       <div class="left">
         <h2><span id="hlanc-month">MAI</span> · <span class="accent">Heures de lancement</span></h2>
-        <div class="sub">Colonnes HL saisie (HLi, CHLi, Hi) + rapport CEGID. Filtrez par période, chaîne ou modèle, puis exportez en PDF.</div>
+        <div class="sub">HLi, CHLi, Hi (saisie) + CEGID. Filtrez par période, modèle ou chaîne — les graphiques s’adaptent (ex. modèle + jour → répartition par chaîne).</div>
       </div>
       <div class="pill-meta"><span class="dot"></span><span id="hlanc-range">—</span></div>
     </div>
@@ -5186,13 +5191,69 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         </div>
       </div>
     </div>
-    <div class="hlanc-charts no-print" id="hlanc-charts-wrap" hidden>
-      <div class="g3">
+    <div class="hlanc-analytics no-print" id="hlanc-analytics-wrap" hidden>
+      <div class="hlanc-kpis" id="hlanc-kpis">
+        <div class="kpi">
+          <div class="kpi-top">
+            <div class="kpi-label">Total Hi</div>
+            <div class="kpi-ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          </div>
+          <div class="kpi-value" id="kpi-hlanc-hi">—<span class="unit">h</span></div>
+          <div class="kpi-foot" id="kpi-hlanc-hi-foot">Σ H de lancement (saisie)</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top">
+            <div class="kpi-label">Total HLi</div>
+            <div class="kpi-ic c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div>
+          </div>
+          <div class="kpi-value" id="kpi-hlanc-hli">—<span class="unit">h</span></div>
+          <div class="kpi-foot" id="kpi-hlanc-hli-foot">Somme HLi sur la période</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top">
+            <div class="kpi-label">H lancement CEGID</div>
+            <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          </div>
+          <div class="kpi-value" id="kpi-hlanc-cegid">—<span class="unit">h</span></div>
+          <div class="kpi-foot" id="kpi-hlanc-cegid-foot">Σ H . MANQ jusqu’au 1er 0</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top">
+            <div class="kpi-label">Lignes</div>
+            <div class="kpi-ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+          </div>
+          <div class="kpi-value" id="kpi-hlanc-rows">0</div>
+          <div class="kpi-foot" id="kpi-hlanc-rows-foot">Chaîne × modèle × jour</div>
+        </div>
+      </div>
+      <div class="g-wide row-gap" id="hlanc-breakdown-wrap" hidden>
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title" id="hlanc-breakdown-title">Répartition par chaîne</div>
+              <div class="card-sub" id="hlanc-breakdown-sub">HLi · CHLi · Hi</div>
+            </div>
+          </div>
+          <div class="h-280" id="hlanc-breakdown-canvas-wrap"><canvas id="chart-hlanc-breakdown"></canvas></div>
+        </div>
+      </div>
+      <div class="g-wide row-gap" id="hlanc-total-wrap">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title" id="hlanc-total-title">Total heures de lancement · par jour</div>
+              <div class="card-sub" id="hlanc-total-sub">Hi (saisie) et H de lancement CEGID cumulés</div>
+            </div>
+          </div>
+          <div class="h-280"><canvas id="chart-hlanc-total"></canvas></div>
+        </div>
+      </div>
+      <div class="g3" id="hlanc-daily-wrap">
         <div class="card">
           <div class="card-head">
             <div>
               <div class="card-title">HLi · par jour</div>
-              <div class="card-sub" id="hlanc-chart-top-sub">HL du jour i (colonne saisie · haut)</div>
+              <div class="card-sub" id="hlanc-chart-top-sub">HL du jour i</div>
             </div>
           </div>
           <div class="h-240"><canvas id="chart-hlanc-hl-top"></canvas></div>
@@ -5201,7 +5262,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
           <div class="card-head">
             <div>
               <div class="card-title">CHLi · par jour</div>
-              <div class="card-sub" id="hlanc-chart-mid-sub">Cumul HL au jour i (colonne saisie · milieu)</div>
+              <div class="card-sub" id="hlanc-chart-mid-sub">Cumul HL au jour i</div>
             </div>
           </div>
           <div class="h-240"><canvas id="chart-hlanc-hl-cumul"></canvas></div>
@@ -5210,7 +5271,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
           <div class="card-head">
             <div>
               <div class="card-title">Hi · par jour</div>
-              <div class="card-sub" id="hlanc-chart-bot-sub">H de lancement au jour i (colonne saisie · bas)</div>
+              <div class="card-sub" id="hlanc-chart-bot-sub">H de lancement au jour i</div>
             </div>
           </div>
           <div class="h-240"><canvas id="chart-hlanc-hl-launch"></canvas></div>
@@ -9990,23 +10051,14 @@ function hlancSyncOptions(month) {
   if (inD) inD.value = HLANC_STATE.dateDebutIso || '';
   if (inF) inF.value = HLANC_STATE.dateFinIso || '';
 
-  const chains = new Set();
   const modeles = new Set();
   for (const d of sheets) {
     for (const line of info.daily[d] || []) {
       if (!isActiveProductionRow(line)) continue;
-      if (line.chain != null) chains.add(Number(line.chain));
       if (line.modele) modeles.add(String(line.modele));
     }
   }
-  const chSel = document.getElementById('hlanc-chain');
-  const prev = String(HLANC_STATE.chain != null ? HLANC_STATE.chain : '');
-  if (chSel) {
-    chSel.innerHTML = '<option value="">Toutes</option>' +
-      Array.from(chains).sort((a, b) => a - b).map(c =>
-        `<option value="${c}">Ch${String(c).padStart(2, '0')}</option>`).join('');
-    chSel.value = prev;
-  }
+  hlancRefreshChainSelect(month);
   const dl = document.getElementById('hlanc-modele-datalist');
   if (dl) {
     dl.innerHTML = Array.from(modeles).sort().map(m =>
@@ -10014,6 +10066,33 @@ function hlancSyncOptions(month) {
   }
   const modInp = document.getElementById('hlanc-modele');
   if (modInp) modInp.value = HLANC_STATE.modele || '';
+}
+
+/** Liste des chaînes présentes pour le modèle / la période filtrés. */
+function hlancRefreshChainSelect(month) {
+  const info = PRODUCTION[month];
+  const chSel = document.getElementById('hlanc-chain');
+  if (!info || !chSel) return;
+  const dates = hlancDatesInRange(month);
+  const dayList = dates.length ? dates : (info.daily_sheets || []);
+  const modFilter = (HLANC_STATE.modele || '').trim().toLowerCase();
+  const chains = new Set();
+  for (const d of dayList) {
+    for (const line of info.daily[d] || []) {
+      if (!isActiveProductionRow(line) || line.chain == null) continue;
+      if (modFilter && !String(line.modele || '').toLowerCase().includes(modFilter)) continue;
+      chains.add(Number(line.chain));
+    }
+  }
+  const prev = String(HLANC_STATE.chain != null ? HLANC_STATE.chain : '');
+  chSel.innerHTML = '<option value="">Toutes</option>' +
+    Array.from(chains).sort((a, b) => a - b).map(c =>
+      `<option value="${c}">Ch${String(c).padStart(2, '0')}</option>`).join('');
+  if (prev && Array.from(chains).some(c => String(c) === prev)) chSel.value = prev;
+  else {
+    chSel.value = '';
+    if (HLANC_STATE.chain != null && !chains.has(Number(HLANC_STATE.chain))) HLANC_STATE.chain = null;
+  }
 }
 
 function hlancLineKey(line) {
@@ -10237,33 +10316,98 @@ function hlancSignedCellCls(v) {
   return n < 0 ? 'neg' : (n > 0 ? 'pos' : '');
 }
 
-function hlancChartFilterLabel() {
-  const parts = [];
-  if (HLANC_STATE.chain != null) parts.push('Ch' + String(HLANC_STATE.chain).padStart(2, '0'));
+function hlancFilters() {
   const mod = (HLANC_STATE.modele || '').trim();
-  if (mod) parts.push(mod);
-  if (HLANC_STATE.dateDebutIso && HLANC_STATE.dateFinIso) {
+  return {
+    chain: HLANC_STATE.chain != null ? Number(HLANC_STATE.chain) : null,
+    modele: mod,
+    modeleLo: mod.toLowerCase(),
+    hasChain: HLANC_STATE.chain != null,
+    hasModele: mod.length > 0,
+  };
+}
+
+function hlancChartFilterLabel(dates) {
+  const f = hlancFilters();
+  const parts = [];
+  if (f.hasChain) parts.push('Ch' + String(f.chain).padStart(2, '0'));
+  if (f.hasModele) parts.push(f.modele);
+  if (dates?.length === 1) parts.push(dates[0]);
+  else if (HLANC_STATE.dateDebutIso && HLANC_STATE.dateFinIso) {
     parts.push(_rapIsoToFr(HLANC_STATE.dateDebutIso) + ' → ' + _rapIsoToFr(HLANC_STATE.dateFinIso));
   }
-  return parts.length ? parts.join(' · ') : 'Toutes les lignes filtrées';
+  return parts.length ? parts.join(' · ') : 'Toute la sélection';
+}
+
+function hlancGetViewMode(dates) {
+  const f = hlancFilters();
+  const singleDay = dates.length === 1;
+  if (singleDay && f.hasModele && !f.hasChain) return 'chains';
+  if (singleDay && f.hasChain && !f.hasModele) return 'models';
+  if (singleDay) return 'chains';
+  if (f.hasModele && !f.hasChain) return 'chains-period';
+  if (f.hasChain && !f.hasModele) return 'daily';
+  return 'daily';
+}
+
+function hlancRowHasMetric(r) {
+  return (r.hlTop != null && isFinite(r.hlTop))
+    || (r.hlCumul != null && isFinite(r.hlCumul))
+    || (r.hlLaunchSum != null && isFinite(r.hlLaunchSum))
+    || (r.hLanc != null && isFinite(r.hLanc))
+    || (r.sortie > 0);
 }
 
 function hlancAggregateByDate(dates, rows) {
-  const byDate = new Map(dates.map(d => [d, { hlTop: null, hlCumul: null, hlLaunch: null }]));
+  const byDate = new Map(dates.map(d => [d, { hlTop: null, hlCumul: null, hlLaunch: null, hCegid: null }]));
   for (const r of rows) {
     const agg = byDate.get(r.date);
     if (!agg) continue;
-    if (r.hlTop != null && isFinite(r.hlTop)) {
-      agg.hlTop = (agg.hlTop || 0) + Number(r.hlTop);
-    }
-    if (r.hlCumul != null && isFinite(r.hlCumul)) {
-      agg.hlCumul = (agg.hlCumul || 0) + Number(r.hlCumul);
-    }
+    if (r.hlTop != null && isFinite(r.hlTop)) agg.hlTop = (agg.hlTop || 0) + Number(r.hlTop);
+    if (r.hlCumul != null && isFinite(r.hlCumul)) agg.hlCumul = (agg.hlCumul || 0) + Number(r.hlCumul);
     if (r.hlLaunchSum != null && isFinite(r.hlLaunchSum)) {
       agg.hlLaunch = (agg.hlLaunch || 0) + Math.abs(Number(r.hlLaunchSum));
     }
+    if (r.hLancLaunch != null && isFinite(r.hLancLaunch)) {
+      agg.hCegid = (agg.hCegid || 0) + Math.abs(Number(r.hLancLaunch));
+    }
   }
   return byDate;
+}
+
+function hlancAggregateByChain(rows, singleDate) {
+  const byCh = new Map();
+  for (const r of rows) {
+    if (singleDate && r.date !== singleDate) continue;
+    const ch = Number(r.ch);
+    if (!byCh.has(ch)) byCh.set(ch, { hlTop: 0, hlCumul: 0, hlLaunch: 0, n: 0 });
+    const a = byCh.get(ch);
+    if (r.hlTop != null && isFinite(r.hlTop)) a.hlTop += Number(r.hlTop);
+    if (r.hlCumul != null && isFinite(r.hlCumul)) a.hlCumul += Number(r.hlCumul);
+    if (r.hlLaunchSum != null && isFinite(r.hlLaunchSum)) a.hlLaunch += Math.abs(Number(r.hlLaunchSum));
+    if (hlancRowHasMetric(r)) a.n++;
+  }
+  return Array.from(byCh.entries())
+    .filter(([, v]) => v.n > 0)
+    .sort((a, b) => a[0] - b[0]);
+}
+
+function hlancAggregateByModel(rows, singleDate) {
+  const byMod = new Map();
+  for (const r of rows) {
+    if (singleDate && r.date !== singleDate) continue;
+    const mod = String(r.modele || '').trim();
+    if (!mod) continue;
+    if (!byMod.has(mod)) byMod.set(mod, { hlTop: 0, hlCumul: 0, hlLaunch: 0, n: 0 });
+    const a = byMod.get(mod);
+    if (r.hlTop != null && isFinite(r.hlTop)) a.hlTop += Number(r.hlTop);
+    if (r.hlCumul != null && isFinite(r.hlCumul)) a.hlCumul += Number(r.hlCumul);
+    if (r.hlLaunchSum != null && isFinite(r.hlLaunchSum)) a.hlLaunch += Math.abs(Number(r.hlLaunchSum));
+    if (hlancRowHasMetric(r)) a.n++;
+  }
+  return Array.from(byMod.entries())
+    .filter(([, v]) => v.n > 0)
+    .sort((a, b) => b[1].hlLaunch - a[1].hlLaunch || a[0].localeCompare(b[0]));
 }
 
 function hlancBarColor(v, baseHex) {
@@ -10273,33 +10417,15 @@ function hlancBarColor(v, baseHex) {
   return alpha(css('--text-dim'), 0.35);
 }
 
-function hlancRenderCharts(month, dates, data) {
-  destroy('hlancHlTop');
-  destroy('hlancHlCumul');
-  destroy('hlancHlLaunch');
-  const wrap = document.getElementById('hlanc-charts-wrap');
-  const cTop = document.getElementById('chart-hlanc-hl-top');
-  const cMid = document.getElementById('chart-hlanc-hl-cumul');
-  const cBot = document.getElementById('chart-hlanc-hl-launch');
-  if (!wrap || !cTop || !cMid || !cBot) return;
-  const filterLbl = hlancChartFilterLabel();
-  const subTop = document.getElementById('hlanc-chart-top-sub');
-  const subMid = document.getElementById('hlanc-chart-mid-sub');
-  const subBot = document.getElementById('hlanc-chart-bot-sub');
-  if (!data.rows.length || dates.length < 1) {
-    wrap.hidden = true;
-    return;
-  }
-  wrap.hidden = false;
-  if (subTop) subTop.textContent = filterLbl;
-  if (subMid) subMid.textContent = filterLbl;
-  if (subBot) subBot.textContent = filterLbl;
-  const byDate = hlancAggregateByDate(dates, data.rows);
-  const labels = dates.map(shortDay);
-  const topData = dates.map(d => { const v = byDate.get(d)?.hlTop; return v != null ? v : null; });
-  const midData = dates.map(d => { const v = byDate.get(d)?.hlCumul; return v != null ? v : null; });
-  const botData = dates.map(d => { const v = byDate.get(d)?.hlLaunch; return v != null ? v : null; });
-  const chartOpts = (title) => ({
+function hlancChartScales(dateLabels) {
+  return {
+    x: { grid: { color: alpha(css('--border'), 0.5) }, ticks: { font: { size: 10 }, maxRotation: 45 } },
+    y: { grid: { color: alpha(css('--border'), 0.35) }, ticks: { font: { size: 10 } } }
+  };
+}
+
+function hlancChartOptsDaily(dates, title) {
+  return {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
@@ -10310,62 +10436,235 @@ function hlancRenderCharts(month, dates, data) {
         }
       }
     },
-    scales: {
-      x: { grid: { color: alpha(css('--border'), 0.5) }, ticks: { font: { size: 10 }, maxRotation: 45 } },
-      y: { grid: { color: alpha(css('--border'), 0.35) }, ticks: { font: { size: 10 } } }
+    scales: hlancChartScales(dates.map(shortDay))
+  };
+}
+
+function hlancChartOptsGrouped(labels) {
+  return {
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'bottom', labels: { usePointStyle: true, padding: 10, font: { size: 10 } } },
+      tooltip: {
+        callbacks: {
+          label: c => c.parsed.y != null ? ` ${c.dataset.label} : ${fmtDecFr(c.parsed.y, 2)}` : ` ${c.dataset.label} : —`
+        }
+      }
+    },
+    scales: hlancChartScales(labels)
+  };
+}
+
+function hlancUpdateKpis(data, dates) {
+  const set = (id, txt) => { const el = document.getElementById(id); if (el) el.innerHTML = txt; };
+  const tot = data.tot || {};
+  const hiVal = tot.hlLaunchSum != null && isFinite(tot.hlLaunchSum) ? fmtDecFr(Math.abs(tot.hlLaunchSum), 2) : '—';
+  const hliVal = tot.hlTop != null && isFinite(tot.hlTop) ? fmtDecFr(tot.hlTop, 2) : '—';
+  const cegidVal = tot.hLaunch != null && isFinite(tot.hLaunch) ? fmtDecFr(Math.abs(tot.hLaunch), 2) : '—';
+  set('kpi-hlanc-hi', hiVal + '<span class="unit">h</span>');
+  set('kpi-hlanc-hli', hliVal + '<span class="unit">h</span>');
+  set('kpi-hlanc-cegid', cegidVal + '<span class="unit">h</span>');
+  const rowsEl = document.getElementById('kpi-hlanc-rows');
+  if (rowsEl) rowsEl.textContent = String(data.rows.filter(hlancRowHasMetric).length);
+  const foot = hlancChartFilterLabel(dates);
+  ['kpi-hlanc-hi-foot', 'kpi-hlanc-hli-foot', 'kpi-hlanc-cegid-foot', 'kpi-hlanc-rows-foot'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && foot) {
+      const base = el.textContent.split(' · ')[0];
+      el.textContent = base + (foot ? ' · ' + foot : '');
     }
   });
+}
+
+function hlancRenderBreakdownChart(mode, dates, rows) {
+  const wrap = document.getElementById('hlanc-breakdown-wrap');
+  const canvas = document.getElementById('chart-hlanc-breakdown');
+  const titleEl = document.getElementById('hlanc-breakdown-title');
+  const subEl = document.getElementById('hlanc-breakdown-sub');
+  if (!wrap || !canvas) return;
+  destroy('hlancBreakdown');
+  const f = hlancFilters();
+  const singleDate = dates.length === 1 ? dates[0] : null;
+  let entries;
+  let axisLabel;
+  if (mode === 'models') {
+    entries = hlancAggregateByModel(rows, singleDate);
+    axisLabel = m => rendShortLabel(m, 16);
+    if (titleEl) titleEl.textContent = 'Répartition par modèle';
+    if (subEl) subEl.textContent = (singleDate ? singleDate + ' · ' : '')
+      + 'Ch' + String(f.chain).padStart(2, '0') + ' · HLi · CHLi · Hi';
+  } else {
+    entries = hlancAggregateByChain(rows, singleDate);
+    axisLabel = ([ch]) => 'Ch' + String(ch).padStart(2, '0');
+    if (titleEl) titleEl.textContent = singleDate ? 'Chaînes au ' + shortDay(singleDate) : 'Répartition par chaîne';
+    if (subEl) subEl.textContent = (f.hasModele ? f.modele + ' · ' : '')
+      + (singleDate ? 'jour unique · ' : 'cumul période · ') + 'HLi · CHLi · Hi';
+  }
+  if (!entries.length) {
+    wrap.hidden = true;
+    return;
+  }
+  wrap.hidden = false;
+  const labels = entries.map(e => axisLabel(e));
+  const accent = css('--accent') || '#38bdf8';
+  charts.hlancBreakdown = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'HLi',
+          data: entries.map(([, v]) => v.hlTop || 0),
+          backgroundColor: alpha(accent, 0.82),
+          borderRadius: 4,
+          maxBarThickness: 22
+        },
+        {
+          label: 'CHLi',
+          data: entries.map(([, v]) => v.hlCumul || 0),
+          backgroundColor: alpha('#a78bfa', 0.82),
+          borderRadius: 4,
+          maxBarThickness: 22
+        },
+        {
+          label: 'Hi',
+          data: entries.map(([, v]) => v.hlLaunch || 0),
+          backgroundColor: alpha('#fb923c', 0.82),
+          borderRadius: 4,
+          maxBarThickness: 22
+        }
+      ]
+    },
+    options: hlancChartOptsGrouped(labels)
+  });
+}
+
+function hlancRenderTotalChart(dates, rows) {
+  const canvas = document.getElementById('chart-hlanc-total');
+  const subEl = document.getElementById('hlanc-total-sub');
+  if (!canvas) return;
+  destroy('hlancTotal');
+  const byDate = hlancAggregateByDate(dates, rows);
+  const labels = dates.map(shortDay);
+  const hiData = dates.map(d => { const v = byDate.get(d)?.hlLaunch; return v != null ? v : null; });
+  const cegidData = dates.map(d => { const v = byDate.get(d)?.hCegid; return v != null ? v : null; });
+  if (subEl) subEl.textContent = hlancChartFilterLabel(dates);
+  charts.hlancTotal = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Hi (saisie)',
+          data: hiData,
+          backgroundColor: alpha('#fb923c', 0.78),
+          borderRadius: 5,
+          borderSkipped: false,
+          maxBarThickness: dates.length > 14 ? 18 : 28,
+          order: 2
+        },
+        {
+          label: 'H lancement CEGID',
+          data: cegidData,
+          type: 'line',
+          borderColor: '#38bdf8',
+          backgroundColor: alpha('#38bdf8', 0.12),
+          borderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: true,
+          tension: 0.25,
+          order: 1
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 10, font: { size: 10 } } },
+        tooltip: {
+          callbacks: {
+            title: items => dates[items[0]?.dataIndex] || '',
+            label: c => c.parsed.y != null ? ` ${c.dataset.label} : ${fmtDecFr(c.parsed.y, 2)} h` : ` ${c.dataset.label} : —`
+          }
+        }
+      },
+      scales: hlancChartScales(labels)
+    }
+  });
+}
+
+function hlancRenderDailyCharts(dates, rows) {
+  const cTop = document.getElementById('chart-hlanc-hl-top');
+  const cMid = document.getElementById('chart-hlanc-hl-cumul');
+  const cBot = document.getElementById('chart-hlanc-hl-launch');
+  if (!cTop || !cMid || !cBot) return;
+  destroy('hlancHlTop');
+  destroy('hlancHlCumul');
+  destroy('hlancHlLaunch');
+  const filterLbl = hlancChartFilterLabel(dates);
+  ['hlanc-chart-top-sub', 'hlanc-chart-mid-sub', 'hlanc-chart-bot-sub'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = filterLbl;
+  });
+  const byDate = hlancAggregateByDate(dates, rows);
+  const labels = dates.map(shortDay);
+  const topData = dates.map(d => { const v = byDate.get(d)?.hlTop; return v != null ? v : null; });
+  const midData = dates.map(d => { const v = byDate.get(d)?.hlCumul; return v != null ? v : null; });
+  const botData = dates.map(d => { const v = byDate.get(d)?.hlLaunch; return v != null ? v : null; });
   const accent = css('--accent') || '#38bdf8';
   charts.hlancHlTop = new Chart(cTop.getContext('2d'), {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'HLi',
-        data: topData,
-        backgroundColor: topData.map(v => hlancBarColor(v, accent)),
-        borderRadius: 5,
-        borderSkipped: false,
-        maxBarThickness: 28
-      }]
-    },
-    options: chartOpts('HLi')
+    data: { labels, datasets: [{ label: 'HLi', data: topData, backgroundColor: topData.map(v => hlancBarColor(v, accent)), borderRadius: 5, borderSkipped: false, maxBarThickness: 28 }] },
+    options: hlancChartOptsDaily(dates, 'HLi')
   });
   charts.hlancHlCumul = new Chart(cMid.getContext('2d'), {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'CHLi',
-        data: midData,
-        backgroundColor: midData.map(v => hlancBarColor(v, '#a78bfa')),
-        borderRadius: 5,
-        borderSkipped: false,
-        maxBarThickness: 28
-      }]
-    },
-    options: chartOpts('CHLi')
+    data: { labels, datasets: [{ label: 'CHLi', data: midData, backgroundColor: midData.map(v => hlancBarColor(v, '#a78bfa')), borderRadius: 5, borderSkipped: false, maxBarThickness: 28 }] },
+    options: hlancChartOptsDaily(dates, 'CHLi')
   });
   charts.hlancHlLaunch = new Chart(cBot.getContext('2d'), {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Hi',
-        data: botData,
-        backgroundColor: botData.map(v => v == null ? alpha(css('--text-faint'), 0.15) : alpha('#fb923c', 0.82)),
-        borderRadius: 5,
-        borderSkipped: false,
-        maxBarThickness: 28
-      }]
-    },
-    options: chartOpts('Hi')
+    data: { labels, datasets: [{ label: 'Hi', data: botData, backgroundColor: botData.map(v => v == null ? alpha(css('--text-faint'), 0.15) : alpha('#fb923c', 0.82)), borderRadius: 5, borderSkipped: false, maxBarThickness: 28 }] },
+    options: hlancChartOptsDaily(dates, 'Hi')
   });
+}
+
+function hlancRenderCharts(month, dates, data) {
+  destroy('hlancHlTop');
+  destroy('hlancHlCumul');
+  destroy('hlancHlLaunch');
+  destroy('hlancBreakdown');
+  destroy('hlancTotal');
+  const wrap = document.getElementById('hlanc-analytics-wrap');
+  const dailyWrap = document.getElementById('hlanc-daily-wrap');
+  if (!wrap) return;
+  if (!data.rows.length || dates.length < 1) {
+    wrap.hidden = true;
+    return;
+  }
+  wrap.hidden = false;
+  hlancUpdateKpis(data, dates);
+  const viewMode = hlancGetViewMode(dates);
+  if (viewMode === 'chains' || viewMode === 'chains-period') {
+    hlancRenderBreakdownChart('chains', dates, data.rows);
+  } else if (viewMode === 'models') {
+    hlancRenderBreakdownChart('models', dates, data.rows);
+  } else {
+    const bd = document.getElementById('hlanc-breakdown-wrap');
+    if (bd) bd.hidden = true;
+  }
+  hlancRenderTotalChart(dates, data.rows);
+  if (dailyWrap) dailyWrap.hidden = dates.length < 2;
+  if (dates.length >= 2) hlancRenderDailyCharts(dates, data.rows);
 }
 
 function hlancRender() {
   const month = currentMonth;
   const info = PRODUCTION[month];
+  hlancRefreshChainSelect(month);
   const pill = document.getElementById('hlanc-month');
   if (pill) pill.textContent = info?.label || month;
   const dates = hlancDatesInRange(month);
