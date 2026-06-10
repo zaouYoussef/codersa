@@ -3328,6 +3328,8 @@ header.topbar {
 #page-hlanc .hlanc-analytics .card-sub { font-size: 11px; color: var(--text-dim); }
 #page-hlanc .hlanc-analytics .g3 { margin-bottom: 0; }
 #page-hlanc .hlanc-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+#page-hlanc .kpi-value-text { font-size: 1.05rem; line-height: 1.25; word-break: break-word; }
+#page-hlanc #kpi-hlanc-chains-foot { font-size: 11px; line-height: 1.35; }
 @media (max-width: 1100px) {
   #page-hlanc .hlanc-analytics .g3 { grid-template-columns: 1fr; }
   #page-hlanc .hlanc-kpis { grid-template-columns: repeat(2, 1fr); }
@@ -5219,11 +5221,11 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         </div>
         <div class="kpi">
           <div class="kpi-top">
-            <div class="kpi-label">Lignes</div>
-            <div class="kpi-ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+            <div class="kpi-label">Chaînes affectées</div>
+            <div class="kpi-ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
           </div>
-          <div class="kpi-value" id="kpi-hlanc-rows">0</div>
-          <div class="kpi-foot" id="kpi-hlanc-rows-foot">Chaîne × modèle × jour</div>
+          <div class="kpi-value" id="kpi-hlanc-chains">0<span class="unit">ch.</span></div>
+          <div class="kpi-foot kpi-value-text" id="kpi-hlanc-chains-foot" title="">—</div>
         </div>
       </div>
       <div class="g-wide row-gap" id="hlanc-breakdown-wrap" hidden>
@@ -10456,6 +10458,19 @@ function hlancChartOptsGrouped(labels) {
   };
 }
 
+function hlancAffectedChains(rows) {
+  const chains = new Set();
+  for (const r of rows) {
+    if (r.ch == null || isNaN(Number(r.ch)) || !hlancRowHasMetric(r)) continue;
+    chains.add(Number(r.ch));
+  }
+  return Array.from(chains).sort((a, b) => a - b);
+}
+
+function hlancChainKpiLabel(ch) {
+  return 'Ch' + String(ch).padStart(2, '0');
+}
+
 function hlancUpdateKpis(data, dates) {
   const set = (id, txt) => { const el = document.getElementById(id); if (el) el.innerHTML = txt; };
   const tot = data.tot || {};
@@ -10465,10 +10480,22 @@ function hlancUpdateKpis(data, dates) {
   set('kpi-hlanc-hi', hiVal + '<span class="unit">h</span>');
   set('kpi-hlanc-hli', hliVal + '<span class="unit">h</span>');
   set('kpi-hlanc-cegid', cegidVal + '<span class="unit">h</span>');
-  const rowsEl = document.getElementById('kpi-hlanc-rows');
-  if (rowsEl) rowsEl.textContent = String(data.rows.filter(hlancRowHasMetric).length);
+  const chains = hlancAffectedChains(data.rows);
+  const chainsVal = document.getElementById('kpi-hlanc-chains');
+  const chainsFoot = document.getElementById('kpi-hlanc-chains-foot');
+  if (chainsVal) chainsVal.innerHTML = String(chains.length) + '<span class="unit">ch.</span>';
+  if (chainsFoot) {
+    if (!chains.length) {
+      chainsFoot.textContent = 'Aucune chaîne sur la sélection';
+      chainsFoot.title = '';
+    } else {
+      const list = chains.map(hlancChainKpiLabel).join(' · ');
+      chainsFoot.textContent = list;
+      chainsFoot.title = list;
+    }
+  }
   const foot = hlancChartFilterLabel(dates);
-  ['kpi-hlanc-hi-foot', 'kpi-hlanc-hli-foot', 'kpi-hlanc-cegid-foot', 'kpi-hlanc-rows-foot'].forEach(id => {
+  ['kpi-hlanc-hi-foot', 'kpi-hlanc-hli-foot', 'kpi-hlanc-cegid-foot'].forEach(id => {
     const el = document.getElementById(id);
     if (el && foot) {
       const base = el.textContent.split(' · ')[0];
