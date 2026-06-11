@@ -701,6 +701,7 @@ footer {
 
 /* Pour les barres horizontales (chaînes, modèles, clients) */
 [data-page="chaines"] .h-360 canvas,
+[data-page="chaines"] .h-480 canvas,
 [data-page="modeles"] .h-360 canvas,
 [data-page="clients"] .h-320 canvas {
   max-height: calc(100% - 40px) !important;
@@ -1000,7 +1001,96 @@ footer {
   cursor: pointer;
   opacity: 0.75;
 }
-#page-rendement .rend-mod-wrap { flex: 1; min-width: 180px; max-width: 280px; }
+/* Filtre modèle — saisie + liste + effacer (Rendement & H. Lancement) */
+.filter-modele-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+.filter-modele-wrap input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 0;
+}
+.filter-modele-pick {
+  flex: 0 0 auto;
+  min-width: 0 !important;
+  width: auto;
+  max-width: 9.5rem;
+  padding: 7px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.filter-modele-clear {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.filter-modele-clear:hover { border-color: var(--accent); color: var(--accent); }
+#page-rendement .rend-mod-wrap {
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  margin-top: 2px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+#page-rendement .rend-mod-wrap label { align-self: flex-start; }
+#page-rendement .rend-mod-wrap .filter-modele-wrap { max-width: 520px; }
+#page-rendement .rend-mod-wrap .filter-modele-wrap input.minimal { min-width: 0; }
+#page-rendement .rend-mod-wrap .filter-modele-pick.minimal { min-width: 0 !important; }
+#page-hlanc .hlanc-mod-wrap {
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  margin-top: 2px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+#page-hlanc .hlanc-mod-wrap label { align-self: flex-start; }
+#page-hlanc .hlanc-mod-wrap .filter-modele-wrap { max-width: 520px; }
+#page-hlanc .hlanc-mod-wrap .filter-modele-wrap input.minimal { min-width: 0; }
+#page-hlanc .hlanc-mod-wrap .filter-modele-pick.minimal { min-width: 0 !important; }
+#page-hlanc .hlanc-controls { margin-bottom: 14px; }
+#page-hlanc .hlanc-controls .chip { cursor: pointer; }
+#page-hlanc .hlanc-controls #hlanc-filter-reset {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+#page-hlanc .hlanc-controls #hlanc-filter-reset:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+@media (max-width: 640px) {
+  .filter-modele-wrap { flex-wrap: wrap; }
+  .filter-modele-wrap input { flex: 1 1 100%; width: 100%; }
+  .filter-modele-pick { flex: 1 1 auto; max-width: none; }
+}
 #page-rendement .rend-controls { margin-bottom: 14px; }
 #page-rendement .rend-controls #rend-filter-reset {
   cursor: pointer; border: 1px solid var(--border);
@@ -1008,6 +1098,136 @@ footer {
 }
 #page-rendement .rend-controls #rend-filter-reset:hover {
   border-color: var(--accent); color: var(--accent);
+}
+#page-chaines .ch-mod-wrap {
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  margin-top: 2px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+#page-chaines .ch-mod-wrap label { align-self: flex-start; }
+#page-chaines .ch-mod-wrap .filter-modele-wrap { max-width: 520px; }
+#page-chaines .ch-mod-wrap .filter-modele-wrap input.minimal { min-width: 0; }
+#page-chaines .ch-mod-wrap .filter-modele-pick.minimal { min-width: 0 !important; }
+#page-chaines .ch-controls { margin-bottom: 14px; }
+#page-chaines .ch-controls .chip { cursor: pointer; }
+#page-chaines .ch-controls #ch-filter-reset {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+#page-chaines .ch-controls #ch-filter-reset:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+#page-chaines .ch-cm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+#page-chaines .ch-cm-legend-i { display: inline-flex; align-items: center; gap: 6px; }
+#page-chaines .ch-cm-legend-sw {
+  width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+}
+#page-chaines .ch-cm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding: 2px 2px 6px;
+}
+#page-chaines .ch-cm-chain-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#page-chaines .ch-cm-chain-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#page-chaines .ch-cm-chain-lab {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+}
+#page-chaines .ch-cm-chain-tot {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-align: right;
+  line-height: 1.35;
+}
+#page-chaines .ch-cm-models { display: flex; flex-direction: column; gap: 10px; }
+#page-chaines .ch-cm-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 8px; align-items: center; }
+#page-chaines .ch-cm-mod {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+  word-break: break-word;
+}
+#page-chaines .ch-cm-bars { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+#page-chaines .ch-cm-bar-line {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 6px;
+  align-items: center;
+}
+#page-chaines .ch-cm-bar-lab {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-faint);
+  text-align: center;
+}
+#page-chaines .ch-cm-bar-track {
+  height: 7px;
+  background: var(--surface);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+#page-chaines .ch-cm-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  min-width: 2px;
+  transition: width 0.25s ease;
+}
+#page-chaines .ch-cm-bar-fill.is-sortie { background: var(--accent); }
+#page-chaines .ch-cm-bar-fill.is-entre { background: var(--accent-2); }
+#page-chaines .ch-cm-bar-val {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+#page-chaines .ch-cm-empty {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 12px;
+  padding: 28px 12px;
+}
+@media (max-width: 520px) {
+  #page-chaines .ch-cm-row { grid-template-columns: 1fr; }
 }
 #page-rendement .kpi-value-text {
   font-size: 1.05rem;
@@ -3327,7 +3547,30 @@ header.topbar {
 #page-hlanc .hlanc-analytics { margin-bottom: 14px; display: flex; flex-direction: column; gap: 14px; }
 #page-hlanc .hlanc-analytics .card-sub { font-size: 11px; color: var(--text-dim); }
 #page-hlanc .hlanc-analytics .g3 { margin-bottom: 0; }
-#page-hlanc .hlanc-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+#page-hlanc .hlanc-chain-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 900px) {
+  #page-hlanc .hlanc-chain-charts { grid-template-columns: 1fr; }
+}
+#page-hlanc #hlanc-daily-wrap { grid-template-columns: 1fr 1fr; }
+#page-hlanc .hlanc-chart-total-pill {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+@media (max-width: 900px) {
+  #page-hlanc #hlanc-daily-wrap { grid-template-columns: 1fr; }
+}
+#page-hlanc .hlanc-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 #page-hlanc .kpi-value-text { font-size: 1.05rem; line-height: 1.25; word-break: break-word; }
 #page-hlanc #kpi-hlanc-chains-foot { font-size: 11px; line-height: 1.35; }
 @media (max-width: 1100px) {
@@ -4893,7 +5136,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       </button>
       <button class="tab" data-page="chaines">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        Chaînes
+        Entrée/sortie
       </button>
       <button class="tab" data-page="clients">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
@@ -5162,62 +5405,56 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       </div>
       <div class="pill-meta"><span class="dot"></span><span id="hlanc-range">—</span></div>
     </div>
-    <div class="rap-toolbar no-print hlanc-toolbar">
-      <div class="rap-filters">
-        <div class="rap-field">
-          <label for="hlanc-date-debut">Date début</label>
-          <input type="date" id="hlanc-date-debut">
-        </div>
-        <div class="rap-field">
-          <label for="hlanc-date-fin">Date fin</label>
-          <input type="date" id="hlanc-date-fin">
-        </div>
-        <div class="rap-field">
-          <label for="hlanc-chain">Chaîne</label>
-          <select id="hlanc-chain"><option value="">Toutes</option></select>
-        </div>
-        <div class="rap-field">
-          <label for="hlanc-modele">Modèle</label>
-          <input type="text" id="hlanc-modele" list="hlanc-modele-datalist" placeholder="Tous" autocomplete="off">
-          <datalist id="hlanc-modele-datalist"></datalist>
-        </div>
-        <div class="rap-field rap-field-actions">
-          <button type="button" class="rap-btn rap-btn-refresh" id="hlanc-refresh-btn" title="Recalculer le tableau">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            Actualiser
-          </button>
-          <button type="button" class="rap-btn rap-btn-print" id="hlanc-print-btn" title="Imprimer / Exporter en PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Exporter PDF
-          </button>
+    <div class="detail-controls rend-controls hlanc-controls no-print" id="hlanc-controls">
+      <div class="grp">
+        <label for="hlanc-filter-date">Jour</label>
+        <input type="date" id="hlanc-filter-date" class="minimal" title="Un jour précis">
+      </div>
+      <div class="grp">
+        <label for="hlanc-date-debut">Du</label>
+        <input type="date" id="hlanc-date-debut" class="minimal" title="Début de période">
+      </div>
+      <div class="grp">
+        <label for="hlanc-date-fin">Au</label>
+        <input type="date" id="hlanc-date-fin" class="minimal" title="Fin de période">
+      </div>
+      <div class="grp">
+        <label for="hlanc-chain">Chaîne</label>
+        <select id="hlanc-chain" class="minimal"><option value="">Toutes</option></select>
+      </div>
+      <div class="grp rend-mod-wrap hlanc-mod-wrap">
+        <label for="hlanc-modele">Modèle</label>
+        <div class="filter-modele-wrap">
+          <input type="text" id="hlanc-modele" class="minimal" list="hlanc-modele-dl" placeholder="Tous ou saisir…" autocomplete="off" title="Saisie libre ou choix dans la liste">
+          <datalist id="hlanc-modele-dl"></datalist>
+          <select id="hlanc-modele-pick" class="minimal filter-modele-pick" title="Liste complète des modèles">
+            <option value="">Liste</option>
+          </select>
+          <button type="button" class="filter-modele-clear" id="hlanc-modele-clear" title="Effacer (tous)" aria-label="Effacer" hidden>×</button>
         </div>
       </div>
+      <button type="button" class="chip" id="hlanc-filter-reset" title="Réinitialiser les filtres">Réinitialiser</button>
+      <button type="button" class="chip" id="hlanc-refresh-btn" title="Recalculer le tableau">Actualiser</button>
+      <button type="button" class="chip" id="hlanc-print-btn" title="Imprimer / Exporter en PDF">Exporter PDF</button>
+      <div class="grp-count" id="hlanc-filter-summary">Grille saisie · tout le mois</div>
     </div>
     <div class="hlanc-analytics no-print" id="hlanc-analytics-wrap" hidden>
       <div class="hlanc-kpis" id="hlanc-kpis">
         <div class="kpi">
           <div class="kpi-top">
-            <div class="kpi-label">Total Hi</div>
+            <div class="kpi-label">Heures de lancement</div>
             <div class="kpi-ic c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
           </div>
           <div class="kpi-value" id="kpi-hlanc-hi">—<span class="unit">h</span></div>
-          <div class="kpi-foot" id="kpi-hlanc-hi-foot">Σ H de lancement (saisie)</div>
+          <div class="kpi-foot" id="kpi-hlanc-hi-foot">Hi · 3ᵉ val. colonne HL</div>
         </div>
         <div class="kpi">
           <div class="kpi-top">
-            <div class="kpi-label">Total HLi</div>
+            <div class="kpi-label">Cumul des heures vide</div>
             <div class="kpi-ic c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div>
           </div>
-          <div class="kpi-value" id="kpi-hlanc-hli">—<span class="unit">h</span></div>
-          <div class="kpi-foot" id="kpi-hlanc-hli-foot">Somme HLi sur la période</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top">
-            <div class="kpi-label">H lancement CEGID</div>
-            <div class="kpi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-          </div>
-          <div class="kpi-value" id="kpi-hlanc-cegid">—<span class="unit">h</span></div>
-          <div class="kpi-foot" id="kpi-hlanc-cegid-foot">Σ H . MANQ jusqu’au 1er 0</div>
+          <div class="kpi-value" id="kpi-hlanc-chli">—<span class="unit">h</span></div>
+          <div class="kpi-foot" id="kpi-hlanc-chli-foot">CHLi · 2ᵉ val. colonne HL</div>
         </div>
         <div class="kpi">
           <div class="kpi-top">
@@ -5228,52 +5465,42 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
           <div class="kpi-foot kpi-value-text" id="kpi-hlanc-chains-foot" title="">—</div>
         </div>
       </div>
-      <div class="g-wide row-gap" id="hlanc-breakdown-wrap" hidden>
+      <div class="hlanc-chain-charts" id="hlanc-chain-charts-wrap">
         <div class="card">
           <div class="card-head">
             <div>
-              <div class="card-title" id="hlanc-breakdown-title">Répartition par chaîne</div>
-              <div class="card-sub" id="hlanc-breakdown-sub">HLi · CHLi · Hi</div>
+              <div class="card-title">Répartition par chaîne · HL</div>
+              <div class="card-sub" id="hlanc-chart-hi-ch-sub">Hi — heures de lancement (3ᵉ val. colonne HL)</div>
             </div>
           </div>
-          <div class="h-280" id="hlanc-breakdown-canvas-wrap"><canvas id="chart-hlanc-breakdown"></canvas></div>
+          <div class="h-280"><canvas id="chart-hlanc-hi-by-chain"></canvas></div>
         </div>
-      </div>
-      <div class="g-wide row-gap" id="hlanc-total-wrap">
         <div class="card">
           <div class="card-head">
             <div>
-              <div class="card-title" id="hlanc-total-title">Total heures de lancement · par jour</div>
-              <div class="card-sub" id="hlanc-total-sub">Hi (saisie) et H de lancement CEGID cumulés</div>
+              <div class="card-title">Répartition par chaîne · heures vides</div>
+              <div class="card-sub" id="hlanc-chart-chli-ch-sub">CHLi — cumul heures vide (2ᵉ val. colonne HL)</div>
             </div>
           </div>
-          <div class="h-280"><canvas id="chart-hlanc-total"></canvas></div>
+          <div class="h-280"><canvas id="chart-hlanc-chli-by-chain"></canvas></div>
         </div>
       </div>
       <div class="g3" id="hlanc-daily-wrap">
         <div class="card">
           <div class="card-head">
             <div>
-              <div class="card-title">HLi · par jour</div>
-              <div class="card-sub" id="hlanc-chart-top-sub">HL du jour i</div>
+              <div class="card-title">Heures vides · par jour</div>
+              <div class="card-sub" id="hlanc-chart-top-sub">HLi — heure vide du jour i</div>
             </div>
+            <div class="hlanc-chart-total-pill" id="hlanc-chart-top-total">Total : —</div>
           </div>
           <div class="h-240"><canvas id="chart-hlanc-hl-top"></canvas></div>
         </div>
         <div class="card">
           <div class="card-head">
             <div>
-              <div class="card-title">CHLi · par jour</div>
-              <div class="card-sub" id="hlanc-chart-mid-sub">Cumul HL au jour i</div>
-            </div>
-          </div>
-          <div class="h-240"><canvas id="chart-hlanc-hl-cumul"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <div>
-              <div class="card-title">Hi · par jour</div>
-              <div class="card-sub" id="hlanc-chart-bot-sub">H de lancement au jour i</div>
+              <div class="card-title">Heures de lancement · par jour</div>
+              <div class="card-sub" id="hlanc-chart-bot-sub">Hi — affiché seulement quand la valeur change</div>
             </div>
           </div>
           <div class="h-240"><canvas id="chart-hlanc-hl-launch"></canvas></div>
@@ -5704,7 +5931,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
     <div class="page-head">
       <div class="left">
         <h2>Analyse du <span class="accent">Rendement</span></h2>
-        <div class="sub">%Rend issu de la grille saisie · objectif 100%</div>
+        <div class="sub">%Rend issu de la grille saisie · objectif 85%</div>
       </div>
       <div class="pill-meta"><span class="dot"></span><span id="rd-count">— lignes</span></div>
     </div>
@@ -5728,8 +5955,14 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       </div>
       <div class="grp rend-mod-wrap">
         <label for="rend-filter-modele">Modèle</label>
-        <input type="text" id="rend-filter-modele" class="minimal" list="rend-filter-modele-dl" placeholder="Tous ou saisir…" autocomplete="off">
-        <datalist id="rend-filter-modele-dl"></datalist>
+        <div class="filter-modele-wrap">
+          <input type="text" id="rend-filter-modele" class="minimal" list="rend-filter-modele-dl" placeholder="Tous ou saisir…" autocomplete="off" title="Saisie libre ou choix dans la liste">
+          <datalist id="rend-filter-modele-dl"></datalist>
+          <select id="rend-filter-modele-pick" class="minimal filter-modele-pick" title="Liste complète des modèles">
+            <option value="">Liste</option>
+          </select>
+          <button type="button" class="filter-modele-clear" id="rend-filter-modele-clear" title="Effacer (tous)" aria-label="Effacer" hidden>×</button>
+        </div>
       </div>
       <button type="button" class="chip" id="rend-filter-reset" title="Réinitialiser les filtres">Réinitialiser</button>
       <div class="grp-count" id="rend-filter-summary">Grille saisie · tout le mois</div>
@@ -5742,7 +5975,7 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
           <div class="kpi-ic c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
         </div>
         <div class="kpi-value" id="kpi-rd-avg">—<span class="unit">%</span></div>
-        <div class="kpi-foot" id="kpi-rd-avg-foot">— vs objectif 100%</div>
+        <div class="kpi-foot" id="kpi-rd-avg-foot">— vs objectif 85%</div>
       </div>
       <div class="kpi">
         <div class="kpi-top">
@@ -5766,11 +5999,23 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-title" id="rd-chart-title">Évolution journalière</div>
-            <div class="card-sub" id="rd-chart-sub">Summary % par jour · objectif 100%</div>
+            <div class="card-title" id="rd-chart-title">Rendement par chaîne</div>
+            <div class="card-sub" id="rd-chart-sub">Summary % par chaîne sur la période · objectif 85%</div>
           </div>
         </div>
         <div class="h-280" id="rd-chart-canvas-wrap"><canvas id="chart-rend-daily"></canvas></div>
+      </div>
+    </div>
+
+    <div class="g-wide row-gap" id="rend-radar-wrap">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Radar Rendement / Chaîne</div>
+            <div class="card-sub">vs objectif 85%</div>
+          </div>
+        </div>
+        <div class="h-360"><canvas id="chart-rend-radar-chain"></canvas></div>
       </div>
     </div>
 
@@ -5827,10 +6072,42 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
   <section class="page" id="page-chaines">
     <div class="page-head">
       <div class="left">
-        <h2>Performance par <span class="accent">Chaîne</span></h2>
-        <div class="sub">Volumes, mix et profil horaire par chaîne</div>
+        <h2><span class="accent">Entrée / sortie</span></h2>
+        <div class="sub">Volumes, rendement et mix par chaîne</div>
       </div>
       <div class="pill-meta"><span class="dot"></span><span id="ch-count">— chaînes</span></div>
+    </div>
+
+    <div class="detail-controls rend-controls ch-controls" id="ch-controls">
+      <div class="grp">
+        <label for="ch-filter-date">Jour</label>
+        <input type="date" id="ch-filter-date" class="minimal" title="Un jour précis">
+      </div>
+      <div class="grp">
+        <label for="ch-filter-from">Du</label>
+        <input type="date" id="ch-filter-from" class="minimal" title="Début de période">
+      </div>
+      <div class="grp">
+        <label for="ch-filter-to">Au</label>
+        <input type="date" id="ch-filter-to" class="minimal" title="Fin de période">
+      </div>
+      <div class="grp">
+        <label for="ch-filter-chain">Chaîne</label>
+        <select id="ch-filter-chain" class="minimal"><option value="">Toutes</option></select>
+      </div>
+      <div class="grp rend-mod-wrap ch-mod-wrap">
+        <label for="ch-filter-modele">Modèle</label>
+        <div class="filter-modele-wrap">
+          <input type="text" id="ch-filter-modele" class="minimal" list="ch-filter-modele-dl" placeholder="Tous ou saisir…" autocomplete="off" title="Saisie libre ou choix dans la liste">
+          <datalist id="ch-filter-modele-dl"></datalist>
+          <select id="ch-filter-modele-pick" class="minimal filter-modele-pick" title="Liste complète des modèles">
+            <option value="">Liste</option>
+          </select>
+          <button type="button" class="filter-modele-clear" id="ch-filter-modele-clear" title="Effacer (tous)" aria-label="Effacer" hidden>×</button>
+        </div>
+      </div>
+      <button type="button" class="chip" id="ch-filter-reset" title="Réinitialiser les filtres">Réinitialiser</button>
+      <div class="grp-count" id="ch-filter-summary">Tout le mois · toutes chaînes</div>
     </div>
 
     <!-- NOUVEAU : KPI strip chaînes -->
@@ -5869,44 +6146,28 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
       </div>
     </div>
 
-    <div class="g-3-2">
+    <div class="g-wide row-gap" id="ch-chain-model-wrap">
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-title">Sortie cumulée par chaîne</div>
-            <div class="card-sub">Total pièces produites · barres horizontales</div>
+            <div class="card-title">Entrée / sortie · chaîne × modèle</div>
+            <div class="card-sub" id="ch-chart-cm-sub">Une carte par chaîne · barres comparatives par modèle</div>
+          </div>
+          <div class="ch-cm-legend">
+            <span class="ch-cm-legend-i"><span class="ch-cm-legend-sw" style="background:var(--accent)"></span>Sortie</span>
+            <span class="ch-cm-legend-i"><span class="ch-cm-legend-sw" style="background:var(--accent-2)"></span>Entrée</span>
           </div>
         </div>
-        <div class="h-360" style="height: auto; min-height: 280px; max-height: 360px; overflow-y: auto;">
-          <canvas id="chart-by-chain" style="height: auto; width: 100%;"></canvas>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-head">
-          <div>
-            <div class="card-title">Radar Rendement / Chaîne</div>
-            <div class="card-sub">vs objectif 100%</div>
-          </div>
-        </div>
-        <div class="h-360"><canvas id="chart-radar-chain"></canvas></div>
+        <div id="ch-chain-model-grid" class="ch-cm-grid"></div>
       </div>
     </div>
 
-    <div class="g2 row-gap">
+    <div class="g-wide row-gap">
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-title">Mix Désignation par Chaîne (top 6)</div>
-            <div class="card-sub">Types de produits sur les chaînes principales</div>
-          </div>
-        </div>
-        <div class="h-280"><canvas id="chart-chain-desig"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-head">
-          <div>
-            <div class="card-title">Encours en cours · par Chaîne</div>
-            <div class="card-sub">Pièces restant en fabrication (dernière obs.)</div>
+            <div class="card-title">Encours · par chaîne</div>
+            <div class="card-sub" id="ch-encours-sub">Pièces en fabrication</div>
           </div>
         </div>
         <div class="h-280"><canvas id="chart-encours-chain"></canvas></div>
@@ -6416,8 +6677,8 @@ table.meth-rules-grid tr.meth-chain-hidden { display: none; }
         </div>
         <div class="filters">
           <button class="chip active" data-filter="all">Toutes</button>
-          <button class="chip" data-filter="good">≥ 100%</button>
-          <button class="chip" data-filter="warn">80–100%</button>
+          <button class="chip" data-filter="good">≥ 85%</button>
+          <button class="chip" data-filter="warn">80–85%</button>
           <button class="chip" data-filter="bad">&lt; 60%</button>
         </div>
       </div>
@@ -6455,7 +6716,7 @@ const PRODUCTION = {"MAI":{"label":"MAI","daily_sheets":["01-05-2026","04-05-202
 const CHART_FONT = "Inter, system-ui, sans-serif";
 
 let currentMonth = "MAI";
-const REND_OBJECTIF_PCT = 100;
+const REND_OBJECTIF_PCT = 85;
 const REND_OBJECTIF = REND_OBJECTIF_PCT / 100;
 let currentPage = "overview";
 let selectedAnomDay = null;
@@ -6946,6 +7207,82 @@ function rendModelesInScope(month, chainFilter) {
   return [...mods].sort((a, b) => a.localeCompare(b, 'fr'));
 }
 
+/** Tous les modèles du mois — liste déroulante toujours complète (indépendante du filtre chaîne). */
+function rendAllModelesInMonth(month) {
+  return rendModelesInScope(month, null);
+}
+
+function fillModeleDatalist(dl, modeles) {
+  if (!dl) return;
+  const esc = s => String(s).replace(/"/g, '&quot;');
+  dl.innerHTML = modeles.map(m => `<option value="${esc(m)}"></option>`).join('');
+}
+
+function fillModelePickSelect(sel, modeles) {
+  if (!sel) return;
+  const esc = s => String(s).replace(/"/g, '&quot;');
+  sel.innerHTML = '<option value="">Liste</option>' +
+    modeles.map(m => `<option value="${esc(m)}">${esc(m)}</option>`).join('');
+  sel.value = '';
+}
+
+function refreshModeleFilterLists(month) {
+  const modeles = rendAllModelesInMonth(month);
+  fillModeleDatalist(document.getElementById('rend-filter-modele-dl'), modeles);
+  fillModelePickSelect(document.getElementById('rend-filter-modele-pick'), modeles);
+  fillModeleDatalist(document.getElementById('hlanc-modele-dl'), modeles);
+  fillModelePickSelect(document.getElementById('hlanc-modele-pick'), modeles);
+  fillModeleDatalist(document.getElementById('ch-filter-modele-dl'), modeles);
+  fillModelePickSelect(document.getElementById('ch-filter-modele-pick'), modeles);
+}
+
+function syncModeleClearBtn(input, clearBtn) {
+  if (clearBtn) clearBtn.hidden = !(input?.value || '').trim();
+}
+
+function bindModeleFilterCombo(opts) {
+  const { input, pick, clearBtn, getValue, setValue, onApply } = opts;
+  if (opts._bound) return;
+  opts._bound = true;
+  let timer = null;
+  const apply = () => { if (onApply) onApply(); };
+  if (pick) {
+    pick.addEventListener('change', () => {
+      if (!pick.value) return;
+      if (input) input.value = pick.value;
+      setValue(pick.value);
+      pick.value = '';
+      syncModeleClearBtn(input, clearBtn);
+      clearTimeout(timer);
+      apply();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', () => {
+      setValue(input.value.trim());
+      syncModeleClearBtn(input, clearBtn);
+      clearTimeout(timer);
+      timer = setTimeout(apply, 400);
+    });
+    input.addEventListener('change', () => {
+      setValue(input.value.trim());
+      syncModeleClearBtn(input, clearBtn);
+      clearTimeout(timer);
+      apply();
+    });
+  }
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (input) input.value = '';
+      if (pick) pick.value = '';
+      setValue('');
+      syncModeleClearBtn(input, clearBtn);
+      clearTimeout(timer);
+      apply();
+    });
+  }
+}
+
 function rendDailySeries(month, f) {
   return rendDatesInScope(month, f).map(date => ({
     date,
@@ -7056,12 +7393,38 @@ function renderRendementHeatmap(month, f, rowKeys, rowLabel, dates, cellRend) {
       } else {
         cell.className = 'cell';
         cell.style.background = rendColor(rv);
-        cell.textContent = Math.round(rv * 100);
+        cell.textContent = Math.round(rv * 100) + '%';
         cell.title = `${rowLabel(row)} · ${d} · ${fmtPct(rv)}`;
       }
       heatmap.appendChild(cell);
     }
   }
+}
+
+function renderRendementChainRadar(month, f, chains) {
+  const canvas = document.getElementById('chart-rend-radar-chain');
+  if (!canvas || !chains.length) return;
+  destroy('rendRadarChain');
+  const labs = chains.map(k => 'Ch' + String(k).padStart(2, '0'));
+  const rendByChain = chains.map(k => {
+    const r = calcRendementForFilter(month, { ...f, chain: k });
+    return r != null && r > 0 && r < 2.5 ? r * 100 : 0;
+  });
+  charts.rendRadarChain = new Chart(canvas.getContext('2d'), {
+    type: 'radar',
+    data: {
+      labels: labs,
+      datasets: [
+        { label: 'Rdt %', data: rendByChain, backgroundColor: alpha(css('--accent'), 0.18), borderColor: css('--accent'), borderWidth: 2, pointBackgroundColor: css('--accent'), pointRadius: 3 },
+        { label: 'Objectif ' + REND_OBJECTIF_PCT + '%', data: chains.map(() => REND_OBJECTIF_PCT), backgroundColor: 'transparent', borderColor: alpha(css('--text-dim'), 0.4), borderDash: [4, 4], borderWidth: 1.2, pointRadius: 0 }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { padding: 10, usePointStyle: true, font: { size: 11 } } } },
+      scales: { r: { suggestedMin: 0, suggestedMax: 130, grid: { color: alpha('#94a3b8', 0.15) }, angleLines: { color: alpha('#94a3b8', 0.15) }, pointLabels: { color: css('--text-dim'), font: { size: 10, weight: 700 } }, ticks: { display: false } } }
+    }
+  });
 }
 
 function activeChainsFiltered(month, f) {
@@ -7173,7 +7536,6 @@ function populateRendementFilters(month) {
   if (!info) return;
   const chainSel = document.getElementById('rend-filter-chain');
   const modInp = document.getElementById('rend-filter-modele');
-  const modDl = document.getElementById('rend-filter-modele-dl');
   if (!chainSel || !modInp) return;
 
   const sheets = info.daily_sheets || [];
@@ -7202,18 +7564,9 @@ function populateRendementFilters(month) {
   if (curChain && sortedChains.map(String).includes(curChain)) chainSel.value = curChain;
   else { chainSel.value = ''; rendFilterChain = ''; }
 
-  const modeles = rendModelesInScope(month, rendFilterChain);
-  if (modDl) {
-    modDl.innerHTML = modeles.map(m =>
-      `<option value="${m.replace(/"/g, '&quot;')}"></option>`).join('');
-  }
+  refreshModeleFilterLists(month);
   modInp.value = curMod || '';
-  if (curMod && rendFilterChain) {
-    const hasMatch = modeles.some(m => rendModeleMatches(m, curMod));
-    if (!hasMatch && !modeles.some(m => rendNormModele(m) === rendNormModele(curMod))) {
-      /* garder la saisie libre (référence partielle hors liste chaîne) */
-    }
-  }
+  syncModeleClearBtn(modInp, document.getElementById('rend-filter-modele-clear'));
 }
 
 function resetRendementFilters() {
@@ -7240,12 +7593,14 @@ function renderRendement(month) {
   const hmTitleEl = document.getElementById('rd-heatmap-title');
   const hmSubEl = document.getElementById('rd-heatmap-sub');
   const dailyWrap = document.getElementById('rend-chart-daily-wrap');
+  const radarWrap = document.getElementById('rend-radar-wrap');
   const heatWrap = document.getElementById('rend-heatmap-wrap');
   const canvasWrap = document.getElementById('rd-chart-canvas-wrap');
   const canvas = document.getElementById('chart-rend-daily');
 
   destroy('rendDaily');
   destroy('rendChain');
+  destroy('rendRadarChain');
 
   let showChart = false;
   let showHeatmap = false;
@@ -7260,7 +7615,7 @@ function renderRendement(month) {
       : `%Rend par modèle sur ${chLab}`;
     if (subEl) subEl.textContent = multiDay && models.length > 1
       ? 'Un jeu de barres par modèle travaillé sur cette chaîne'
-      : 'Summary % par modèle · objectif 100%';
+      : 'Summary % par modèle · objectif ' + REND_OBJECTIF_PCT + '%';
     if (hmTitleEl) hmTitleEl.textContent = `Heatmap · Modèle × Jour · ${chLab}`;
     if (hmSubEl) hmSubEl.textContent = 'Rendement de chaque modèle sur la chaîne filtrée';
 
@@ -7380,63 +7735,44 @@ function renderRendement(month) {
     const multiDay = dates.length > 1;
     showChart = chains.length > 0;
     showHeatmap = multiDay && chains.length > 1;
-    if (titleEl) titleEl.textContent = multiDay && chains.length > 1
-      ? `%Rend par chaîne · ${f.modele}`
-      : `%Rend par chaîne · ${rendShortLabel(f.modele, 22)}`;
-    if (subEl) subEl.textContent = 'Chaînes ayant travaillé ce modèle';
+    if (titleEl) titleEl.textContent = `Rendement par chaîne · ${rendShortLabel(f.modele, 22)}`;
+    if (subEl) subEl.textContent = 'Summary % par chaîne sur la période · objectif ' + REND_OBJECTIF_PCT + '%';
     if (hmTitleEl) hmTitleEl.textContent = `Heatmap · Chaîne × Jour · ${rendShortLabel(f.modele, 18)}`;
     if (hmSubEl) hmSubEl.textContent = 'Rendement du modèle sur chaque chaîne';
 
     if (showChart && canvas) {
-      const palette = pickPalette(chains.length);
-      if (multiDay && chains.length > 1) {
-        const labels = dates.map(shortDay);
-        const datasets = chains.map((ch, i) => ({
-          label: 'Ch' + String(ch).padStart(2, '0'),
-          data: dates.map(d => {
-            const r = calcRendementSummary(month, d, ch, f.modele);
-            return r != null && r > 0 && r < 2.5 ? r * 100 : null;
-          }),
-          backgroundColor: alpha(palette[i], 0.82),
-          borderColor: palette[i],
-          borderWidth: 1,
-          borderRadius: 4,
-          borderSkipped: false,
-          maxBarThickness: 22
-        }));
-        datasets.push(rendObjectiveDataset(labels, false));
-        if (canvasWrap) { canvasWrap.className = 'h-280'; canvasWrap.style.height = ''; }
-        charts.rendDaily = new Chart(canvas.getContext('2d'), {
-          type: 'bar',
-          data: { labels, datasets },
-          options: {
-            maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 8, font: { size: 10 } } } },
-            scales: rendChartScalesPct()
-          }
-        });
-      } else {
-        const labels = chains.map(k => 'Ch' + String(k).padStart(2, '0'));
-        const vals = chains.map(k => {
-          const r = calcRendementForFilter(month, { ...f, chain: k });
-          return r != null && r > 0 && r < 2.5 ? r * 100 : null;
-        });
-        const h = Math.min(400, Math.max(180, chains.length * 36));
-        if (canvasWrap) { canvasWrap.className = ''; canvasWrap.style.height = h + 'px'; }
-        canvas.style.height = h + 'px';
-        charts.rendDaily = new Chart(canvas.getContext('2d'), {
-          type: 'bar',
-          data: {
-            labels,
-            datasets: [
-              { label: '%Rend', data: vals, backgroundColor: vals.map(v => v == null ? alpha(css('--text-faint'), 0.15) : alpha(rendColor(v / 100), 0.88)), borderRadius: 6, borderSkipped: false, maxBarThickness: 26, order: 1 },
-              rendObjectiveDataset(labels, true)
-            ]
+      const labels = chains.map(k => 'Ch' + String(k).padStart(2, '0'));
+      const vals = chains.map(k => {
+        const r = calcRendementForFilter(month, { ...f, chain: k });
+        return r != null && r > 0 && r < 2.5 ? r * 100 : null;
+      });
+      const h = Math.min(400, Math.max(180, chains.length * 36));
+      if (canvasWrap) { canvasWrap.className = ''; canvasWrap.style.height = h + 'px'; }
+      canvas.style.height = h + 'px';
+      charts.rendDaily = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            { label: '%Rend', data: vals, backgroundColor: vals.map(v => v == null ? alpha(css('--text-faint'), 0.15) : alpha(rendColor(v / 100), 0.88)), borderRadius: 6, borderSkipped: false, maxBarThickness: 26, order: 1 },
+            rendObjectiveDataset(labels, true)
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: items => labels[items[0]?.dataIndex] || '',
+                label: c => rendObjectiveTooltipLabel(c.dataset.label) || (c.parsed.x != null ? ` %Rend : ${c.parsed.x.toFixed(1)}%` : ' —')
+              }
+            }
           },
-          options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: rendChartScalesPctX() }
-        });
-      }
+          scales: rendChartScalesPctX()
+        }
+      });
     }
     if (showHeatmap) {
       renderRendementHeatmap(month, f, chains, k => 'Ch' + String(k).padStart(2, '0'), dates,
@@ -7471,26 +7807,45 @@ function renderRendement(month) {
     }
   } else {
     const multiDay = dates.length > 1;
-    showChart = multiDay;
-    showHeatmap = multiDay && chainKeys.length > 1;
-    if (titleEl) titleEl.textContent = 'Évolution journalière';
-    if (subEl) subEl.textContent = 'Summary % global par jour · objectif 100%';
+    const chains = chainKeys;
+    showChart = chains.length > 0;
+    showHeatmap = multiDay && chains.length > 1;
+    if (titleEl) titleEl.textContent = 'Rendement par chaîne';
+    if (subEl) subEl.textContent = 'Summary % par chaîne sur la période · objectif ' + REND_OBJECTIF_PCT + '%';
     if (hmTitleEl) hmTitleEl.textContent = 'Heatmap · Chaîne × Jour';
     if (hmSubEl) hmSubEl.textContent = 'Vue d\'ensemble du mois';
     if (showChart && canvas) {
-      const s = rendDailySeries(month, f);
-      const data = s.map(x => x.rend != null ? x.rend * 100 : null);
-      if (canvasWrap) { canvasWrap.className = 'h-280'; canvasWrap.style.height = ''; }
+      const labels = chains.map(k => 'Ch' + String(k).padStart(2, '0'));
+      const vals = chains.map(k => {
+        const r = calcRendementForFilter(month, { ...f, chain: k });
+        return r != null && r > 0 && r < 2.5 ? r * 100 : null;
+      });
+      const h = Math.min(400, Math.max(180, chains.length * 36));
+      if (canvasWrap) { canvasWrap.className = ''; canvasWrap.style.height = h + 'px'; }
+      canvas.style.height = h + 'px';
       charts.rendDaily = new Chart(canvas.getContext('2d'), {
         type: 'bar',
         data: {
-          labels: s.map(x => shortDay(x.date)),
+          labels,
           datasets: [
-            { label: '%Rend', data, backgroundColor: data.map(v => v == null ? alpha(css('--text-faint'), 0.15) : alpha(rendColor(v / 100), 0.88)), borderRadius: 6, borderSkipped: false, maxBarThickness: 32, order: 1 },
-            rendObjectiveDataset(s.map(x => shortDay(x.date)), false)
+            { label: '%Rend', data: vals, backgroundColor: vals.map(v => v == null ? alpha(css('--text-faint'), 0.15) : alpha(rendColor(v / 100), 0.88)), borderRadius: 6, borderSkipped: false, maxBarThickness: 26, order: 1 },
+            rendObjectiveDataset(labels, true)
           ]
         },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: rendChartScalesPct() }
+        options: {
+          indexAxis: 'y',
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: items => labels[items[0]?.dataIndex] || '',
+                label: c => rendObjectiveTooltipLabel(c.dataset.label) || (c.parsed.x != null ? ` %Rend : ${c.parsed.x.toFixed(1)}%` : ' —')
+              }
+            }
+          },
+          scales: rendChartScalesPctX()
+        }
       });
     }
     if (showHeatmap) {
@@ -7499,7 +7854,11 @@ function renderRendement(month) {
     }
   }
 
+  const showRadar = (viewMode === 'overview' || viewMode === 'by-chain') && chainKeys.length >= 2;
+  if (showRadar) renderRendementChainRadar(month, f, chainKeys);
+
   if (dailyWrap) dailyWrap.style.display = showChart ? '' : 'none';
+  if (radarWrap) radarWrap.style.display = showRadar ? '' : 'none';
   if (heatWrap) heatWrap.style.display = showHeatmap ? '' : 'none';
 
   const avgRend = calcRendementForFilter(month, f) || 0;
@@ -7564,12 +7923,193 @@ function renderRendement(month) {
 }
 
 // === CHAINES ===
+let chFilterChain = '';
+let chFilterModele = '';
+let chFilterDate = '';
+let chFilterDateFrom = '';
+let chFilterDateTo = '';
+
+function getChainesFilters() {
+  return {
+    chain: chFilterChain ? Number(chFilterChain) : null,
+    modele: chFilterModele || null,
+    date: chFilterDate || null,
+    dateFrom: chFilterDateFrom || null,
+    dateTo: chFilterDateTo || null
+  };
+}
+
+function chSyncDateFilterUI() {
+  const dateEl = document.getElementById('ch-filter-date');
+  const fromEl = document.getElementById('ch-filter-from');
+  const toEl = document.getElementById('ch-filter-to');
+  if (dateEl) dateEl.value = chFilterDate ? _frToIso(chFilterDate) : '';
+  if (fromEl) fromEl.value = chFilterDateFrom ? _frToIso(chFilterDateFrom) : '';
+  if (toEl) toEl.value = chFilterDateTo ? _frToIso(chFilterDateTo) : '';
+}
+
+function chSyncDatePickerBounds(month) {
+  const info = PRODUCTION[month];
+  const sheets = info?.daily_sheets || [];
+  for (const id of ['ch-filter-date', 'ch-filter-from', 'ch-filter-to']) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (sheets.length) {
+      el.min = _frToIso(sheets[0]);
+      el.max = _frToIso(sheets[sheets.length - 1]);
+    } else {
+      el.removeAttribute('min');
+      el.removeAttribute('max');
+    }
+  }
+  chSyncDateFilterUI();
+}
+
+function updateChainesFilterSummary(month, f) {
+  const el = document.getElementById('ch-filter-summary');
+  const parts = [];
+  if (f.dateFrom || f.dateTo) {
+    parts.push(`${f.dateFrom || '…'} → ${f.dateTo || '…'}`);
+  } else if (f.date) {
+    parts.push(f.date);
+  }
+  if (f.chain != null) parts.push('Ch' + String(f.chain).padStart(2, '0'));
+  if (f.modele) parts.push(f.modele);
+  if (el) {
+    el.innerHTML = parts.length
+      ? `Filtre : <b>${parts.join(' · ')}</b>`
+      : 'Tout le mois · toutes chaînes';
+  }
+}
+
+function populateChainesFilters(month) {
+  const info = PRODUCTION[month];
+  if (!info) return;
+  const chainSel = document.getElementById('ch-filter-chain');
+  const modInp = document.getElementById('ch-filter-modele');
+  if (!chainSel || !modInp) return;
+
+  const sheets = info.daily_sheets || [];
+  const curChain = chFilterChain;
+  const curMod = chFilterModele;
+
+  const inMonth = (fr) => {
+    if (!fr || !sheets.length) return '';
+    const min = sheets[0], max = sheets[sheets.length - 1];
+    return _inRange(fr, min, max) ? fr : '';
+  };
+  chFilterDate = inMonth(chFilterDate);
+  chFilterDateFrom = inMonth(chFilterDateFrom);
+  chFilterDateTo = inMonth(chFilterDateTo);
+  chSyncDatePickerBounds(month);
+
+  const chains = new Set();
+  for (const d of info.daily_sheets || []) {
+    for (const c of info.daily[d] || []) {
+      if (c.chain != null && isActiveProductionRow(c)) chains.add(Number(c.chain));
+    }
+  }
+  const sortedChains = [...chains].sort((a, b) => a - b);
+  chainSel.innerHTML = '<option value="">Toutes</option>' +
+    sortedChains.map(c => `<option value="${c}">Chaîne ${String(c).padStart(2, '0')}</option>`).join('');
+  if (curChain && sortedChains.map(String).includes(curChain)) chainSel.value = curChain;
+  else { chainSel.value = ''; chFilterChain = ''; }
+
+  refreshModeleFilterLists(month);
+  modInp.value = curMod || '';
+  syncModeleClearBtn(modInp, document.getElementById('ch-filter-modele-clear'));
+}
+
+function resetChainesFilters() {
+  chFilterChain = '';
+  chFilterModele = '';
+  chFilterDate = '';
+  chFilterDateFrom = '';
+  chFilterDateTo = '';
+  populateChainesFilters(currentMonth);
+  renderChaines(currentMonth);
+}
+
+function chEncoursSnapshotDate(datesInScope) {
+  return datesInScope.length ? datesInScope[datesInScope.length - 1] : null;
+}
+
+function renderChainModelGrid(cmRows, chainOrder) {
+  const grid = document.getElementById('ch-chain-model-grid');
+  if (!grid) return;
+  if (!cmRows.length) {
+    grid.innerHTML = '<div class="ch-cm-empty">Aucun modèle pour cette sélection</div>';
+    return;
+  }
+  const byChain = new Map();
+  for (const r of cmRows) {
+    if (!byChain.has(r.chain)) byChain.set(r.chain, []);
+    byChain.get(r.chain).push(r);
+  }
+  const chains = chainOrder.filter(k => byChain.has(k));
+  for (const k of byChain.keys()) {
+    if (!chains.includes(k)) chains.push(k);
+  }
+  const globalMax = Math.max(1, ...cmRows.map(r => Math.max(r.sortie, r.entre)));
+  grid.innerHTML = chains.map(chain => {
+    const rows = byChain.get(chain).sort((a, b) => b.sortie - a.sortie || b.entre - a.entre);
+    const totS = rows.reduce((s, r) => s + r.sortie, 0);
+    const totE = rows.reduce((s, r) => s + r.entre, 0);
+    const chLab = 'Ch' + String(chain).padStart(2, '0');
+    const modelsHtml = rows.map(r => {
+      const sw = r.sortie ? Math.max(4, Math.round((r.sortie / globalMax) * 100)) : 0;
+      const ew = r.entre ? Math.max(4, Math.round((r.entre / globalMax) * 100)) : 0;
+      const modShort = rendShortLabel(r.modele, 22);
+      return `<div class="ch-cm-row">
+        <div class="ch-cm-mod" title="${escAttr(r.modele)}">${escHtml(modShort)}</div>
+        <div class="ch-cm-bars">
+          <div class="ch-cm-bar-line">
+            <span class="ch-cm-bar-lab">S</span>
+            <div class="ch-cm-bar-track"><div class="ch-cm-bar-fill is-sortie" style="width:${sw}%"></div></div>
+            <span class="ch-cm-bar-val">${fmtInt(r.sortie)}</span>
+          </div>
+          <div class="ch-cm-bar-line">
+            <span class="ch-cm-bar-lab">E</span>
+            <div class="ch-cm-bar-track"><div class="ch-cm-bar-fill is-entre" style="width:${ew}%"></div></div>
+            <span class="ch-cm-bar-val">${fmtInt(r.entre)}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="ch-cm-chain-card">
+      <div class="ch-cm-chain-head">
+        <span class="ch-cm-chain-lab">${chLab}</span>
+        <span class="ch-cm-chain-tot">Σ sortie ${fmtInt(totS)} · Σ entrée ${fmtInt(totE)}<br>${rows.length} modèle${rows.length > 1 ? 's' : ''}</span>
+      </div>
+      <div class="ch-cm-models">${modelsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function chBuildEncoursByChain(rows, datesInScope) {
+  const snapDate = chEncoursSnapshotDate(datesInScope);
+  const multiDay = datesInScope.length > 1;
+  const out = {};
+  for (const c of rows) {
+    if (c.chain == null) continue;
+    if (multiDay && c.date !== snapDate) continue;
+    const e = c.encours || 0;
+    if (e > 0) out[c.chain] = Math.max(out[c.chain] || 0, e);
+  }
+  return { byChain: out, snapDate, multiDay };
+}
+
 function renderChaines(month) {
-  const ch = activeChains(month);
+  const f = getChainesFilters();
+  const datesInScope = rendDatesInScope(month, f);
+  updateChainesFilterSummary(month, f);
+  const ch = activeChainsFiltered(month, f);
+  const encoursSnap = chBuildEncoursByChain(ch, datesInScope);
   const byChain = {};
+  const byChainModelMap = new Map();
   for (const c of ch) {
     if (c.chain == null) continue;
-    if (!byChain[c.chain]) byChain[c.chain] = { sortie:0, entre:0, rendWSum:0, rendW:0, encours:0, desigs: {} };
+    if (!byChain[c.chain]) byChain[c.chain] = { sortie:0, entre:0, rendWSum:0, rendW:0, desigs: {} };
     if (c.sortie_total) byChain[c.chain].sortie += c.sortie_total;
     if (c.entre_total) byChain[c.chain].entre += c.entre_total;
     const r = c.rendement, s = c.sortie_total || 0;
@@ -7577,68 +8117,53 @@ function renderChaines(month) {
       byChain[c.chain].rendWSum += r * s;
       byChain[c.chain].rendW += s;
     }
-    if (c.encours) byChain[c.chain].encours = Math.max(byChain[c.chain].encours, c.encours);
     if (c.desig) byChain[c.chain].desigs[c.desig] = (byChain[c.chain].desigs[c.desig] || 0) + (c.sortie_total || 0);
+    const mod = ((c.modele || '') + '').trim() || '—';
+    const cmKey = `${c.chain}\0${mod}`;
+    if (!byChainModelMap.has(cmKey)) {
+      byChainModelMap.set(cmKey, { chain: c.chain, modele: mod, sortie: 0, entre: 0 });
+    }
+    const cm = byChainModelMap.get(cmKey);
+    cm.sortie += c.sortie_total || 0;
+    cm.entre += c.entre_total || 0;
   }
   const keys = Object.keys(byChain).map(Number).sort((a,b)=>a-b);
   const labs = keys.map(k=>'Ch'+String(k).padStart(2,'0'));
 
   destroy('byChain');
-const ctx1 = document.getElementById('chart-by-chain').getContext('2d');
-const nbChaines = labs.length;
-const hauteurDynamique = Math.min(360, Math.max(180, nbChaines * 28));
-document.getElementById('chart-by-chain').style.height = hauteurDynamique + 'px';
-charts.byChain = new Chart(ctx1, {
-    type: 'bar',
-    data: {
-      labels: labs,
-      datasets: [
-        { label: 'Sortie', data: keys.map(k=>byChain[k].sortie), backgroundColor: alpha(css('--accent'),0.85), borderRadius: 5, borderSkipped: false },
-        { label: 'Entrée', data: keys.map(k=>byChain[k].entre), backgroundColor: alpha(css('--accent-2'),0.7), borderRadius: 5, borderSkipped: false }
-      ]
-    },
-    options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 12, font: { size: 11 } } } }, scales: { x: { grid: { color: css('--grid') }, ticks: { color: css('--text-dim'), callback: v=>fmtInt(v) } }, y: { grid: { display: false }, ticks: { color: css('--text-dim'), font: { size: 11, weight: 700 } } } } }
-  });
-
-  // Radar
   destroy('radarChain');
-  const rendByChain = keys.map(k => byChain[k].rendW ? (byChain[k].rendWSum / byChain[k].rendW) * 100 : 0);
-  const ctx2 = document.getElementById('chart-radar-chain').getContext('2d');
-  charts.radarChain = new Chart(ctx2, {
-    type: 'radar',
-    data: {
-      labels: labs,
-      datasets: [
-        { label: 'Rdt %', data: rendByChain, backgroundColor: alpha(css('--accent'),0.18), borderColor: css('--accent'), borderWidth: 2, pointBackgroundColor: css('--accent'), pointRadius: 3 },
-        { label: 'Objectif 100%', data: keys.map(()=>100), backgroundColor: 'transparent', borderColor: alpha(css('--text-dim'),0.4), borderDash: [4,4], borderWidth: 1.2, pointRadius: 0 }
-      ]
-    },
-    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 10, usePointStyle: true, font: { size: 11 } } } }, scales: { r: { suggestedMin: 0, suggestedMax: 130, grid: { color: alpha('#94a3b8',0.15) }, angleLines: { color: alpha('#94a3b8',0.15) }, pointLabels: { color: css('--text-dim'), font: { size: 10, weight: 700 } }, ticks: { display: false } } } }
-  });
-
-  // Mix Desig per Chain top 6
   destroy('chainDesig');
-  const allDesigs = new Set();
-  for (const k of keys) for (const d of Object.keys(byChain[k].desigs)) allDesigs.add(d);
-  const designations = [...allDesigs].slice(0,6);
-  const topChains = [...keys].sort((a,b)=>byChain[b].sortie - byChain[a].sortie).slice(0,6);
-  const ctx3 = document.getElementById('chart-chain-desig').getContext('2d');
-  charts.chainDesig = new Chart(ctx3, {
-    type: 'bar',
-    data: {
-      labels: topChains.map(k=>'Ch'+String(k).padStart(2,'0')),
-      datasets: designations.map((d,i)=>({ label: d, data: topChains.map(k => byChain[k].desigs[d] || 0), backgroundColor: pickPalette(designations.length)[i], borderRadius: 4 }))
-    },
-    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 8, font: { size: 10 } } } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { color: css('--text-dim') } }, y: { stacked: true, grid: { color: css('--grid') }, ticks: { color: css('--text-dim'), callback: v=>fmtInt(v) } } } }
-  });
 
-  // Encours per chain
+  // Entrée / sortie par chaîne × modèle — grille de cartes (une par chaîne)
+  destroy('chChainModel');
+  const cmRows = [...byChainModelMap.values()].filter(r => r.sortie > 0 || r.entre > 0);
+  const cmWrap = document.getElementById('ch-chain-model-wrap');
+  const cmSub = document.getElementById('ch-chart-cm-sub');
+  const nModels = cmRows.length;
+  const nChainsCm = new Set(cmRows.map(r => r.chain)).size;
+  if (cmSub) {
+    const period = datesInScope.length > 1
+      ? `${datesInScope.length} jour(s) · cumul`
+      : (datesInScope[0] || 'période filtrée');
+    cmSub.textContent = `${nChainsCm} chaîne${nChainsCm > 1 ? 's' : ''} · ${nModels} modèle${nModels > 1 ? 's' : ''} · ${period}`;
+  }
+  if (cmWrap) cmWrap.style.display = cmRows.length ? '' : 'none';
+  renderChainModelGrid(cmRows, keys);
+
+  // Encours par chaîne — snapshot dernier jour si période > 1 jour
   destroy('encChain');
+  const encSub = document.getElementById('ch-encours-sub');
+  if (encSub) {
+    encSub.textContent = encoursSnap.multiDay && encoursSnap.snapDate
+      ? `Snapshot au ${encoursSnap.snapDate} (dernier jour de la période)`
+      : (encoursSnap.snapDate ? `Au ${encoursSnap.snapDate}` : 'Pièces en fabrication');
+  }
+  const encVals = keys.map(k => encoursSnap.byChain[k] || 0);
   const ctx4 = document.getElementById('chart-encours-chain').getContext('2d');
   charts.encChain = new Chart(ctx4, {
     type: 'bar',
-    data: { labels: labs, datasets: [{ label: 'Encours', data: keys.map(k=>byChain[k].encours), backgroundColor: keys.map((_,i)=>alpha(pickPalette(keys.length)[i],0.85)), borderRadius: 5, borderSkipped: false }] },
-    options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: css('--text-dim'), font: { size: 10 } } }, y: { grid: { color: css('--grid') }, ticks: { color: css('--text-dim'), callback: v=>fmtInt(v) } } } }
+    data: { labels: labs, datasets: [{ label: 'Encours', data: encVals, backgroundColor: keys.map((_, i) => alpha(pickPalette(keys.length)[i], 0.85)), borderRadius: 5, borderSkipped: false }] },
+    options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: css('--text-dim'), font: { size: 10 } } }, y: { grid: { color: css('--grid') }, ticks: { color: css('--text-dim'), callback: v => fmtInt(v) } } } }
   });
 
   // NOUVEAU : KPIs + Récap par chaîne
@@ -7649,7 +8174,7 @@ charts.byChain = new Chart(ctx1, {
   const cntEl = document.getElementById('ch-count');
   if (cntEl) cntEl.textContent = `${nbCh} chaîne${nbCh>1?'s':''}`;
   const elA = document.getElementById('kpi-ch-active'); if (elA) elA.textContent = nbCh;
-  const elAF = document.getElementById('kpi-ch-active-foot'); if (elAF) elAF.textContent = `Sur ${PRODUCTION[month].daily_sheets.length} jour(s)`;
+  const elAF = document.getElementById('kpi-ch-active-foot'); if (elAF) elAF.textContent = `Sur ${datesInScope.length} jour(s)`;
   const elT = document.getElementById('kpi-ch-tot'); if (elT) elT.innerHTML = `${fmtInt(totSortie)}<span class="unit">pcs</span>`;
   const elTF = document.getElementById('kpi-ch-tot-foot'); if (elTF) elTF.textContent = nbCh ? `≈ ${fmtInt(totSortie/nbCh)} pcs / chaîne` : '—';
   const elTop = document.getElementById('kpi-ch-top'); if (elTop) elTop.textContent = top ? ('Ch'+String(top).padStart(2,'0')) : '—';
@@ -7674,7 +8199,7 @@ charts.byChain = new Chart(ctx1, {
         <td class="num">${fmtInt(b.sortie)}</td>
         <td class="num">${fmtInt(b.entre)}</td>
         <td class="num" style="color:${rdColor};font-weight:800">${rendAvg != null ? fmtPct(rendAvg) : '—'}</td>
-        <td class="num">${fmtInt(b.encours)}</td>
+        <td class="num">${fmtInt(encoursSnap.byChain[k] || 0)}</td>
         <td class="num">${modelsCount}</td>
         <td>${topDesig ? topDesig[0] : '—'}</td>
       </tr>`;
@@ -9988,6 +10513,7 @@ function renderRapports() {
 /* ================================================================ */
 
 const HLANC_STATE = {
+  dateJourIso: null,
   dateDebutIso: null,
   dateFinIso: null,
   chain: null,
@@ -9995,10 +10521,40 @@ const HLANC_STATE = {
   _bound: false,
 };
 
+function hlancSyncDateFilterUI() {
+  const dateEl = document.getElementById('hlanc-filter-date');
+  const inD = document.getElementById('hlanc-date-debut');
+  const inF = document.getElementById('hlanc-date-fin');
+  if (dateEl) dateEl.value = HLANC_STATE.dateJourIso || '';
+  if (inD) inD.value = HLANC_STATE.dateDebutIso || '';
+  if (inF) inF.value = HLANC_STATE.dateFinIso || '';
+}
+
+function hlancSyncDatePickerBounds(month) {
+  const info = PRODUCTION[month];
+  const sheets = info?.daily_sheets || [];
+  for (const id of ['hlanc-filter-date', 'hlanc-date-debut', 'hlanc-date-fin']) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (sheets.length) {
+      el.min = _frToIso(sheets[0]);
+      el.max = _frToIso(sheets[sheets.length - 1]);
+    } else {
+      el.removeAttribute('min');
+      el.removeAttribute('max');
+    }
+  }
+  hlancSyncDateFilterUI();
+}
+
 function hlancDatesInRange(month) {
   const info = PRODUCTION[month];
   if (!info) return [];
   const all = info.daily_sheets || [];
+  if (HLANC_STATE.dateJourIso) {
+    const fr = _isoToFr(HLANC_STATE.dateJourIso);
+    return all.includes(fr) ? [fr] : [];
+  }
   const ymdMin = _rapIsoYMD(HLANC_STATE.dateDebutIso);
   const ymdMax = _rapIsoYMD(HLANC_STATE.dateFinIso);
   return all.filter(fr => {
@@ -10010,15 +10566,64 @@ function hlancDatesInRange(month) {
   });
 }
 
+function updateHlancFilterSummary(month, dates) {
+  const el = document.getElementById('hlanc-filter-summary');
+  const parts = [];
+  if (HLANC_STATE.dateJourIso) parts.push(_isoToFr(HLANC_STATE.dateJourIso));
+  else if (HLANC_STATE.dateDebutIso || HLANC_STATE.dateFinIso) {
+    parts.push((_rapIsoToFr(HLANC_STATE.dateDebutIso) || '…') + ' → ' + (_rapIsoToFr(HLANC_STATE.dateFinIso) || '…'));
+  }
+  if (HLANC_STATE.chain != null) parts.push('Ch' + String(HLANC_STATE.chain).padStart(2, '0'));
+  if ((HLANC_STATE.modele || '').trim()) parts.push(HLANC_STATE.modele.trim());
+  if (el) {
+    el.innerHTML = parts.length
+      ? `Filtre : <b>${parts.join(' · ')}</b> · ${dates.length} j.`
+      : `Tout le mois · ${dates.length} j.`;
+  }
+}
+
+function resetHlancFilters() {
+  const info = PRODUCTION[currentMonth];
+  const sheets = info?.daily_sheets || [];
+  HLANC_STATE.dateJourIso = null;
+  HLANC_STATE.dateDebutIso = sheets.length ? _frToIso(sheets[0]) : null;
+  HLANC_STATE.dateFinIso = sheets.length ? _frToIso(sheets[sheets.length - 1]) : null;
+  HLANC_STATE.chain = null;
+  HLANC_STATE.modele = '';
+  hlancSyncOptions(currentMonth);
+  hlancRender();
+}
+
 function hlancInitOnce() {
   if (HLANC_STATE._bound) return;
   HLANC_STATE._bound = true;
+  document.getElementById('hlanc-filter-date')?.addEventListener('change', e => {
+    HLANC_STATE.dateJourIso = e.target.value || null;
+    if (HLANC_STATE.dateJourIso) {
+      HLANC_STATE.dateDebutIso = null;
+      HLANC_STATE.dateFinIso = null;
+    }
+    hlancSyncDateFilterUI();
+    hlancRender();
+  });
   document.getElementById('hlanc-date-debut')?.addEventListener('change', e => {
     HLANC_STATE.dateDebutIso = e.target.value || null;
+    if (HLANC_STATE.dateDebutIso || HLANC_STATE.dateFinIso) HLANC_STATE.dateJourIso = null;
+    if (HLANC_STATE.dateDebutIso && HLANC_STATE.dateFinIso
+      && _parseDate(_isoToFr(HLANC_STATE.dateDebutIso)) > _parseDate(_isoToFr(HLANC_STATE.dateFinIso))) {
+      HLANC_STATE.dateFinIso = HLANC_STATE.dateDebutIso;
+    }
+    hlancSyncDateFilterUI();
     hlancRender();
   });
   document.getElementById('hlanc-date-fin')?.addEventListener('change', e => {
     HLANC_STATE.dateFinIso = e.target.value || null;
+    if (HLANC_STATE.dateDebutIso || HLANC_STATE.dateFinIso) HLANC_STATE.dateJourIso = null;
+    if (HLANC_STATE.dateDebutIso && HLANC_STATE.dateFinIso
+      && _parseDate(_isoToFr(HLANC_STATE.dateDebutIso)) > _parseDate(_isoToFr(HLANC_STATE.dateFinIso))) {
+      HLANC_STATE.dateDebutIso = HLANC_STATE.dateFinIso;
+    }
+    hlancSyncDateFilterUI();
     hlancRender();
   });
   document.getElementById('hlanc-chain')?.addEventListener('change', e => {
@@ -10026,9 +10631,13 @@ function hlancInitOnce() {
     HLANC_STATE.chain = (v === '' || isNaN(v)) ? null : Number(v);
     hlancRender();
   });
-  document.getElementById('hlanc-modele')?.addEventListener('input', e => {
-    HLANC_STATE.modele = e.target.value || '';
-    hlancRender();
+  bindModeleFilterCombo({
+    input: document.getElementById('hlanc-modele'),
+    pick: document.getElementById('hlanc-modele-pick'),
+    clearBtn: document.getElementById('hlanc-modele-clear'),
+    getValue: () => HLANC_STATE.modele,
+    setValue: v => { HLANC_STATE.modele = v || ''; },
+    onApply: () => hlancRender(),
   });
   document.getElementById('hlanc-refresh-btn')?.addEventListener('click', () => {
     prepareDashboardMetrics(currentMonth);
@@ -10038,6 +10647,7 @@ function hlancInitOnce() {
     hlancRender();
     setTimeout(() => window.print(), 60);
   });
+  document.getElementById('hlanc-filter-reset')?.addEventListener('click', () => resetHlancFilters());
 }
 
 function hlancSyncOptions(month) {
@@ -10046,28 +10656,15 @@ function hlancSyncOptions(month) {
   const sheets = info.daily_sheets || [];
   const firstIso = sheets.length ? _rapFrToIsoLocal(sheets[0]) : '';
   const lastIso  = sheets.length ? _rapFrToIsoLocal(sheets[sheets.length - 1]) : '';
-  const inD = document.getElementById('hlanc-date-debut');
-  const inF = document.getElementById('hlanc-date-fin');
-  if (!HLANC_STATE.dateDebutIso) HLANC_STATE.dateDebutIso = firstIso || null;
-  if (!HLANC_STATE.dateFinIso)   HLANC_STATE.dateFinIso   = lastIso  || null;
-  if (inD) inD.value = HLANC_STATE.dateDebutIso || '';
-  if (inF) inF.value = HLANC_STATE.dateFinIso || '';
+  if (!HLANC_STATE.dateDebutIso && !HLANC_STATE.dateJourIso) HLANC_STATE.dateDebutIso = firstIso || null;
+  if (!HLANC_STATE.dateFinIso && !HLANC_STATE.dateJourIso)   HLANC_STATE.dateFinIso   = lastIso  || null;
+  hlancSyncDatePickerBounds(month);
 
-  const modeles = new Set();
-  for (const d of sheets) {
-    for (const line of info.daily[d] || []) {
-      if (!isActiveProductionRow(line)) continue;
-      if (line.modele) modeles.add(String(line.modele));
-    }
-  }
   hlancRefreshChainSelect(month);
-  const dl = document.getElementById('hlanc-modele-datalist');
-  if (dl) {
-    dl.innerHTML = Array.from(modeles).sort().map(m =>
-      `<option value="${m.replace(/"/g, '&quot;')}"></option>`).join('');
-  }
+  refreshModeleFilterLists(month);
   const modInp = document.getElementById('hlanc-modele');
   if (modInp) modInp.value = HLANC_STATE.modele || '';
+  syncModeleClearBtn(modInp, document.getElementById('hlanc-modele-clear'));
 }
 
 /** Liste des chaînes présentes pour le modèle / la période filtrés. */
@@ -10471,15 +11068,95 @@ function hlancChainKpiLabel(ch) {
   return 'Ch' + String(ch).padStart(2, '0');
 }
 
+function hlancRowLineKey(r) {
+  return String(Number(r.ch)) + '|' + String(r.modele || '').trim().toUpperCase();
+}
+
+function hlancRowHasHlMetric(r) {
+  return (r.hlLaunchSum != null && isFinite(r.hlLaunchSum))
+    || (r.hlCumul != null && isFinite(r.hlCumul));
+}
+
+/**
+ * KPI Hi / CHLi — valeurs d'état au jour i (colonne HL saisie), pas une somme sur la période.
+ * - CHLi = cumul HL au jour i pour un modèle
+ * - Hi = heures de lancement au jour i (selon règles Yi)
+ * Par modèle : valeur au dernier jour de la période filtrée, ou dernier jour avec données.
+ * Plusieurs modèles : une valeur par modèle puis agrégation (pas de cumul jour après jour).
+ */
+function hlancKpiSnapshotValues(rows, dates) {
+  if (!dates.length || !rows.length) return { hi: null, chli: null, asOf: null, modelCount: 0 };
+  const refDay = dates[dates.length - 1];
+  const byModel = new Map();
+  for (const r of rows) {
+    if (!hlancRowHasHlMetric(r)) continue;
+    const k = hlancRowLineKey(r);
+    const prev = byModel.get(k);
+    if (!prev || _rapFrToTs(r.date) >= _rapFrToTs(prev.date)) byModel.set(k, r);
+  }
+  const snapshots = [];
+  for (const [, lastRow] of byModel) {
+    const onRef = rows.find(x =>
+      hlancRowLineKey(x) === hlancRowLineKey(lastRow) && x.date === refDay && hlancRowHasHlMetric(x)
+    );
+    snapshots.push(onRef || lastRow);
+  }
+  if (!snapshots.length) return { hi: null, chli: null, asOf: refDay, modelCount: 0 };
+
+  const f = hlancFilters();
+  let pool = snapshots;
+  if (f.hasModele) {
+    pool = snapshots.filter(r => rendModeleMatches(r.modele, f.modele));
+  }
+  if (!pool.length) return { hi: null, chli: null, asOf: refDay, modelCount: 0 };
+
+  if (pool.length === 1) {
+    const r = pool[0];
+    return {
+      hi: r.hlLaunchSum != null && isFinite(r.hlLaunchSum) ? Number(r.hlLaunchSum) : null,
+      chli: r.hlCumul != null && isFinite(r.hlCumul) ? Number(r.hlCumul) : null,
+      asOf: r.date,
+      modelCount: 1,
+      modele: r.modele,
+    };
+  }
+
+  let hi = null;
+  let chli = null;
+  for (const r of pool) {
+    if (r.hlLaunchSum != null && isFinite(r.hlLaunchSum)) {
+      hi = (hi || 0) + Math.abs(Number(r.hlLaunchSum));
+    }
+    if (r.hlCumul != null && isFinite(r.hlCumul)) {
+      chli = (chli || 0) + Number(r.hlCumul);
+    }
+  }
+  return { hi, chli, asOf: refDay, modelCount: pool.length, multi: true };
+}
+
+function hlancKpiFootLabel(metricLabel, snap, dates) {
+  const parts = [metricLabel];
+  const f = hlancFilters();
+  if (f.hasChain) parts.push('Ch' + String(f.chain).padStart(2, '0'));
+  if (f.hasModele && snap.modele) parts.push(String(snap.modele).trim());
+  else if (snap.multi) parts.push(snap.modelCount + ' modèles');
+  if (snap.asOf) parts.push('au ' + shortDay(snap.asOf));
+  else if (dates.length === 1) parts.push(dates[0]);
+  return parts.join(' · ');
+}
+
 function hlancUpdateKpis(data, dates) {
   const set = (id, txt) => { const el = document.getElementById(id); if (el) el.innerHTML = txt; };
-  const tot = data.tot || {};
-  const hiVal = tot.hlLaunchSum != null && isFinite(tot.hlLaunchSum) ? fmtDecFr(Math.abs(tot.hlLaunchSum), 2) : '—';
-  const hliVal = tot.hlTop != null && isFinite(tot.hlTop) ? fmtDecFr(tot.hlTop, 2) : '—';
-  const cegidVal = tot.hLaunch != null && isFinite(tot.hLaunch) ? fmtDecFr(Math.abs(tot.hLaunch), 2) : '—';
-  set('kpi-hlanc-hi', hiVal + '<span class="unit">h</span>');
-  set('kpi-hlanc-hli', hliVal + '<span class="unit">h</span>');
-  set('kpi-hlanc-cegid', cegidVal + '<span class="unit">h</span>');
+  const snap = hlancKpiSnapshotValues(data.rows, dates);
+  const hiTxt = snap.hi != null && isFinite(snap.hi) ? fmtHLancLaunchSum(snap.hi) : '';
+  const chliTxt = snap.chli != null && isFinite(snap.chli) ? rapFmtSigned(snap.chli) : '';
+  set('kpi-hlanc-hi', hiTxt === '' ? '—' : hiTxt + '<span class="unit">h</span>');
+  set('kpi-hlanc-chli', chliTxt === '' ? '—' : chliTxt + '<span class="unit">h</span>');
+  const hiFoot = document.getElementById('kpi-hlanc-hi-foot');
+  const chliFoot = document.getElementById('kpi-hlanc-chli-foot');
+  if (hiFoot) hiFoot.textContent = hlancKpiFootLabel('Hi', snap, dates);
+  if (chliFoot) chliFoot.textContent = hlancKpiFootLabel('CHLi', snap, dates);
+
   const chains = hlancAffectedChains(data.rows);
   const chainsVal = document.getElementById('kpi-hlanc-chains');
   const chainsFoot = document.getElementById('kpi-hlanc-chains-foot');
@@ -10494,177 +11171,182 @@ function hlancUpdateKpis(data, dates) {
       chainsFoot.title = list;
     }
   }
-  const foot = hlancChartFilterLabel(dates);
-  ['kpi-hlanc-hi-foot', 'kpi-hlanc-hli-foot', 'kpi-hlanc-cegid-foot'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && foot) {
-      const base = el.textContent.split(' · ')[0];
-      el.textContent = base + (foot ? ' · ' + foot : '');
-    }
-  });
 }
 
-function hlancRenderBreakdownChart(mode, dates, rows) {
-  const wrap = document.getElementById('hlanc-breakdown-wrap');
-  const canvas = document.getElementById('chart-hlanc-breakdown');
-  const titleEl = document.getElementById('hlanc-breakdown-title');
-  const subEl = document.getElementById('hlanc-breakdown-sub');
-  if (!wrap || !canvas) return;
-  destroy('hlancBreakdown');
-  const f = hlancFilters();
-  const singleDate = dates.length === 1 ? dates[0] : null;
-  let entries;
-  let axisLabel;
-  if (mode === 'models') {
-    entries = hlancAggregateByModel(rows, singleDate);
-    axisLabel = m => rendShortLabel(m, 16);
-    if (titleEl) titleEl.textContent = 'Répartition par modèle';
-    if (subEl) subEl.textContent = (singleDate ? singleDate + ' · ' : '')
-      + 'Ch' + String(f.chain).padStart(2, '0') + ' · HLi · CHLi · Hi';
-  } else {
-    entries = hlancAggregateByChain(rows, singleDate);
-    axisLabel = ([ch]) => 'Ch' + String(ch).padStart(2, '0');
-    if (titleEl) titleEl.textContent = singleDate ? 'Chaînes au ' + shortDay(singleDate) : 'Répartition par chaîne';
-    if (subEl) subEl.textContent = (f.hasModele ? f.modele + ' · ' : '')
-      + (singleDate ? 'jour unique · ' : 'cumul période · ') + 'HLi · CHLi · Hi';
+/** Par chaîne : snapshot Hi / CHLi au dernier jour (une valeur par modèle, puis par chaîne). */
+function hlancSnapshotTotalsByChain(rows, dates) {
+  if (!dates.length) return [];
+  const refDay = dates[dates.length - 1];
+  const byModel = new Map();
+  for (const r of rows) {
+    if (!hlancRowHasHlMetric(r)) continue;
+    const k = hlancRowLineKey(r);
+    const prev = byModel.get(k);
+    if (!prev || _rapFrToTs(r.date) >= _rapFrToTs(prev.date)) byModel.set(k, r);
   }
+  const byCh = new Map();
+  for (const [, lastRow] of byModel) {
+    const onRef = rows.find(x =>
+      hlancRowLineKey(x) === hlancRowLineKey(lastRow) && x.date === refDay && hlancRowHasHlMetric(x)
+    );
+    const snap = onRef || lastRow;
+    const ch = Number(snap.ch);
+    if (!byCh.has(ch)) byCh.set(ch, { hi: 0, chli: 0, hasHi: false, hasChli: false });
+    const a = byCh.get(ch);
+    if (snap.hlLaunchSum != null && isFinite(snap.hlLaunchSum)) {
+      a.hi += Math.abs(Number(snap.hlLaunchSum));
+      a.hasHi = true;
+    }
+    if (snap.hlCumul != null && isFinite(snap.hlCumul)) {
+      a.chli += Number(snap.hlCumul);
+      a.hasChli = true;
+    }
+  }
+  return Array.from(byCh.entries())
+    .sort((a, b) => a[0] - b[0])
+    .map(([ch, v]) => ({
+      ch,
+      hi: v.hasHi ? v.hi : null,
+      chli: v.hasChli ? v.chli : null,
+    }));
+}
+
+function hlancChainChartSubLabel(dates) {
+  const parts = [];
+  const f = hlancFilters();
+  if (f.hasModele) parts.push(f.modele);
+  if (dates.length) parts.push('au ' + shortDay(dates[dates.length - 1]));
+  const fl = hlancChartFilterLabel(dates);
+  if (fl && !parts.length) return fl;
+  return parts.length ? parts.join(' · ') : fl;
+}
+
+function hlancRenderChainHlCharts(dates, rows) {
+  const wrap = document.getElementById('hlanc-chain-charts-wrap');
+  const cHi = document.getElementById('chart-hlanc-hi-by-chain');
+  const cChli = document.getElementById('chart-hlanc-chli-by-chain');
+  const subHi = document.getElementById('hlanc-chart-hi-ch-sub');
+  const subChli = document.getElementById('hlanc-chart-chli-ch-sub');
+  if (!wrap || !cHi || !cChli) return;
+  destroy('hlancHiByChain');
+  destroy('hlancChliByChain');
+  const entries = hlancSnapshotTotalsByChain(rows, dates);
   if (!entries.length) {
     wrap.hidden = true;
     return;
   }
   wrap.hidden = false;
-  const labels = entries.map(e => axisLabel(e));
-  const accent = css('--accent') || '#38bdf8';
-  charts.hlancBreakdown = new Chart(canvas.getContext('2d'), {
+  const sub = hlancChainChartSubLabel(dates);
+  if (subHi) subHi.textContent = 'Hi — heures de lancement · ' + sub;
+  if (subChli) subChli.textContent = 'CHLi — cumul heures vide · ' + sub;
+  const labels = entries.map(e => hlancChainKpiLabel(e.ch));
+  const hiData = entries.map(e => e.hi);
+  const chliData = entries.map(e => e.chli);
+  const barOpts = (label, color) => ({
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: c => c.parsed.y != null ? ` ${label} : ${fmtDecFr(c.parsed.y, 2)} h` : ` ${label} : —`
+        }
+      }
+    },
+    scales: hlancChartScales(labels)
+  });
+  charts.hlancHiByChain = new Chart(cHi.getContext('2d'), {
     type: 'bar',
     data: {
       labels,
-      datasets: [
-        {
-          label: 'HLi',
-          data: entries.map(([, v]) => v.hlTop || 0),
-          backgroundColor: alpha(accent, 0.82),
-          borderRadius: 4,
-          maxBarThickness: 22
-        },
-        {
-          label: 'CHLi',
-          data: entries.map(([, v]) => v.hlCumul || 0),
-          backgroundColor: alpha('#a78bfa', 0.82),
-          borderRadius: 4,
-          maxBarThickness: 22
-        },
-        {
-          label: 'Hi',
-          data: entries.map(([, v]) => v.hlLaunch || 0),
-          backgroundColor: alpha('#fb923c', 0.82),
-          borderRadius: 4,
-          maxBarThickness: 22
-        }
-      ]
+      datasets: [{
+        label: 'Hi',
+        data: hiData,
+        backgroundColor: hiData.map(v => v == null ? alpha(css('--text-faint'), 0.15) : alpha('#fb923c', 0.82)),
+        borderRadius: 6,
+        borderSkipped: false,
+        maxBarThickness: 36
+      }]
     },
-    options: hlancChartOptsGrouped(labels)
+    options: barOpts('Hi')
+  });
+  charts.hlancChliByChain = new Chart(cChli.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'CHLi',
+        data: chliData,
+        backgroundColor: chliData.map(v => hlancBarColor(v, '#a78bfa')),
+        borderRadius: 6,
+        borderSkipped: false,
+        maxBarThickness: 36
+      }]
+    },
+    options: barOpts('CHLi')
   });
 }
 
-function hlancRenderTotalChart(dates, rows) {
-  const canvas = document.getElementById('chart-hlanc-total');
-  const subEl = document.getElementById('hlanc-total-sub');
-  if (!canvas) return;
-  destroy('hlancTotal');
-  const byDate = hlancAggregateByDate(dates, rows);
-  const labels = dates.map(shortDay);
-  const hiData = dates.map(d => { const v = byDate.get(d)?.hlLaunch; return v != null ? v : null; });
-  const cegidData = dates.map(d => { const v = byDate.get(d)?.hCegid; return v != null ? v : null; });
-  if (subEl) subEl.textContent = hlancChartFilterLabel(dates);
-  charts.hlancTotal = new Chart(canvas.getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Hi (saisie)',
-          data: hiData,
-          backgroundColor: alpha('#fb923c', 0.78),
-          borderRadius: 5,
-          borderSkipped: false,
-          maxBarThickness: dates.length > 14 ? 18 : 28,
-          order: 2
-        },
-        {
-          label: 'H lancement CEGID',
-          data: cegidData,
-          type: 'line',
-          borderColor: '#38bdf8',
-          backgroundColor: alpha('#38bdf8', 0.12),
-          borderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          fill: true,
-          tension: 0.25,
-          order: 1
-        }
-      ]
-    },
-    options: {
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 10, font: { size: 10 } } },
-        tooltip: {
-          callbacks: {
-            title: items => dates[items[0]?.dataIndex] || '',
-            label: c => c.parsed.y != null ? ` ${c.dataset.label} : ${fmtDecFr(c.parsed.y, 2)} h` : ` ${c.dataset.label} : —`
-          }
-        }
-      },
-      scales: hlancChartScales(labels)
+/** Masque les valeurs identiques au jour précédent (plateau) — n'affiche que les changements. */
+function hlancDedupePlateauSeries(dates, valueForDate) {
+  let prev = null;
+  let hasPrev = false;
+  return dates.map(d => {
+    const raw = valueForDate(d);
+    if (raw == null || !isFinite(raw)) return null;
+    const n = Math.round(Number(raw) * 100) / 100;
+    if (!hasPrev || Math.abs(n - prev) > 0.0001) {
+      prev = n;
+      hasPrev = true;
+      return n;
     }
+    return null;
   });
 }
 
 function hlancRenderDailyCharts(dates, rows) {
   const cTop = document.getElementById('chart-hlanc-hl-top');
-  const cMid = document.getElementById('chart-hlanc-hl-cumul');
   const cBot = document.getElementById('chart-hlanc-hl-launch');
-  if (!cTop || !cMid || !cBot) return;
+  if (!cTop || !cBot) return;
   destroy('hlancHlTop');
-  destroy('hlancHlCumul');
   destroy('hlancHlLaunch');
   const filterLbl = hlancChartFilterLabel(dates);
-  ['hlanc-chart-top-sub', 'hlanc-chart-mid-sub', 'hlanc-chart-bot-sub'].forEach((id, i) => {
+  for (const id of ['hlanc-chart-top-sub', 'hlanc-chart-bot-sub']) {
     const el = document.getElementById(id);
     if (el) el.textContent = filterLbl;
-  });
+  }
   const byDate = hlancAggregateByDate(dates, rows);
   const labels = dates.map(shortDay);
   const topData = dates.map(d => { const v = byDate.get(d)?.hlTop; return v != null ? v : null; });
-  const midData = dates.map(d => { const v = byDate.get(d)?.hlCumul; return v != null ? v : null; });
-  const botData = dates.map(d => { const v = byDate.get(d)?.hlLaunch; return v != null ? v : null; });
+  const botData = hlancDedupePlateauSeries(dates, d => byDate.get(d)?.hlLaunch ?? null);
+  let totalVides = 0;
+  let hasTotalVides = false;
+  for (const v of topData) {
+    if (v != null && isFinite(v)) { totalVides += Number(v); hasTotalVides = true; }
+  }
+  const totalEl = document.getElementById('hlanc-chart-top-total');
+  if (totalEl) {
+    totalEl.textContent = hasTotalVides
+      ? 'Total : ' + rapFmtSigned(totalVides) + ' h'
+      : 'Total : —';
+  }
   const accent = css('--accent') || '#38bdf8';
   charts.hlancHlTop = new Chart(cTop.getContext('2d'), {
     type: 'bar',
-    data: { labels, datasets: [{ label: 'HLi', data: topData, backgroundColor: topData.map(v => hlancBarColor(v, accent)), borderRadius: 5, borderSkipped: false, maxBarThickness: 28 }] },
-    options: hlancChartOptsDaily(dates, 'HLi')
-  });
-  charts.hlancHlCumul = new Chart(cMid.getContext('2d'), {
-    type: 'bar',
-    data: { labels, datasets: [{ label: 'CHLi', data: midData, backgroundColor: midData.map(v => hlancBarColor(v, '#a78bfa')), borderRadius: 5, borderSkipped: false, maxBarThickness: 28 }] },
-    options: hlancChartOptsDaily(dates, 'CHLi')
+    data: { labels, datasets: [{ label: 'Heures vides', data: topData, backgroundColor: topData.map(v => hlancBarColor(v, accent)), borderRadius: 5, borderSkipped: false, maxBarThickness: 28 }] },
+    options: hlancChartOptsDaily(dates, 'Heures vides')
   });
   charts.hlancHlLaunch = new Chart(cBot.getContext('2d'), {
     type: 'bar',
-    data: { labels, datasets: [{ label: 'Hi', data: botData, backgroundColor: botData.map(v => v == null ? alpha(css('--text-faint'), 0.15) : alpha('#fb923c', 0.82)), borderRadius: 5, borderSkipped: false, maxBarThickness: 28 }] },
-    options: hlancChartOptsDaily(dates, 'Hi')
+    data: { labels, datasets: [{ label: 'Heures de lancement', data: botData, backgroundColor: botData.map(v => v == null ? alpha(css('--text-faint'), 0.15) : alpha('#fb923c', 0.82)), borderRadius: 5, borderSkipped: false, maxBarThickness: 28 }] },
+    options: hlancChartOptsDaily(dates, 'Heures de lancement')
   });
 }
 
 function hlancRenderCharts(month, dates, data) {
   destroy('hlancHlTop');
-  destroy('hlancHlCumul');
   destroy('hlancHlLaunch');
-  destroy('hlancBreakdown');
-  destroy('hlancTotal');
+  destroy('hlancHiByChain');
+  destroy('hlancChliByChain');
   const wrap = document.getElementById('hlanc-analytics-wrap');
   const dailyWrap = document.getElementById('hlanc-daily-wrap');
   if (!wrap) return;
@@ -10674,16 +11356,7 @@ function hlancRenderCharts(month, dates, data) {
   }
   wrap.hidden = false;
   hlancUpdateKpis(data, dates);
-  const viewMode = hlancGetViewMode(dates);
-  if (viewMode === 'chains' || viewMode === 'chains-period') {
-    hlancRenderBreakdownChart('chains', dates, data.rows);
-  } else if (viewMode === 'models') {
-    hlancRenderBreakdownChart('models', dates, data.rows);
-  } else {
-    const bd = document.getElementById('hlanc-breakdown-wrap');
-    if (bd) bd.hidden = true;
-  }
-  hlancRenderTotalChart(dates, data.rows);
+  hlancRenderChainHlCharts(dates, data.rows);
   if (dailyWrap) dailyWrap.hidden = dates.length < 2;
   if (dates.length >= 2) hlancRenderDailyCharts(dates, data.rows);
 }
@@ -10695,11 +11368,16 @@ function hlancRender() {
   const pill = document.getElementById('hlanc-month');
   if (pill) pill.textContent = info?.label || month;
   const dates = hlancDatesInRange(month);
+  updateHlancFilterSummary(month, dates);
   const rangeEl = document.getElementById('hlanc-range');
   if (rangeEl) {
     if (!dates.length) rangeEl.textContent = '—';
-    else rangeEl.textContent = _rapIsoToFr(HLANC_STATE.dateDebutIso) + ' → ' + _rapIsoToFr(HLANC_STATE.dateFinIso)
-      + ' (' + dates.length + ' j.)';
+    else if (HLANC_STATE.dateJourIso) {
+      rangeEl.textContent = _isoToFr(HLANC_STATE.dateJourIso) + ' (1 j.)';
+    } else {
+      rangeEl.textContent = _rapIsoToFr(HLANC_STATE.dateDebutIso) + ' → ' + _rapIsoToFr(HLANC_STATE.dateFinIso)
+        + ' (' + dates.length + ' j.)';
+    }
   }
   const doc = document.getElementById('hlanc-doc');
   if (!doc) return;
@@ -10733,7 +11411,10 @@ function renderPage(page) {
     populateRendementFilters(currentMonth);
     renderRendement(currentMonth);
   }
-  else if (page === 'chaines') renderChaines(currentMonth);
+  else if (page === 'chaines') {
+    populateChainesFilters(currentMonth);
+    renderChaines(currentMonth);
+  }
   else if (page === 'clients') renderClients(currentMonth);
   else if (page === 'modeles') renderModeles(currentMonth);
   else if (page === 'effectifs') renderEffectifs(currentMonth);
@@ -10871,13 +11552,67 @@ document.getElementById('chain-filter').addEventListener('change', (e) => {
     if (chainEl) chainEl.value = rendFilterChain;
     renderRendement(currentMonth);
   });
-  let _rendModTimer = null;
-  if (modEl) modEl.addEventListener('input', (e) => {
-    rendFilterModele = e.target.value.trim();
-    clearTimeout(_rendModTimer);
-    _rendModTimer = setTimeout(() => renderRendement(currentMonth), 180);
+  bindModeleFilterCombo({
+    input: modEl,
+    pick: document.getElementById('rend-filter-modele-pick'),
+    clearBtn: document.getElementById('rend-filter-modele-clear'),
+    getValue: () => rendFilterModele,
+    setValue: v => { rendFilterModele = v || ''; },
+    onApply: () => renderRendement(currentMonth),
   });
   if (resetEl) resetEl.addEventListener('click', () => resetRendementFilters());
+})();
+
+// ─── Chaînes : filtres période / chaîne / modèle ───
+(function bindChainesFilters() {
+  const dateEl = document.getElementById('ch-filter-date');
+  const fromEl = document.getElementById('ch-filter-from');
+  const toEl = document.getElementById('ch-filter-to');
+  const chainEl = document.getElementById('ch-filter-chain');
+  const modEl = document.getElementById('ch-filter-modele');
+  const resetEl = document.getElementById('ch-filter-reset');
+  if (dateEl) dateEl.addEventListener('change', (e) => {
+    chFilterDate = e.target.value ? _isoToFr(e.target.value) : '';
+    if (chFilterDate) {
+      chFilterDateFrom = '';
+      chFilterDateTo = '';
+    }
+    chSyncDateFilterUI();
+    renderChaines(currentMonth);
+  });
+  if (fromEl) fromEl.addEventListener('change', (e) => {
+    chFilterDateFrom = e.target.value ? _isoToFr(e.target.value) : '';
+    if (chFilterDateFrom || chFilterDateTo) chFilterDate = '';
+    if (chFilterDateFrom && chFilterDateTo && _parseDate(chFilterDateFrom) > _parseDate(chFilterDateTo)) {
+      chFilterDateTo = chFilterDateFrom;
+    }
+    chSyncDateFilterUI();
+    renderChaines(currentMonth);
+  });
+  if (toEl) toEl.addEventListener('change', (e) => {
+    chFilterDateTo = e.target.value ? _isoToFr(e.target.value) : '';
+    if (chFilterDateFrom || chFilterDateTo) chFilterDate = '';
+    if (chFilterDateFrom && chFilterDateTo && _parseDate(chFilterDateFrom) > _parseDate(chFilterDateTo)) {
+      chFilterDateFrom = chFilterDateTo;
+    }
+    chSyncDateFilterUI();
+    renderChaines(currentMonth);
+  });
+  if (chainEl) chainEl.addEventListener('change', (e) => {
+    chFilterChain = e.target.value;
+    populateChainesFilters(currentMonth);
+    if (chainEl) chainEl.value = chFilterChain;
+    renderChaines(currentMonth);
+  });
+  bindModeleFilterCombo({
+    input: modEl,
+    pick: document.getElementById('ch-filter-modele-pick'),
+    clearBtn: document.getElementById('ch-filter-modele-clear'),
+    getValue: () => chFilterModele,
+    setValue: v => { chFilterModele = v || ''; },
+    onApply: () => renderChaines(currentMonth),
+  });
+  if (resetEl) resetEl.addEventListener('click', () => resetChainesFilters());
 })();
 
 let _searchTimer = null;
