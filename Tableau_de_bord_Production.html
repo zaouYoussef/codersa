@@ -14447,11 +14447,8 @@ function calcHLancLaunchSumForLine(month, date, line) {
   if (idx < 0) return null;
   const targetKey = saisieLineKey(line);
 
-  // Reconstruit HLi et CHLi jour par jour jusqu'au jour i (inclus)
+  // Reconstruit HLi jour par jour — si HLi <= 0, remise a zero du cumul
   let cumul = 0;
-  let prevCumul = 0; // CHLi-1 (cumul avant le jour courant)
-  let firstNegIdx = -1; // index du premier jour où HLi <= 0
-  let cumulBeforeFirstNeg = null; // cumul juste avant ce premier jour
   let hasVal = false;
 
   for (let i = 0; i <= idx; i++) {
@@ -14466,26 +14463,20 @@ function calcHLancLaunchSumForLine(month, date, line) {
     const ph = Number(target.ph) || 0;
     const sortie = (target.hours_exit || [])
       .reduce((s, v) => s + (v != null ? Number(v) : 0), 0);
-    if (!Hn || !ph) continue;
+    if (!ph) continue;
+    if (!Hn && sortie === 0) continue;
 
-    prevCumul = cumul;
     const HLi = Math.round((Hn - sortie / ph) * 100) / 100;
-    cumul = Math.round((cumul + HLi) * 100) / 100;
     hasVal = true;
 
-    // Mémorise le premier jour où HLi <= 0
-    if (firstNegIdx < 0 && HLi <= 0) {
-      firstNegIdx = i;
-      cumulBeforeFirstNeg = prevCumul; // CHL(j-1)
+    if (HLi <= 0) {
+      cumul = 0;
+    } else {
+      cumul = Math.round((cumul + HLi) * 100) / 100;
     }
   }
 
   if (!hasVal) return null;
-
-  // Cas 2 ou 3 : un jour <= 0 existe → Yi = CHL(j-1)
-  if (firstNegIdx >= 0) return cumulBeforeFirstNeg;
-
-  // Cas 1 : tous les jours > 0 → Yi = CHLi
   return cumul;
 }
 
