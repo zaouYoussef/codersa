@@ -6859,7 +6859,7 @@ function defaultChartOpts() {
           let txt;
           if (Math.abs(val) >= 1000) txt = fmtInt ? fmtInt(Math.round(val)) : Math.round(val).toLocaleString('fr-FR');
           else if (Number.isInteger(val)) txt = String(val);
-          else txt = fmtDecFr ? fmtDecFr(Math.abs(val), 2) : Math.abs(val).toFixed(2).replace('.', ',');
+          else txt = fmtDecFr ? fmtDecFr(val, 2) : val.toFixed(2).replace('.', ',');
 
           ctx.font = '600 9px ' + (CHART_FONT || 'Inter, sans-serif');
           ctx.textAlign = 'center';
@@ -6875,12 +6875,13 @@ function defaultChartOpts() {
           } else {
             const barHeight = Math.abs((bar.y || 0) - (bar.base || 0));
             if (barHeight < 12) {
-              // Affiche au-dessus si trop petite
+              // Affiche en dehors si trop petite (au-dessus si positive, en-dessous si négative)
               ctx.fillStyle = css('--text') || '#e2e8f0';
-              ctx.fillText(txt, bar.x, val >= 0 ? (bar.y || 0) - 7 : (bar.base || 0) + 7);
+              ctx.fillText(txt, bar.x, val >= 0 ? (bar.y || 0) - 7 : (bar.y || 0) + 7);
             } else {
               ctx.fillStyle = '#fff';
-              ctx.fillText(txt, bar.x, (bar.y || 0) + barHeight / 2);
+              const yMid = ((bar.y || 0) + (bar.base || 0)) / 2;
+              ctx.fillText(txt, bar.x, yMid);
             }
           }
         });
